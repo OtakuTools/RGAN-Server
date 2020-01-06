@@ -3,6 +3,8 @@ package com.okatu.rgan.employee;
 import com.okatu.rgan.employee.EmployeeNotFoundException;
 import com.okatu.rgan.employee.Employee;
 import com.okatu.rgan.employee.EmployeeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class EmployeeController {
+    private static Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     private final EmployeeRepository repository;
 
@@ -50,5 +53,11 @@ public class EmployeeController {
     @DeleteMapping("/employees/{id}")
     void deleteEmployee(@PathVariable Long id){
         repository.deleteById(id);
+    }
+
+    @GetMapping("/hello")
+    String helloWorld(){
+        logger.error("log repo test");
+        return "hello world";
     }
 }

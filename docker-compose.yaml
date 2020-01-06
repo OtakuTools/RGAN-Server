@@ -1,2 +1,12 @@
 # 编排整个应用，包括nginx容器和spring boot容器，目前mysql不需要
 # http://www.ityouknow.com/springboot/2018/03/28/dockercompose-springboot-mysql-nginx.html
+version: '3'
+
+services:
+  spring:
+    build: ./app
+    working_dir: ./app
+    ports:
+      - '8080:8080'
+    volumes:
+      - /home/ubuntu/logs/rgan-server:./app/logs
