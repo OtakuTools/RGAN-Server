@@ -11,6 +11,6 @@ public class EmployeeController {
     @GetMapping("/hello")
     String helloWorld(){
         logger.error("log repo test");
-        return "hello world";
+        return "我改";
     }
 }
