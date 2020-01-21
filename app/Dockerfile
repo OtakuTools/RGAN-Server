@@ -1,6 +1,9 @@
 FROM maven:3.6.3-jdk-8-slim as build
 
 ENV APP_HOME=/app
+ENV TZ=Asia/Shanghai
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 WORKDIR $APP_HOME
 
