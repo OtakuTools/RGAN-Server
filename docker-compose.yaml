@@ -4,6 +4,7 @@ version: '3'
 services:
   spring:
     build: ./app
+    image: spring:latest
     ports:
       - '8080:8080'
     volumes:
