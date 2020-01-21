@@ -53,6 +53,6 @@
     </logger>
 
     <root level="${DEPLOY_LOG_LEVEL}">
-        <appender-ref ref="DEPLOY"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
