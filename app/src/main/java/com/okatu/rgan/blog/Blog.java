@@ -12,6 +12,8 @@ public class Blog {
     @GeneratedValue
     private Long id;
 
+    private String title;
+
     @Column(columnDefinition = "text")
     private String content;
 
@@ -31,7 +33,16 @@ public class Blog {
         this.content = content;
     }
 
-    public Blog(String content) {
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Blog(String title, String content) {
+        this.title = title;
         this.content = content;
     }
 

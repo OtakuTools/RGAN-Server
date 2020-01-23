@@ -14,7 +14,7 @@ public class LoadDatabase {
     CommandLineRunner initDatabase(BlogRepository repository){
         return args -> {
             logger.info(
-                    "Preloading " + repository.save(new Blog("fuck me"))
+                    "Preloading " + repository.save(new Blog("this is title", "fuck me"))
             );
         };
     }

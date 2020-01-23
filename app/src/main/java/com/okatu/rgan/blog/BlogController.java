@@ -34,6 +34,7 @@ public class BlogController {
     Blog edit(@PathVariable Long id, @RequestBody Blog newBlog){
         return blogRepository.findById(id).map(
             blog -> {
+                blog.setTitle(newBlog.getTitle());
                 blog.setContent(newBlog.getContent());
                 return blogRepository.save(blog);
             }
