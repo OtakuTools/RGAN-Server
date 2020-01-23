@@ -1,5 +1,6 @@
-package com.okatu.rgan.employee;
+package com.okatu.rgan.blog;
 
+import com.okatu.rgan.employee.EmployeeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -7,11 +8,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class EmployeeNotFoundAdvice {
+public class BlogExceptionAdvice {
     @ResponseBody
-    @ExceptionHandler(EmployeeNotFoundException.class)
+    @ExceptionHandler(BlogNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String employeeNotFoundHandler(EmployeeNotFoundException exception){
+    String blogNotFoundHandler(BlogNotFoundException exception){
         return exception.getMessage();
     }
+
 }
