@@ -1,6 +1,5 @@
 package com.okatu.rgan.blog;
 
-import com.okatu.rgan.employee.EmployeeNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
