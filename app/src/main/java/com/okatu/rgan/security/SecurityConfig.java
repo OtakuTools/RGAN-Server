@@ -45,6 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             cookieSerializer.setCookieName(sessionCookieConfig.getName());
             cookieSerializer.setCookieMaxAge(sessionCookieConfig.getMaxAge());
             cookieSerializer.setDomainName(sessionCookieConfig.getDomain());
+            cookieSerializer.setSameSite("Lax");
         }
     }
 }
