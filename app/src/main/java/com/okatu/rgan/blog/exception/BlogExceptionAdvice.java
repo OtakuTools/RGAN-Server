@@ -33,4 +33,11 @@ public class BlogExceptionAdvice {
     }
 
 
+    @ResponseBody
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    String backupExceptionHandler(Exception exception){
+        logger.error("Backup exception", exception);
+        return "";
+    }
 }
