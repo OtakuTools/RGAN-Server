@@ -1,6 +1,8 @@
 package com.okatu.rgan.blog.model.entity;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 // `findBlogByTagId` is definitely needed
@@ -21,13 +23,33 @@ public class Blog {
 
     private Integer visitorCount = 0;
 
-    @ManyToMany()
+    @ManyToMany
     @JoinTable(
         name = "blog_tag_association",
         joinColumns = @JoinColumn(name = "blog_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new LinkedHashSet<>();
+
+    private Date createdTime;
+
+    private Date modifiedTime;
+
+    public Date getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(Date createdTime) {
+        this.createdTime = createdTime;
+    }
+
+    public Date getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
 
     public Long getId() {
         return id;

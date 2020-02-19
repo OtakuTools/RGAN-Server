@@ -1,6 +1,10 @@
 package com.okatu.rgan.blog.model;
 
+import javax.validation.constraints.NotBlank;
+
 public class TagEditParam {
+
+    @NotBlank
     private String title;
 
     private String description;

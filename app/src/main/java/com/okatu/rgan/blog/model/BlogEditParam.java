@@ -1,16 +1,20 @@
 package com.okatu.rgan.blog.model;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 public class BlogEditParam {
-    @NotEmpty
+
     private String title;
 
     private String content;
 
-    private Set<String> tags;
+    // must guarantee no duplicated and sorted by insertion order
+    private LinkedHashSet<String> tags = new LinkedHashSet<>();
 
     public String getTitle() {
         return title;
@@ -28,11 +32,11 @@ public class BlogEditParam {
         this.content = content;
     }
 
-    public Set<String> getTags() {
+    public LinkedHashSet<String> getTags() {
         return tags;
     }
 
-    public void setTags(Set<String> tags) {
+    public void setTags(LinkedHashSet<String> tags) {
         this.tags = tags;
     }
 

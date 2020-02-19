@@ -1,7 +1,5 @@
 package com.okatu.rgan.blog.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.okatu.rgan.blog.exception.InvalidInputParameterException;
 import com.okatu.rgan.blog.model.BlogEditParam;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Tag;
@@ -9,11 +7,11 @@ import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.exception.EntityNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -26,17 +24,19 @@ public class BlogController {
     @Autowired
     private TagRepository tagRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @GetMapping
     List<Blog> all(){
         return blogRepository.findAll();
     }
 
+//    @GetMapping
+//    Page<Blog> getPage(@PageableDefault Pageable pageable){
+//        return blogRepository.findAll(pageable);
+//    }
+
     @PostMapping
     Blog add(@RequestBody BlogEditParam blogEditParam){
-        Set<Tag> tags = findTagsByTitles(blogEditParam.getTags());
+        LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
         blog.setContent(blogEditParam.getContent());
@@ -68,9 +68,9 @@ public class BlogController {
         blogRepository.deleteById(id);
     }
 
-    private Set<Tag> findTagsByTitles(Set<String> titles){
+    private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
         return titles.stream().map(
-            title -> tagRepository.findByTitle(title).orElseThrow(() -> new InvalidInputParameterException("No such tag name: " + title + " exist"))
-        ).collect(Collectors.toSet());
+            title -> tagRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Could not find Tag, title: " + title))
+        ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

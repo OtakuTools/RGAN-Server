@@ -1,6 +1,5 @@
 package com.okatu.rgan.blog.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.okatu.rgan.blog.model.TagEditParam;
 import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.blog.exception.EntityNotFoundException;
@@ -8,6 +7,7 @@ import com.okatu.rgan.blog.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,7 +23,8 @@ public class TagController {
     }
 
     @PostMapping
-    Tag addTag(@RequestBody TagEditParam tagEditParam){
+    // perform parameter validation
+    Tag add(@Valid @RequestBody TagEditParam tagEditParam){
         Tag tag = new Tag(tagEditParam.getTitle(), tagEditParam.getDescription());
         return tagRepository.save(tag);
     }
