@@ -1,11 +1,13 @@
 package com.okatu.rgan.common.exception;
 
+import com.okatu.rgan.common.model.MethodArgumentNotValidErrorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,9 +41,15 @@ public class ApplicationExceptionAdvice {
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    String methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
+    MethodArgumentNotValidErrorResult methodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception){
         logger.error("Invalid request parameter", exception);
-        return exception.getMessage();
+        MethodArgumentNotValidErrorResult errorResult = new MethodArgumentNotValidErrorResult();
+        errorResult.setMessage("Invalid request parameter");
+
+        for(FieldError fieldError : exception.getBindingResult().getFieldErrors()){
+            errorResult.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
+        }
+        return errorResult;
     }
 
     @ResponseBody

@@ -6,7 +6,7 @@ WORKDIR $APP_HOME
 
 COPY . $APP_HOME
 
-RUN mvn clean package
+RUN mvn clean package -Dmaven.test.skip=true
 
 FROM openjdk:8-jdk-alpine
 
