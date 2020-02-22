@@ -1,5 +1,9 @@
 package com.okatu.rgan.user.auth.handler.success;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.user.model.RganUserDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -13,12 +17,17 @@ import java.io.IOException;
 
 public class RganAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
+    @Autowired
+    private ObjectMapper mapper;
+
     // don't need to flush/close the outputstream, see:
     // https://stackoverflow.com/questions/5043657/do-i-need-to-flush-the-servlet-outputstream
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpStatus.OK.value());
-        httpServletResponse.getWriter().write("Authentication success");
+        httpServletResponse.getWriter().write(mapper.writeValueAsString(
+            RganUserDTO.convertFrom((RganUser) authentication.getPrincipal()))
+        );
     }
 }

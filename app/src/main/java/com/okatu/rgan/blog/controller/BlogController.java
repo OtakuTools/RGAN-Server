@@ -13,6 +13,7 @@ import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -88,6 +89,15 @@ public class BlogController {
             blogRepository.deleteById(id);
         });
     }
+
+//    @GetMapping("/search/{id}")
+//    List<BlogDTO> search(@RequestParam("keyword") String keyword){
+//        if(StringUtils.isEmpty(keyword)){
+//            return blogRepository.findAll().stream().map(BlogDTO::convertFrom)
+//                .collect(Collectors.toList());
+//        }
+//
+//    }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
         return titles.stream().map(
