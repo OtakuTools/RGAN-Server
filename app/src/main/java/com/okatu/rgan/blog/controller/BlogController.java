@@ -17,6 +17,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,6 +36,9 @@ public class BlogController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @GetMapping
     List<Blog> all(){
@@ -90,14 +96,17 @@ public class BlogController {
         });
     }
 
-//    @GetMapping("/search/{id}")
-//    List<BlogDTO> search(@RequestParam("keyword") String keyword){
-//        if(StringUtils.isEmpty(keyword)){
-//            return blogRepository.findAll().stream().map(BlogDTO::convertFrom)
-//                .collect(Collectors.toList());
-//        }
-//
-//    }
+    @GetMapping("/search")
+    List<BlogDTO> search(@RequestParam("keyword") String keyword){
+        if(StringUtils.isEmpty(keyword)){
+            return blogRepository.findAll().stream().map(BlogDTO::convertFrom)
+                .collect(Collectors.toList());
+        }
+
+        String[] keywords = keyword.split(" ");
+
+        return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords)).stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
+    }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
         return titles.stream().map(

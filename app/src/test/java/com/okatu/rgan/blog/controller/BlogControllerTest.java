@@ -72,4 +72,17 @@ class BlogControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(print());
     }
+
+    @Test
+    void testSearch() throws Exception{
+
+        String keywords = "this user";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/blogs/search?keyword=" + keywords);
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(print());
+    }
 }
