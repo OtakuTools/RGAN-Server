@@ -1,6 +1,7 @@
 package com.okatu.rgan.security;
 
 import com.okatu.rgan.user.auth.handler.success.RganLogoutSuccessHandler;
+import com.okatu.rgan.user.auth.service.RganRememberMeServices;
 import com.okatu.rgan.user.auth.service.RganUserDetailService;
 import com.okatu.rgan.user.auth.config.AuthenticationExceptionHandlerConfig;
 import com.okatu.rgan.user.auth.handler.AcceptJsonUsernamePasswordAuthenticationFilter;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -56,6 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .rememberMe()
             .rememberMeServices(rememberMeServices())
+            .tokenValiditySeconds(60 * 60 * 24)
             .and()
             .authorizeRequests()
             .antMatchers(
@@ -63,11 +66,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/login",
                 "/logout"
             ).permitAll()
-            .anyRequest().permitAll()
+            .antMatchers(
+                HttpMethod.GET,
+                "/blogs/**",
+                "/tags/**",
+                "/users/**"
+            ).permitAll()
+            .anyRequest().authenticated()
             .and()
             .csrf().disable()
             ;
-
     }
 
     @Override
@@ -89,6 +97,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         acceptJsonUsernamePasswordAuthenticationFilter.setAuthenticationManager(authenticationManagerBean());
         acceptJsonUsernamePasswordAuthenticationFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler());
         acceptJsonUsernamePasswordAuthenticationFilter.setAuthenticationFailureHandler(delegatingAuthenticationFailureHandler);
+        acceptJsonUsernamePasswordAuthenticationFilter.setRememberMeServices(rememberMeServices());
         return acceptJsonUsernamePasswordAuthenticationFilter;
     }
 
@@ -119,7 +128,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public RememberMeServices rememberMeServices(){
-        return new PersistentTokenBasedRememberMeServices("guess-what?", userDetailsService(), persistentTokenRepository());
+        return new RganRememberMeServices("guess-what?", userDetailsService(), persistentTokenRepository());
     }
 
     @Bean
@@ -129,28 +138,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return jdbcTokenRepository;
     }
 
-
-    @Bean
-    public DefaultCookieSerializer cookieSerializer(){
-        return new DefaultCookieSerializer();
-    }
-
-
-    private class CookieSerializerConfigure implements ServletContainerInitializer{
-        @Override
-        public void onStartup(Set<Class<?>> set, ServletContext servletContext) throws ServletException {
-            SessionCookieConfig sessionCookieConfig = servletContext.getSessionCookieConfig();
-            // about the setting, see:
-            // https://docs.spring.io/spring-session/docs/current/api/org/springframework/session/web/http/DefaultCookieSerializer.html
-            // https://github.com/spring-projects/spring-session/issues/87
-            DefaultCookieSerializer cookieSerializer = cookieSerializer();
-            cookieSerializer.setUseSecureCookie(sessionCookieConfig.isSecure());
-            cookieSerializer.setUseHttpOnlyCookie(sessionCookieConfig.isHttpOnly());
-            cookieSerializer.setCookiePath(sessionCookieConfig.getPath());
-            cookieSerializer.setCookieName(sessionCookieConfig.getName());
-            cookieSerializer.setCookieMaxAge(sessionCookieConfig.getMaxAge());
-            cookieSerializer.setDomainName(sessionCookieConfig.getDomain());
-            cookieSerializer.setSameSite("Lax");
-        }
-    }
 }

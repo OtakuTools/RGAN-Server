@@ -16,6 +16,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.print.attribute.standard.Media;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
@@ -53,10 +56,16 @@ class UserAuthControllerTest {
         loginPrincipal.setUsername("test1");
         loginPrincipal.setPassword("password length > 8");
 
+        Map<String, String> params = new HashMap<>();
+
+        params.put("username", "test1");
+        params.put("password", "password length > 8");
+        params.put("rememberMe", "true");
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
             .post("/login")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(loginPrincipal));
+            .content(mapper.writeValueAsString(params));
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

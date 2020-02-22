@@ -1,4 +1,4 @@
-package com.okatu.rgan.blog.model;
+package com.okatu.rgan.blog.model.param;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

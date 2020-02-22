@@ -1,11 +1,11 @@
-package com.okatu.rgan.blog.exception;
+package com.okatu.rgan.common.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-public class BlogExceptionAdvice {
+public class ApplicationExceptionAdvice {
 
-    private static Logger logger = LoggerFactory.getLogger(BlogExceptionAdvice.class);
+    private static Logger logger = LoggerFactory.getLogger(ApplicationExceptionAdvice.class);
 
     @ResponseBody
     @ExceptionHandler(EntityNotFoundException.class)
@@ -45,11 +45,24 @@ public class BlogExceptionAdvice {
     }
 
     @ResponseBody
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({ResourceAccessDeniedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    String resourceForbiddenExceptionHandler(ResourceAccessDeniedException exception){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null){
+            logger.error("anonymous user try to access authenticated resource", exception);
+        }else{
+            logger.error("user: {} try to access authenticated resource", authentication.getName(), exception);
+        }
+        return exception.getMessage();
+    }
+
+    @ResponseBody
+    @ExceptionHandler({Exception.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     String backupExceptionHandler(Exception exception){
         logger.error("Backup controller exception handler", exception);
-        return "";
+        return "Something wrong happened inside the system, please retry later";
     }
 
 }

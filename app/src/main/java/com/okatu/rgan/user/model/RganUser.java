@@ -1,10 +1,13 @@
 package com.okatu.rgan.user.model;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 // about the difference between lock and enable, see
@@ -29,6 +32,12 @@ public class RganUser implements UserDetails {
     private String password;
 
     private Integer status = ACTIVE;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_time", updatable = false, insertable = false,
+        columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @Generated(value = GenerationTime.ALWAYS)
+    private Date createdTime;
 
     @Transient
     private Set<GrantedAuthority> grantedAuthorities;
@@ -78,5 +87,13 @@ public class RganUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return status == ACTIVE;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public Date getCreatedTime() {
+        return createdTime;
     }
 }

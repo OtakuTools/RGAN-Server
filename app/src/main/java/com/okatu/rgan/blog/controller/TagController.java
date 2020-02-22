@@ -1,8 +1,8 @@
 package com.okatu.rgan.blog.controller;
 
-import com.okatu.rgan.blog.model.TagEditParam;
+import com.okatu.rgan.blog.model.param.TagEditParam;
 import com.okatu.rgan.blog.model.entity.Tag;
-import com.okatu.rgan.blog.exception.EntityNotFoundException;
+import com.okatu.rgan.common.exception.EntityNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

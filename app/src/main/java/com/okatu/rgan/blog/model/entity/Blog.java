@@ -1,5 +1,10 @@
 package com.okatu.rgan.blog.model.entity;
 
+import com.okatu.rgan.user.model.RganUser;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -23,6 +28,11 @@ public class Blog {
 
     private Integer visitorCount = 0;
 
+    // ugly here
+    // i want the Set semantic and performance enhancement(in jpa),
+    // but i also want to keep the tag insertion order
+    // however, keep the insertion order itself is considered as anti-pattern in database
+    // and this method(declared as LinkedHashSet cannot guarantee nothing at all
     @ManyToMany
     @JoinTable(
         name = "blog_tag_association",
@@ -31,24 +41,28 @@ public class Blog {
     )
     private Set<Tag> tags = new LinkedHashSet<>();
 
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private RganUser user;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_time", updatable = false, insertable = false,
+        columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @Generated(value = GenerationTime.ALWAYS)
     private Date createdTime;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "modified_time",
+        columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Generated(value = GenerationTime.ALWAYS)
     private Date modifiedTime;
 
     public Date getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
-
     public Date getModifiedTime() {
         return modifiedTime;
-    }
-
-    public void setModifiedTime(Date modifiedTime) {
-        this.modifiedTime = modifiedTime;
     }
 
     public Long getId() {
@@ -97,6 +111,14 @@ public class Blog {
 
     public void setTags(Set<Tag> tags) {
         this.tags = tags;
+    }
+
+    public RganUser getUser() {
+        return user;
+    }
+
+    public void setUser(RganUser user) {
+        this.user = user;
     }
 
     public Blog() {
