@@ -3,6 +3,7 @@ package com.okatu.rgan.blog.model;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Tag;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,9 +23,9 @@ public class BlogDTO {
 
     private String username;
 
-    private Date createdTime;
+    private LocalDateTime createdTime;
 
-    private Date modifiedTime;
+    private LocalDateTime modifiedTime;
 
     public Long getId() {
         return id;
@@ -82,19 +83,19 @@ public class BlogDTO {
         this.username = username;
     }
 
-    public Date getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 
-    public Date getModifiedTime() {
+    public LocalDateTime getModifiedTime() {
         return modifiedTime;
     }
 
-    public void setModifiedTime(Date modifiedTime) {
+    public void setModifiedTime(LocalDateTime modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
 

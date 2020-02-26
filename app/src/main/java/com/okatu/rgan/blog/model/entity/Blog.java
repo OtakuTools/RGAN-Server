@@ -3,9 +3,9 @@ package com.okatu.rgan.blog.model.entity;
 import com.okatu.rgan.user.model.RganUser;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -45,23 +45,23 @@ public class Blog {
     @JoinColumn(name = "author_id")
     private RganUser user;
 
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_time", updatable = false, insertable = false,
         columnDefinition = "datetime default CURRENT_TIMESTAMP")
     @Generated(value = GenerationTime.ALWAYS)
-    private Date createdTime;
+    private LocalDateTime createdTime;
 
-    @Temporal(TemporalType.TIMESTAMP)
+//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "modified_time",
         columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     @Generated(value = GenerationTime.ALWAYS)
-    private Date modifiedTime;
+    private LocalDateTime modifiedTime;
 
-    public Date getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public Date getModifiedTime() {
+    public LocalDateTime getModifiedTime() {
         return modifiedTime;
     }
 

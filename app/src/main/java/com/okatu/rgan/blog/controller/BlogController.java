@@ -37,9 +37,6 @@ public class BlogController {
     @Autowired
     private UserRepository userRepository;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @GetMapping
     List<Blog> all(){
         return blogRepository.findAll();

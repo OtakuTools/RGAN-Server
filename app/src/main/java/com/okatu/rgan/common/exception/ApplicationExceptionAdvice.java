@@ -66,9 +66,9 @@ public class ApplicationExceptionAdvice {
     }
 
     @ResponseBody
-    @ExceptionHandler({Exception.class, ConstraintViolationException.class})
+    @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    String backupExceptionHandler(Exception exception){
+    String backupExceptionHandler(ConstraintViolationException exception){
         logger.error("Backup controller exception handler", exception);
         return "Something wrong happened inside the system, please retry later";
     }

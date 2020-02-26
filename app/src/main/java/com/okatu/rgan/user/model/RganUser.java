@@ -6,8 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Set;
 
 // about the difference between lock and enable, see
@@ -33,11 +33,13 @@ public class RganUser implements UserDetails {
 
     private Integer status = ACTIVE;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    private String email;
+
+//    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_time", updatable = false, insertable = false,
         columnDefinition = "datetime default CURRENT_TIMESTAMP")
     @Generated(value = GenerationTime.ALWAYS)
-    private Date createdTime;
+    private LocalDateTime createdTime;
 
     @Transient
     private Set<GrantedAuthority> grantedAuthorities;
@@ -93,7 +95,15 @@ public class RganUser implements UserDetails {
         return id;
     }
 
-    public Date getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

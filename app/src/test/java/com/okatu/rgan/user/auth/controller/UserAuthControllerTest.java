@@ -2,7 +2,7 @@ package com.okatu.rgan.user.auth.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.okatu.rgan.user.model.UserLoginPrincipal;
-import com.okatu.rgan.user.model.UserRegisterParam;
+import com.okatu.rgan.user.model.param.UserRegisterParam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,12 +14,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import javax.print.attribute.standard.Media;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest

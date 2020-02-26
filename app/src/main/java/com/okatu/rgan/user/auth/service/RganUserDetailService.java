@@ -13,9 +13,9 @@ public class RganUserDetailService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(
-            () -> new UsernameNotFoundException("Username: " + username + " not found")
+    public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
+        return userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail).orElseThrow(
+            () -> new UsernameNotFoundException("Username/Email: " + usernameOrEmail + " not found")
         );
     }
 }

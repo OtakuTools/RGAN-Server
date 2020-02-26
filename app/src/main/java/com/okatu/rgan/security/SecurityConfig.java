@@ -72,6 +72,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/tags/**",
                 "/users/**"
             ).permitAll()
+            .antMatchers(
+                HttpMethod.POST,
+                "/verification/email/receive"
+            ).permitAll()
             .anyRequest().authenticated()
             .and()
             .csrf().disable()

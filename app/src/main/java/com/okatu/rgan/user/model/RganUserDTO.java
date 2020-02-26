@@ -1,13 +1,13 @@
 package com.okatu.rgan.user.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class RganUserDTO {
     private Long id;
 
     private String username;
 
-    private Date createdTime;
+    private LocalDateTime createdTime;
 
     public Long getId() {
         return id;
@@ -25,11 +25,11 @@ public class RganUserDTO {
         this.username = username;
     }
 
-    public Date getCreatedTime() {
+    public LocalDateTime getCreatedTime() {
         return createdTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
 

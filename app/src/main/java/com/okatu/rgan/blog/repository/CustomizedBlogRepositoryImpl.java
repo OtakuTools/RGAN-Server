@@ -25,6 +25,7 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
 
         Query query = entityManager.createQuery(based.toString());
 
+
         int index = 1;
         for(String keyword : keywords){
             query.setParameter(index++, "%" + keyword + "%");
