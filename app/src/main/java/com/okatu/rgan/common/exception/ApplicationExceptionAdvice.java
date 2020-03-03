@@ -68,9 +68,17 @@ public class ApplicationExceptionAdvice {
     @ResponseBody
     @ExceptionHandler({ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    String backupExceptionHandler(ConstraintViolationException exception){
+    String constraintViolationExceptionHandler(ConstraintViolationException exception){
         logger.error("Backup controller exception handler", exception);
         return "Something wrong happened inside the system, please retry later";
+    }
+
+    @ResponseBody
+    @ExceptionHandler({VerificationEmailUnavailableException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    String verificationEmailUnavailableExceptionHandler(VerificationEmailUnavailableException exception){
+        logger.error(exception.getMessage(), exception);
+        return exception.getMessage();
     }
 
 }

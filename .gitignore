@@ -31,3 +31,6 @@ build/
 .vscode/
 
 logs/
+
+## Local application.properties
+app/src/main/resources/application-dev.properties

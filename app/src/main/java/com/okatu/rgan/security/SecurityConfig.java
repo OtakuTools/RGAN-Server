@@ -1,14 +1,11 @@
 package com.okatu.rgan.security;
 
-import com.okatu.rgan.user.auth.handler.success.RganLogoutSuccessHandler;
-import com.okatu.rgan.user.auth.service.RganRememberMeServices;
-import com.okatu.rgan.user.auth.service.RganUserDetailService;
-import com.okatu.rgan.user.auth.config.AuthenticationExceptionHandlerConfig;
-import com.okatu.rgan.user.auth.handler.AcceptJsonUsernamePasswordAuthenticationFilter;
-import com.okatu.rgan.user.auth.handler.RganAuthenticationEntryPoint;
-import com.okatu.rgan.user.auth.handler.success.RganAuthenticationSuccessHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.okatu.rgan.user.authentication.handler.success.RganLogoutSuccessHandler;
+import com.okatu.rgan.user.authentication.service.RganRememberMeServices;
+import com.okatu.rgan.user.authentication.service.RganUserDetailService;
+import com.okatu.rgan.user.authentication.handler.AcceptJsonUsernamePasswordAuthenticationFilter;
+import com.okatu.rgan.user.authentication.handler.RganAuthenticationEntryPoint;
+import com.okatu.rgan.user.authentication.handler.success.RganAuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,13 +22,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.*;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.session.web.http.DefaultCookieSerializer;
 
-import javax.servlet.*;
 import javax.sql.DataSource;
-import java.util.Set;
 
 @Configuration
 @EnableWebSecurity

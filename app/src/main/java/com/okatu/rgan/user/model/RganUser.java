@@ -1,5 +1,7 @@
 package com.okatu.rgan.user.model;
 
+import com.okatu.rgan.user.authentication.constant.UserAccountStatus;
+import com.okatu.rgan.user.authentication.constant.UserVerificationStatus;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,11 +19,6 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 public class RganUser implements UserDetails {
-    private static int ACTIVE = 1;
-
-    private static int LOCKED = 2;
-
-    private static int DISABLED = 3;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +28,7 @@ public class RganUser implements UserDetails {
 
     private String password;
 
-    private Integer status = ACTIVE;
+    private Integer status = UserAccountStatus.ACTIVE;
 
     private String email;
 
@@ -40,6 +37,16 @@ public class RganUser implements UserDetails {
         columnDefinition = "datetime default CURRENT_TIMESTAMP")
     @Generated(value = GenerationTime.ALWAYS)
     private LocalDateTime createdTime;
+
+    private LocalDateTime lastLoginTime;
+
+    private String verificationEmail;
+
+    private String verificationToken;
+
+    private Integer verificationStatus = UserVerificationStatus.CREATED;
+
+    private LocalDateTime verificationCreatedTime;
 
     @Transient
     private Set<GrantedAuthority> grantedAuthorities;
@@ -78,7 +85,7 @@ public class RganUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return status != LOCKED;
+        return status != UserAccountStatus.LOCKED;
     }
 
     @Override
@@ -88,7 +95,7 @@ public class RganUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status == ACTIVE;
+        return status == UserAccountStatus.ACTIVE;
     }
 
     public Long getId() {
@@ -105,5 +112,45 @@ public class RganUser implements UserDetails {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getVerificationEmail() {
+        return verificationEmail;
+    }
+
+    public void setVerificationEmail(String verificationEmail) {
+        this.verificationEmail = verificationEmail;
+    }
+
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public Integer getVerificationStatus() {
+        return verificationStatus;
+    }
+
+    public void setVerificationStatus(Integer verificationStatus) {
+        this.verificationStatus = verificationStatus;
+    }
+
+    public LocalDateTime getVerificationCreatedTime() {
+        return verificationCreatedTime;
+    }
+
+    public void setVerificationCreatedTime(LocalDateTime verificationCreatedTime) {
+        this.verificationCreatedTime = verificationCreatedTime;
+    }
+
+    public LocalDateTime getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    public void setLastLoginTime(LocalDateTime lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
     }
 }

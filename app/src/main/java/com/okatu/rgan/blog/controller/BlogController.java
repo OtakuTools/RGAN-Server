@@ -19,9 +19,9 @@ import org.springframework.web.client.ResourceAccessException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -36,6 +36,8 @@ public class BlogController {
 
     @Autowired
     private UserRepository userRepository;
+
+    private static Map<Long, Set<String>> visitorsIpMap = new ConcurrentHashMap<>();
 
     @GetMapping
     List<Blog> all(){
@@ -61,8 +63,18 @@ public class BlogController {
         return BlogDTO.convertFrom(blogRepository.save(blog));
     }
 
+    // visitor count problem:
+    // front-end event track, involve some stream processing framework to handle.
+    // or just intercept back-end
+    // however, if configure each get method
+    // stupid
+    // if use some filter/advice/intercept mechanism
+    // involve a question, visitor count is highly associated with entity
+    // how to get the entity concept in filter class?
+    // or we involve some centralized visitor count mechanism?
     @GetMapping("/{id}")
-    BlogDTO one(@PathVariable Long id){
+    BlogDTO one(@PathVariable Long id, HttpServletRequest request){
+        request.getRemoteAddr();
         return blogRepository.findById(id).map(BlogDTO::convertFrom)
             .orElseThrow(() -> new EntityNotFoundException("blog", id));
     }
@@ -103,6 +115,16 @@ public class BlogController {
         String[] keywords = keyword.split(" ");
 
         return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords)).stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
+    }
+
+    @PostMapping("/{id}/comments")
+    public void comment(){
+
+    }
+
+    @PostMapping("/{id}/vote")
+    public void vote(){
+
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
