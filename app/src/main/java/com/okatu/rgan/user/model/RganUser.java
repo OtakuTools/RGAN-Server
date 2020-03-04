@@ -44,6 +44,7 @@ public class RganUser implements UserDetails {
 
     private String verificationToken;
 
+    @Column(nullable = false)
     private Integer verificationStatus = UserVerificationStatus.CREATED;
 
     private LocalDateTime verificationCreatedTime;

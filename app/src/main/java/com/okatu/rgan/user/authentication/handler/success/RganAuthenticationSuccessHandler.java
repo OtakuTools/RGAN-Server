@@ -28,14 +28,14 @@ public class RganAuthenticationSuccessHandler implements AuthenticationSuccessHa
     // https://stackoverflow.com/questions/5043657/do-i-need-to-flush-the-servlet-outputstream
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication) throws IOException, ServletException {
-        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        httpServletResponse.setStatus(HttpStatus.OK.value());
         RganUser user = (RganUser) authentication.getPrincipal();
         user.setLastLoginTime(LocalDateTime.now());
-        userRepository.save(user);
 
         httpServletResponse.getWriter().write(mapper.writeValueAsString(
-            RganUserDTO.convertFrom(user))
+            RganUserDTO.convertFrom(userRepository.save(user)))
         );
+        httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        httpServletResponse.setStatus(HttpStatus.OK.value());
+
     }
 }

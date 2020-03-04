@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.time.Duration;
@@ -150,7 +151,7 @@ public class VerificationController {
     private void setCreatedVerificationStatus(RganUser user, String verificationEmail){
         user.setVerificationEmail(verificationEmail);
         user.setVerificationCreatedTime(LocalDateTime.now());
-        user.setStatus(UserVerificationStatus.CREATED);
+        user.setVerificationStatus(UserVerificationStatus.CREATED);
         user.setVerificationToken(UUID.randomUUID().toString());
     }
 
@@ -166,7 +167,7 @@ public class VerificationController {
         simpleMailMessage.setSubject("Rgan Email Verification");
 
         String verificationLink = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/verification").path("/email").path("/receive")
+            .replacePath("/verification").path("/email")
             .queryParam("token", user.getVerificationToken()).build().toUriString();
 
         simpleMailMessage.setText(verificationLink);
