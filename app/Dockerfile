@@ -18,6 +18,13 @@ RUN mvn clean package -Dmaven.test.skip=true
 
 FROM openjdk:8-jdk-alpine
 
+ARG SPRING_DATASOURCE_URL
+ARG SPRING_DATASOURCE_USERNAME
+ARG SPRING_DATASOURCE_PASSWORD
+ARG SPRING_MAIL_USERNAME
+ARG SPRING_MAIL_PASSWORD
+ARG SPRING_MAIL_PROPERTIES_MAIL_SMTP_FROM
+
 ENV TZ=Asia/Shanghai
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
