@@ -1,5 +1,6 @@
 package com.okatu.rgan.user.feature.controller;
 
+import com.okatu.rgan.common.exception.EntityNotFoundException;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
 import com.okatu.rgan.user.feature.model.entity.FollowRelationship;
@@ -7,6 +8,7 @@ import com.okatu.rgan.user.feature.model.param.FollowParam;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.model.RganUserDTO;
 import com.okatu.rgan.user.repository.FollowRelationshipRepository;
+import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,8 +23,15 @@ public class UserFollowController {
     @Autowired
     private FollowRelationshipRepository followRelationshipRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/user")
     public String follow(FollowParam param, @AuthenticationPrincipal RganUser user){
+
+        if(!userRepository.findById(param.getTargetUserId()).isPresent()){
+            throw new EntityNotFoundException("user", param.getTargetUserId());
+        }
 
         FollowRelationship followRelationship = new FollowRelationship();
         followRelationship.setBeFollowedId(param.getTargetUserId());
@@ -37,6 +46,7 @@ public class UserFollowController {
 
     @DeleteMapping("/user")
     public String unFollow(FollowParam param, @AuthenticationPrincipal RganUser user){
+
         followRelationshipRepository.findByBeFollowedIdAndFollowerIdAndTypeAndStatus(
             param.getTargetUserId(), user.getId(), FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING).ifPresent(followRelationship -> {
             followRelationship.setStatus(FollowRelationshipStatus.UN_FOLLOW);
