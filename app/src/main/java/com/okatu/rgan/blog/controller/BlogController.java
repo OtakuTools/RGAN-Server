@@ -20,6 +20,8 @@ import org.springframework.web.client.ResourceAccessException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -36,8 +38,6 @@ public class BlogController {
 
     @Autowired
     private UserRepository userRepository;
-
-    private static Map<Long, Set<String>> visitorsIpMap = new ConcurrentHashMap<>();
 
     @GetMapping
     List<Blog> all(){
@@ -72,9 +72,15 @@ public class BlogController {
     // involve a question, visitor count is highly associated with entity
     // how to get the entity concept in filter class?
     // or we involve some centralized visitor count mechanism?
+
+    // Multiple servlets executing request threads may have active access to the same session object at the same time.
+    // The container must ensure that manipulation of internal data structures representing the session attributes
+    // is performed in a threadsafe manner.
+    // The Developer has the responsibility for threadsafe access to the attribute objects themselves.
+    // This will protect the attribute collection inside the HttpSession object from concurrent access,
+    // eliminating the opportunity for an application to cause that collection to become corrupted.
     @GetMapping("/{id}")
-    BlogDTO one(@PathVariable Long id, HttpServletRequest request){
-        request.getRemoteAddr();
+    BlogDTO one(@PathVariable Long id, HttpSession session){
         return blogRepository.findById(id).map(BlogDTO::convertFrom)
             .orElseThrow(() -> new EntityNotFoundException("blog", id));
     }
@@ -122,6 +128,8 @@ public class BlogController {
 
     }
 
+    // upvote Request URL: https://stackoverflow.com/posts/2913160/vote/2
+    // downvote Request URL: https://stackoverflow.com/posts/2913160/vote/3
     @PostMapping("/{id}/vote")
     public void vote(){
 

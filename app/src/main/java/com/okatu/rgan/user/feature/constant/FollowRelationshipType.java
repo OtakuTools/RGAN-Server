@@ -1,4 +1,4 @@
-package com.okatu.rgan.feed.constant;
+package com.okatu.rgan.user.feature.constant;
 
 public final class FollowRelationshipType {
 

@@ -39,4 +39,5 @@ public class UserController {
                                        @AuthenticationPrincipal RganUser user){
         return RganUserDTO.convertFrom(userRepository.save(user));
     }
+
 }

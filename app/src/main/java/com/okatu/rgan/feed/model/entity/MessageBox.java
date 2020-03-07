@@ -3,21 +3,20 @@ package com.okatu.rgan.feed.model.entity;
 import javax.persistence.*;
 
 //@Entity
-public class FollowRelationship {
-    public final static int USER = 1;
-    public final static int TAG = 2;
+public class MessageBox {
+    public static final int BLOG = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long beFollowedId;
+    private Long userId;
 
-    private Long followerId;
+    private Long messageId;
 
     @Column(nullable = false)
-    private Integer type;
+    private Integer messageType;
 
     private Integer status;
-
 }
+
