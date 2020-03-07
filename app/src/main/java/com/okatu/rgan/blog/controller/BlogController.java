@@ -22,6 +22,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -40,8 +41,8 @@ public class BlogController {
     private UserRepository userRepository;
 
     @GetMapping
-    List<Blog> all(){
-        return blogRepository.findAll();
+    List<BlogDTO> all(){
+        return blogRepository.findAll().stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
     }
 
 //    @GetMapping
@@ -52,6 +53,7 @@ public class BlogController {
     @PostMapping
     BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
         LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
+        LocalDateTime now = LocalDateTime.now();
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
         blog.setContent(blogEditParam.getContent());
