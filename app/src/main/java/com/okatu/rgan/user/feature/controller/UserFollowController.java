@@ -10,12 +10,18 @@ import com.okatu.rgan.user.model.RganUserDTO;
 import com.okatu.rgan.user.repository.FollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
+// The unsubscibe logic have two choice, delete or keep the history data from one’s inbox.
+// We decide to keep them.
+// thus, in the aggregate layer, we have to do filter:
+// for each post, double check that whether current following users contain the post's author
 @RestController
 @RequestMapping("/follow")
 public class UserFollowController {
@@ -25,6 +31,9 @@ public class UserFollowController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/user")
     public String follow(FollowParam param, @AuthenticationPrincipal RganUser user){
@@ -40,6 +49,8 @@ public class UserFollowController {
         followRelationship.setType(FollowRelationshipType.USER);
 
         followRelationshipRepository.save(followRelationship);
+
+        // fill the initial inbox
 
         return "";
     }

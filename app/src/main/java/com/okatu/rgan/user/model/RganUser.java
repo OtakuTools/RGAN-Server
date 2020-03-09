@@ -32,11 +32,16 @@ public class RganUser implements UserDetails {
 
     private String email;
 
-//    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_time", updatable = false, insertable = false,
-        columnDefinition = "datetime default CURRENT_TIMESTAMP")
-    @Generated(value = GenerationTime.ALWAYS)
+////    @Temporal(TemporalType.TIMESTAMP)
+//    @Column(name = "created_time", updatable = false, insertable = false,
+//        columnDefinition = "datetime default CURRENT_TIMESTAMP")
+//    @Generated(value = GenerationTime.ALWAYS)
     private LocalDateTime createdTime;
+
+    @PrePersist
+    private void prePersist(){
+        createdTime = LocalDateTime.now();
+    }
 
     private LocalDateTime lastLoginTime;
 

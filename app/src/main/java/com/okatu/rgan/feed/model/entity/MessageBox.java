@@ -10,7 +10,7 @@ public class MessageBox {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    private Long receiverId;
 
     private Long messageId;
 

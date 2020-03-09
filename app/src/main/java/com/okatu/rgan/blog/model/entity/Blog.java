@@ -46,16 +46,28 @@ public class Blog {
     private RganUser user;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_time", updatable = false, insertable = false,
-        columnDefinition = "datetime default CURRENT_TIMESTAMP")
-    @Generated(value = GenerationTime.ALWAYS)
+//    @Column(name = "created_time", updatable = false, insertable = false,
+//        columnDefinition = "datetime default CURRENT_TIMESTAMP")
+//    @Generated(value = GenerationTime.ALWAYS)
     private LocalDateTime createdTime;
 
 //    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "modified_time",
-        columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    @Generated(value = GenerationTime.ALWAYS)
+//    @Column(name = "modified_time",
+//        columnDefinition = "datetime default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+//    @Generated(value = GenerationTime.ALWAYS)
     private LocalDateTime modifiedTime;
+
+    @PrePersist
+    private void prePersist(){
+        createdTime = LocalDateTime.now();
+        modifiedTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    private void preUpdate(){
+        modifiedTime = LocalDateTime.now();
+    }
+
 
     public LocalDateTime getCreatedTime() {
         return createdTime;
