@@ -19,16 +19,16 @@ public class TaskExecutorConfiguration {
 //        TaskExecutor executor = new ThreadPoolExecutor();
 //    }
 
-    @Bean
-    public TaskExecutor taskExecutor(){
-        Executor executor = new ThreadPoolExecutor(
-            4,
-            8,
-            20,
-            TimeUnit.MINUTES,
-            new ArrayBlockingQueue<>(2 << 16)
-        );
-
-        return (TaskExecutor) executor;
-    }
+//    @Bean
+//    public TaskExecutor taskExecutor(){
+//        Executor executor = new ThreadPoolExecutor(
+//            4,
+//            8,
+//            20,
+//            TimeUnit.MINUTES,
+//            new ArrayBlockingQueue<>(2 << 16)
+//        );
+//
+//        return (TaskExecutor) executor;
+//    }
 }

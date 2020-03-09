@@ -40,6 +40,6 @@ public class TimelineController {
 
         List<RganUser> users = userRepository.findAllById(followingId);
 
-        return blogRepository.findByUserContainingOrderByCreatedTimeDesc(users, pageable).map(BlogDTO::convertFrom);
+        return blogRepository.findByUserInOrderByCreatedTimeDesc(users, pageable).map(BlogDTO::convertFrom);
     }
 }

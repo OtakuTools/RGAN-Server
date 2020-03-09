@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
 
-    Page<Blog> findByUserContainingOrderByCreatedTimeDesc(Collection<RganUser> users, Pageable pageable);
+    Page<Blog> findByUserInOrderByCreatedTimeDesc(Collection<RganUser> users, Pageable pageable);
 }
