@@ -46,7 +46,6 @@ public class BlogController {
     @PostMapping
     BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
         LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
-        LocalDateTime now = LocalDateTime.now();
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
         blog.setSummary(blogEditParam.getSummary());
