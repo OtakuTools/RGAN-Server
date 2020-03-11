@@ -57,6 +57,8 @@ public class Blog {
 //    @Generated(value = GenerationTime.ALWAYS)
     private LocalDateTime modifiedTime;
 
+    private String summary;
+
     @PrePersist
     private void prePersist(){
         createdTime = LocalDateTime.now();
@@ -68,6 +70,13 @@ public class Blog {
         modifiedTime = LocalDateTime.now();
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
     public LocalDateTime getCreatedTime() {
         return createdTime;

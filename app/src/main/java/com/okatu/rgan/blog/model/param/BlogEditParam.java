@@ -11,6 +11,8 @@ public class BlogEditParam {
 
     private String title;
 
+    private String summary;
+
     private String content;
 
     // must guarantee no duplicated and sorted by insertion order
@@ -40,15 +42,15 @@ public class BlogEditParam {
         this.tags = tags;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
     public BlogEditParam() {
     }
 
-    @Override
-    public String toString() {
-        return "BlogEditParam{" +
-                "title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", tags=" + tags +
-                '}';
-    }
 }

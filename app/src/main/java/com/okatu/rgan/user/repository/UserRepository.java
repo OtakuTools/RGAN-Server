@@ -1,6 +1,8 @@
 package com.okatu.rgan.user.repository;
 
 import com.okatu.rgan.user.model.RganUser;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -16,4 +18,6 @@ public interface UserRepository extends JpaRepository<RganUser, Long> {
     Optional<RganUser> findByVerificationToken(String token);
 
     List<RganUser> findByEmailOrVerificationEmail(String email, String verificationEmail);
+
+//    Page<RganUser> findById(Pageable pageable);
 }

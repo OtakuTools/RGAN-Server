@@ -13,6 +13,8 @@ public class BlogDTO {
 
     private String title;
 
+    private String summary;
+
     private String content;
 
     private Integer upvoteCount = 0;
@@ -26,6 +28,14 @@ public class BlogDTO {
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
     public Long getId() {
         return id;
@@ -118,6 +128,7 @@ public class BlogDTO {
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setId(blog.getId());
         blogDTO.setTitle(blog.getTitle());
+        blogDTO.setSummary(blog.getSummary());
         blogDTO.setContent(blog.getContent());
         blogDTO.setCreatedTime(blog.getCreatedTime());
         blogDTO.setModifiedTime(blog.getModifiedTime());

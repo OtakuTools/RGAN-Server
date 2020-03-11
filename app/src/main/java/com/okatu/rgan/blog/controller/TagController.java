@@ -5,6 +5,9 @@ import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.common.exception.EntityNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,8 +21,8 @@ public class TagController {
     private TagRepository tagRepository;
 
     @GetMapping
-    List<Tag> all(){
-        return tagRepository.findAll();
+    Page<Tag> all(@PageableDefault Pageable pageable){
+        return tagRepository.findAll(pageable);
     }
 
     @PostMapping

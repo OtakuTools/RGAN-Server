@@ -1,6 +1,6 @@
 package com.okatu.rgan.feed;
 
-import com.okatu.rgan.blog.model.BlogDTO;
+import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
@@ -33,13 +33,12 @@ public class TimelineController {
     private UserRepository userRepository;
 
     @GetMapping
-    public Page<BlogDTO> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
+    public Page<BlogSummaryProjection> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
         List<Long> followingId = followRelationshipRepository
             .findByFollowerIdAndTypeAndStatus(user.getId(), FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING)
             .stream().map(FollowRelationship::getBeFollowedId).collect(Collectors.toList());
 
-        List<RganUser> users = userRepository.findAllById(followingId);
 
-        return blogRepository.findByUserInOrderByCreatedTimeDesc(users, pageable).map(BlogDTO::convertFrom);
+        return blogRepository.findByUser_IdInOrderByCreatedTimeDesc(followingId, pageable);
     }
 }

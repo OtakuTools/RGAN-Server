@@ -1,5 +1,6 @@
 package com.okatu.rgan.blog.controller;
 
+import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.blog.model.BlogDTO;
@@ -12,19 +13,16 @@ import com.okatu.rgan.blog.repository.TagRepository;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.ResourceAccessException;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,14 +39,9 @@ public class BlogController {
     private UserRepository userRepository;
 
     @GetMapping
-    List<BlogDTO> all(){
-        return blogRepository.findAll().stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
+    Page<BlogSummaryProjection> all(@PageableDefault Pageable pageable) {
+        return blogRepository.findByOrderByCreatedTimeDesc(pageable);
     }
-
-//    @GetMapping
-//    Page<Blog> getPage(@PageableDefault Pageable pageable){
-//        return blogRepository.findAll(pageable);
-//    }
 
     @PostMapping
     BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
@@ -56,6 +49,7 @@ public class BlogController {
         LocalDateTime now = LocalDateTime.now();
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
+        blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
         blog.setTags(tags);
         blog.setUser(userRepository.findByUsername(user.getUsername())
@@ -97,6 +91,7 @@ public class BlogController {
         }
 
         blog.setTitle(blogEditParam.getTitle());
+        blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
         blog.setTags(findTagsByTitles(blogEditParam.getTags()));
 
@@ -107,7 +102,7 @@ public class BlogController {
     void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         blogRepository.findById(id).ifPresent(blog -> {
             if(!blog.getUser().getId().equals(user.getId())){
-                throw new ResourceAccessException("you have no permission to delete this blog");
+                throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
             blogRepository.deleteById(id);
         });
@@ -123,18 +118,6 @@ public class BlogController {
         String[] keywords = keyword.split(" ");
 
         return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords)).stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
-    }
-
-    @PostMapping("/{id}/comments")
-    public void comment(){
-
-    }
-
-    // upvote Request URL: https://stackoverflow.com/posts/2913160/vote/2
-    // downvote Request URL: https://stackoverflow.com/posts/2913160/vote/3
-    @PostMapping("/{id}/vote")
-    public void vote(){
-
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
