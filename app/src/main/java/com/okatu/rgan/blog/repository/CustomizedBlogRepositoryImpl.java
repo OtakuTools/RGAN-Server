@@ -27,7 +27,7 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
                 "b.id, b.title, " +
                 "b.summary, " +
                 "b.upvoteCount, b.visitorCount, " +
-                "b.user.username, " +
+                "b.author.username, " +
                 "b.createdTime, b.modifiedTime) FROM Blog b WHERE");
         // LOWER(firstname) like '%' + LOWER(?0) + '%'
         based.append(" b.title like ?1");

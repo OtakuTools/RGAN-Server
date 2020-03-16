@@ -2,7 +2,7 @@ package com.okatu.rgan.blog.model.projection;
 
 import java.time.LocalDateTime;
 
-public interface CommentProjection {
+public interface CommentSummaryProjection {
     Long getId();
 
     String getContent();

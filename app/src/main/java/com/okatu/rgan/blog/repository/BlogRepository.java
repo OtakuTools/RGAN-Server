@@ -10,7 +10,7 @@ import java.util.Collection;
 
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
 
-    Page<BlogSummaryProjection> findByUser_IdInOrderByCreatedTimeDesc(Collection<Long> usersId, Pageable pageable);
+    Page<BlogSummaryProjection> findByAuthor_IdInOrderByCreatedTimeDesc(Collection<Long> usersId, Pageable pageable);
 
     Page<Blog> findAllByOrderByCreatedTimeDesc(Pageable pageable);
 

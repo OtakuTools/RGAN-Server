@@ -1,6 +1,5 @@
 package com.okatu.rgan.blog.controller;
 
-import com.google.common.cache.Cache;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
@@ -22,7 +21,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,7 +50,7 @@ public class BlogController {
         blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
         blog.setTags(tags);
-        blog.setUser(userRepository.findByUsername(user.getUsername())
+        blog.setAuthor(userRepository.findByUsername(user.getUsername())
             .orElseThrow(() -> new ConstraintViolationException("Cannot find current request username in repository, username: " + user.getUsername()))
         );
 
@@ -86,7 +84,7 @@ public class BlogController {
 
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("blog", id));
 
-        if(!RganUser.isSame(blog.getUser(), user)){
+        if(!RganUser.isSame(blog.getAuthor(), user)){
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
@@ -101,7 +99,7 @@ public class BlogController {
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         blogRepository.findById(id).ifPresent(blog -> {
-            if(!RganUser.isSame(blog.getUser(), user)){
+            if(!RganUser.isSame(blog.getAuthor(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
             blogRepository.deleteById(id);

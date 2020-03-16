@@ -1,12 +1,9 @@
 package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -43,7 +40,7 @@ public class Blog {
 
     @ManyToOne
     @JoinColumn(name = "author_id")
-    private RganUser user;
+    private RganUser author;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "created_time", updatable = false, insertable = false,
@@ -134,12 +131,12 @@ public class Blog {
         this.tags = tags;
     }
 
-    public RganUser getUser() {
-        return user;
+    public RganUser getAuthor() {
+        return author;
     }
 
-    public void setUser(RganUser user) {
-        this.user = user;
+    public void setAuthor(RganUser author) {
+        this.author = author;
     }
 
     public Blog() {

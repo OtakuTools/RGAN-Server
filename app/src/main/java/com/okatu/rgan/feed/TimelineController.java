@@ -1,7 +1,12 @@
 package com.okatu.rgan.feed;
 
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
+import com.okatu.rgan.blog.model.CommentSummaryDTO;
 import com.okatu.rgan.blog.repository.BlogRepository;
+import com.okatu.rgan.blog.repository.CommentRepository;
+import com.okatu.rgan.feed.constant.FeedMessageType;
+import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
+import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
 import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
 import com.okatu.rgan.user.feature.model.entity.FollowRelationship;
@@ -32,13 +37,29 @@ public class TimelineController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping
+    @Autowired
+    private FeedMessageBoxRepository feedMessageBoxRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @GetMapping("/blogs")
     public Page<BlogSummaryDTO> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
-        List<Long> followingId = followRelationshipRepository
+        List<Long> followingIds = followRelationshipRepository
             .findByFollowerIdAndTypeAndStatus(user.getId(), FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING)
             .stream().map(FollowRelationship::getBeFollowedId).collect(Collectors.toList());
 
 
-        return blogRepository.findByUser_IdInOrderByCreatedTimeDesc(followingId, pageable).map(BlogSummaryDTO::convertFrom);
+        return blogRepository.findByAuthor_IdInOrderByCreatedTimeDesc(followingIds, pageable).map(BlogSummaryDTO::convertFrom);
+    }
+
+    @GetMapping("/comments")
+    public Page<CommentSummaryDTO> getReplyComment(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
+        Page<FeedMessageBoxItem> items = feedMessageBoxRepository
+            .findByReceiverAndMessageTypeOrderByFeedMessageDesc(user, FeedMessageType.COMMENT, pageable);
+        return feedMessageBoxRepository
+            .findByReceiverAndMessageTypeOrderByFeedMessageDesc(user, FeedMessageType.COMMENT, pageable)
+            .map(feedMessageBoxItem -> commentRepository.findByIdIs(feedMessageBoxItem.getFeedMessage().getEntityId()))
+            .map(CommentSummaryDTO::convertFrom);
     }
 }

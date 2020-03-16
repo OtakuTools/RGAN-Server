@@ -3,7 +3,8 @@ package com.okatu.rgan.blog.controller;
 import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.blog.model.event.CommentPublishEvent;
 import com.okatu.rgan.blog.model.param.CommentEditParam;
-import com.okatu.rgan.blog.model.projection.CommentProjection;
+import com.okatu.rgan.blog.model.CommentSummaryDTO;
+import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.common.exception.EntityNotFoundException;
@@ -42,8 +43,9 @@ public class CommentController {
     private ApplicationEventPublisher eventPublisher;
 
     @GetMapping("/{blogId}/comments")
-    public Page<CommentProjection> all(@PathVariable("blogId") Long blogId, @PageableDefault(size = 20) Pageable pageable){
-        return commentRepository.findByBlog_Id(blogId, pageable);
+    public Page<CommentSummaryDTO> all(@PathVariable("blogId") Long blogId, @PageableDefault(size = 20) Pageable pageable){
+        Page<CommentSummaryProjection> commentSummaryProjections = commentRepository.findByBlog_Id(blogId, pageable);
+        return commentRepository.findByBlog_Id(blogId, pageable).map(CommentSummaryDTO::convertFrom);
     }
 
     // about getOne and findById:

@@ -1,6 +1,5 @@
 package com.okatu.rgan.blog.model;
 
-import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 
 import java.time.LocalDateTime;
@@ -19,7 +18,7 @@ public class BlogSummaryDTO{
 
     private Integer visitorCount;
 
-    private String username;
+    private String authorName;
 
     private Set<TagSummaryDTO> tags;
 
@@ -35,14 +34,14 @@ public class BlogSummaryDTO{
         Long id, String title,
         String summary,
         Integer upvoteCount, Integer visitorCount,
-        String username,
+        String authorName,
         LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.title = title;
         this.summary = summary;
         this.upvoteCount = upvoteCount;
         this.visitorCount = visitorCount;
-        this.username = username;
+        this.authorName = authorName;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
     }
@@ -67,8 +66,8 @@ public class BlogSummaryDTO{
         return visitorCount;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAuthorName() {
+        return authorName;
     }
 
     public Set<TagSummaryDTO> getTags() {
@@ -103,8 +102,8 @@ public class BlogSummaryDTO{
         this.visitorCount = visitorCount;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public void setTags(Set<TagSummaryDTO> tags) {
@@ -126,7 +125,7 @@ public class BlogSummaryDTO{
             blogSummaryProjection.getSummary(),
             blogSummaryProjection.getUpvoteCount(),
             blogSummaryProjection.getVisitorCount(),
-            blogSummaryProjection.getUser().getUsername(),
+            blogSummaryProjection.getAuthor().getUsername(),
             blogSummaryProjection.getCreatedTime(),
             blogSummaryProjection.getModifiedTime()
         );

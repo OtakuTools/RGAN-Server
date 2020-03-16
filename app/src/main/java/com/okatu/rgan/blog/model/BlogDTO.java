@@ -4,7 +4,6 @@ import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Tag;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -23,7 +22,7 @@ public class BlogDTO {
 
     private Set<Tag> tags = new LinkedHashSet<>();
 
-    private String username;
+    private String authorName;
 
     private LocalDateTime createdTime;
 
@@ -85,12 +84,12 @@ public class BlogDTO {
         this.tags = tags;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAuthorName() {
+        return authorName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -118,7 +117,7 @@ public class BlogDTO {
             ", upvoteCount=" + upvoteCount +
             ", visitorCount=" + visitorCount +
             ", tags=" + tags +
-            ", username='" + username + '\'' +
+            ", username='" + authorName + '\'' +
             ", createdTime=" + createdTime +
             ", modifiedTime=" + modifiedTime +
             '}';
@@ -133,7 +132,7 @@ public class BlogDTO {
         blogDTO.setCreatedTime(blog.getCreatedTime());
         blogDTO.setModifiedTime(blog.getModifiedTime());
         blogDTO.setTags(blog.getTags());
-        blogDTO.setUsername(blog.getUser().getUsername());
+        blogDTO.setAuthorName(blog.getAuthor().getUsername());
         blogDTO.setUpvoteCount(blog.getUpvoteCount());
         blogDTO.setVisitorCount(blog.getVisitorCount());
         return blogDTO;

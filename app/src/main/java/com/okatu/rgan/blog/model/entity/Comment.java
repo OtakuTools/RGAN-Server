@@ -13,6 +13,7 @@ public class Comment {
 
     private String content;
 
+    @Transient
     private Integer status;
 
     @ManyToOne
