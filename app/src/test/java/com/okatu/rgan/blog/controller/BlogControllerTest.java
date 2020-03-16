@@ -28,7 +28,7 @@ class BlogControllerTest {
 
     @Test
     public void testGet() throws Exception{
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs/12");
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())
@@ -77,6 +77,18 @@ class BlogControllerTest {
     void testSearch() throws Exception{
 
         String keywords = "this user";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/blogs/search?keyword=" + keywords);
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(print());
+    }
+
+    @Test
+    void search() throws Exception{
+        String keywords = "Test";
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
             .get("/blogs/search?keyword=" + keywords);

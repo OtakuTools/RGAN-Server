@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 
 // about the difference between lock and enable, see
@@ -158,5 +159,9 @@ public class RganUser implements UserDetails {
 
     public void setLastLoginTime(LocalDateTime lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+    }
+
+    public static boolean isSame(RganUser lhs, RganUser rhs){
+        return (lhs != null && lhs.getId().equals(rhs.getId())) || (lhs == rhs);
     }
 }

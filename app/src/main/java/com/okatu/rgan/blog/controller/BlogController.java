@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.controller;
 
-import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
+import com.google.common.cache.Cache;
+import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.blog.model.BlogDTO;
@@ -39,8 +40,8 @@ public class BlogController {
     private UserRepository userRepository;
 
     @GetMapping
-    Page<BlogSummaryProjection> all(@PageableDefault Pageable pageable) {
-        return blogRepository.findByOrderByCreatedTimeDesc(pageable);
+    Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
+        return blogRepository.findByOrderByCreatedTimeDesc(pageable).map(BlogSummaryDTO::convertFrom);
     }
 
     @PostMapping
@@ -85,7 +86,7 @@ public class BlogController {
 
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("blog", id));
 
-        if(!blog.getUser().getId().equals(user.getId())){
+        if(!RganUser.isSame(blog.getUser(), user)){
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
@@ -100,7 +101,7 @@ public class BlogController {
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         blogRepository.findById(id).ifPresent(blog -> {
-            if(!blog.getUser().getId().equals(user.getId())){
+            if(!RganUser.isSame(blog.getUser(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
             blogRepository.deleteById(id);
@@ -108,15 +109,14 @@ public class BlogController {
     }
 
     @GetMapping("/search")
-    List<BlogDTO> search(@RequestParam("keyword") String keyword){
+    Page<BlogSummaryDTO> search(@RequestParam("keyword") String keyword, @PageableDefault Pageable pageable){
         if(StringUtils.isEmpty(keyword)){
-            return blogRepository.findAll().stream().map(BlogDTO::convertFrom)
-                .collect(Collectors.toList());
+            return blogRepository.findBy(pageable).map(BlogSummaryDTO::convertFrom);
         }
 
         String[] keywords = keyword.split(" ");
 
-        return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords)).stream().map(BlogDTO::convertFrom).collect(Collectors.toList());
+        return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords), pageable);
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){

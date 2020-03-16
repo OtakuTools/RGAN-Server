@@ -134,7 +134,7 @@ public class VerificationController {
         List<RganUser> userVerifications = userRepository.findByEmailOrVerificationEmail(email, email);
 
         for(RganUser user : userVerifications){
-            if(!Objects.equals(user.getId(), self.getId()) &&
+            if(!RganUser.isSame(self, user) &&
                 (user.getVerificationStatus() == UserVerificationStatus.VERIFIED || !isVerificationDateExpired(user))){
                 throw new VerificationEmailUnavailableException(email);
             }

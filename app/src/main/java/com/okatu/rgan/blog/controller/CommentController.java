@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.controller;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.blog.model.event.CommentPublishEvent;
 import com.okatu.rgan.blog.model.param.CommentEditParam;
 import com.okatu.rgan.blog.model.projection.CommentProjection;
 import com.okatu.rgan.blog.repository.BlogRepository;
@@ -10,6 +11,7 @@ import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -36,8 +38,11 @@ public class CommentController {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
     @GetMapping("/{blogId}/comments")
-    public Page<CommentProjection> all(@PathVariable("blogId") Long blogId, @PageableDefault Pageable pageable){
+    public Page<CommentProjection> all(@PathVariable("blogId") Long blogId, @PageableDefault(size = 20) Pageable pageable){
         return commentRepository.findByBlog_Id(blogId, pageable);
     }
 
@@ -49,26 +54,29 @@ public class CommentController {
         Comment comment = new Comment();
         comment.setContent(commentEditParam.getContent());
         comment.setAuthor(user);
-        comment.setBlog(blogRepository.getOne(blogId));
+        comment.setBlog(blogRepository.findById(blogId).orElseThrow(
+            () -> new EntityNotFoundException("blog", blogId)
+        ));
 
         if(commentEditParam.getReplyTo() != null){
-            comment.setReplyTo(
-                userRepository.findById(commentEditParam.getReplyTo())
-                    .orElseThrow(() -> new EntityNotFoundException("user", commentEditParam.getReplyTo()))
-            );
+            comment.setReplyTo(userRepository.findById(commentEditParam.getReplyTo())
+                .orElseThrow(
+                    () -> new EntityNotFoundException("user", commentEditParam.getReplyTo())
+                ));
         }
 
         commentRepository.save(comment);
+        eventPublisher.publishEvent(new CommentPublishEvent(this, comment));
 
         return "";
     }
 
-    @PutMapping("/{blogId}/comments/{commentId}")
-    public String edit(@PathVariable("blogId") Long blogId, @PathVariable("commentId") Long commentId,
+    @PutMapping("/comments/{commentId}")
+    public String edit(@PathVariable("commentId") Long commentId,
                        @RequestBody CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("comment", commentId));
 
-        if(!comment.getAuthor().getId().equals(user.getId())){
+        if(!RganUser.isSame(comment.getAuthor(), user)){
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
@@ -78,7 +86,6 @@ public class CommentController {
 
         comment.setContent(commentEditParam.getContent());
         comment.setAuthor(user);
-        comment.setBlog(blogRepository.getOne(blogId));
 
         if(commentEditParam.getReplyTo() != null){
             comment.setReplyTo(
@@ -94,10 +101,10 @@ public class CommentController {
         return "";
     }
 
-    @DeleteMapping("/{blogId}/comments/{commentId}")
-    public void deleteComment(@PathVariable("blogId") Long blogId, @PathVariable("commentId") Long commentId, @AuthenticationPrincipal RganUser user){
+    @DeleteMapping("/comments/{commentId}")
+    public void deleteComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal RganUser user){
         commentRepository.findById(commentId).ifPresent(comment -> {
-            if(!comment.getAuthor().getId().equals(user.getId())){
+            if(!RganUser.isSame(comment.getAuthor(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
 

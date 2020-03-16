@@ -20,7 +20,7 @@ public class Comment {
     private RganUser author;
 
     @ManyToOne
-    @JoinColumn(name = "reply_to")
+    @JoinColumn(name = "reply_to_id")
     private RganUser replyTo;
 
     @ManyToOne

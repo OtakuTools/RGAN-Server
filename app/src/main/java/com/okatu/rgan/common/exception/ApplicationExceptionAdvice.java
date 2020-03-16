@@ -81,4 +81,11 @@ public class ApplicationExceptionAdvice {
         return exception.getMessage();
     }
 
+    @ResponseBody
+    @ExceptionHandler({UniquenessViolationException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String uniquenessViolationExceptionHandler(UniquenessViolationException exception){
+        logger.error(exception.getMessage(), exception);
+        return exception.getMessage();
+    }
 }

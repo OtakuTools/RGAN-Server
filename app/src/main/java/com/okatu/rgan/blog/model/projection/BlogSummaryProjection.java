@@ -1,5 +1,6 @@
 package com.okatu.rgan.blog.model.projection;
 
+import com.okatu.rgan.blog.model.TagSummaryDTO;
 import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.user.model.RganUser;
 
@@ -20,7 +21,8 @@ public interface BlogSummaryProjection {
 
     UserSummary getUser();
 
-    Set<Tag> getTags();
+    // pretty strange here, cannot use class-based projection
+    Set<TagSummaryProjection> getTags();
 
     LocalDateTime getCreatedTime();
 

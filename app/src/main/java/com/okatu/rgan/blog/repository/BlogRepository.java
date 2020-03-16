@@ -15,4 +15,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlo
     Page<Blog> findAllByOrderByCreatedTimeDesc(Pageable pageable);
 
     Page<BlogSummaryProjection> findByOrderByCreatedTimeDesc(Pageable pageable);
+
+    Page<BlogSummaryProjection> findBy(Pageable pageable);
+
 }

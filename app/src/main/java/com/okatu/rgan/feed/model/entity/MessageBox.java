@@ -3,8 +3,8 @@ package com.okatu.rgan.feed.model.entity;
 import javax.persistence.*;
 
 //@Entity
+//@Table(name = "feed_message_box")
 public class MessageBox {
-    public static final int BLOG = 1;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
