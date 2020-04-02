@@ -1,5 +1,6 @@
 package com.okatu.rgan.user.repository;
 
+import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.user.model.RganUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -3,6 +3,7 @@ package com.okatu.rgan.blog.model.param;
 public class CommentEditParam {
     private String content;
 
+    // identify the reply to COMMENT_ID
     private Long replyTo;
 
     public String getContent() {

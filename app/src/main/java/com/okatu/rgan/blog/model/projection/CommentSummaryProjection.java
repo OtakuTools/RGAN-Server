@@ -20,6 +20,6 @@ public interface CommentSummaryProjection {
     }
 
     interface ReplyToSummary{
-        String getUsername();
+        Long getId();
     }
 }

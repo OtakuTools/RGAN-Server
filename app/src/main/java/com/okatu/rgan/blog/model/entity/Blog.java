@@ -1,7 +1,6 @@
 package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;

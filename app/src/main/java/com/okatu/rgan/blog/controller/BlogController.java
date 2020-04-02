@@ -1,5 +1,7 @@
 package com.okatu.rgan.blog.controller;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.LoadingCache;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
@@ -16,9 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -36,6 +40,8 @@ public class BlogController {
 
     @Autowired
     private UserRepository userRepository;
+
+    private LoadingCache<Long, Long> cache;
 
     @GetMapping
     Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {

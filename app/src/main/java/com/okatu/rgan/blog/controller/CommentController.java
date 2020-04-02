@@ -61,9 +61,9 @@ public class CommentController {
         ));
 
         if(commentEditParam.getReplyTo() != null){
-            comment.setReplyTo(userRepository.findById(commentEditParam.getReplyTo())
+            comment.setReplyTo(commentRepository.findById(commentEditParam.getReplyTo())
                 .orElseThrow(
-                    () -> new EntityNotFoundException("user", commentEditParam.getReplyTo())
+                    () -> new EntityNotFoundException("comment", commentEditParam.getReplyTo())
                 ));
         }
 
@@ -88,15 +88,7 @@ public class CommentController {
 
         comment.setContent(commentEditParam.getContent());
         comment.setAuthor(user);
-
-        if(commentEditParam.getReplyTo() != null){
-            comment.setReplyTo(
-                userRepository.findById(commentEditParam.getReplyTo())
-                    .orElseThrow(() -> new EntityNotFoundException("user", commentEditParam.getReplyTo()))
-            );
-        }else{
-            comment.setReplyTo(null);
-        }
+        // ignore the reply to
 
         commentRepository.save(comment);
 

@@ -50,7 +50,7 @@ public class FeedMessagePublishService {
             FeedMessageBoxItem replyToUserMessageBoxItem = new FeedMessageBoxItem();
             replyToUserMessageBoxItem.setFeedMessage(savedFeedMessage);
             replyToUserMessageBoxItem.setMessageType(FeedMessageType.COMMENT);
-            replyToUserMessageBoxItem.setReceiver(comment.getReplyTo());
+            replyToUserMessageBoxItem.setReceiver(comment.getReplyTo().getAuthor());
             feedMessageBoxRepository.save(replyToUserMessageBoxItem);
         }
     }

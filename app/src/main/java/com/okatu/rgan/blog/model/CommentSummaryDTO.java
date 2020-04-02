@@ -11,7 +11,7 @@ public class CommentSummaryDTO {
 
     private String authorName;
 
-    private String replyToName;
+    private Long replyTo;
 
     private LocalDateTime createdTime;
 
@@ -41,12 +41,12 @@ public class CommentSummaryDTO {
         this.authorName = authorName;
     }
 
-    public String getReplyToName() {
-        return replyToName;
+    public Long getReplyTo() {
+        return replyTo;
     }
 
-    public void setReplyToName(String replyToName) {
-        this.replyToName = replyToName;
+    public void setReplyTo(Long replyTo) {
+        this.replyTo = replyTo;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -68,23 +68,23 @@ public class CommentSummaryDTO {
     public CommentSummaryDTO() {
     }
 
-    public CommentSummaryDTO(Long id, String content, String authorName, String replyToName, LocalDateTime createdTime, LocalDateTime modifiedTime) {
+    public CommentSummaryDTO(Long id, String content, String authorName, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.content = content;
         this.authorName = authorName;
-        this.replyToName = replyToName;
+        this.replyTo = replyTo;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
     }
 
     public static CommentSummaryDTO convertFrom(CommentSummaryProjection projection){
-        String replyToUsername = projection.getReplyTo() != null ?
-            projection.getReplyTo().getUsername() : null;
+        Long replyToCommentId = projection.getReplyTo() != null ?
+            projection.getReplyTo().getId() : null;
         return new CommentSummaryDTO(
             projection.getId(),
             projection.getContent(),
             projection.getAuthor().getUsername(),
-            replyToUsername,
+            replyToCommentId,
             projection.getCreatedTime(),
             projection.getModifiedTime()
         );

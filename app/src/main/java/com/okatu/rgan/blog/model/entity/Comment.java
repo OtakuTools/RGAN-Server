@@ -21,8 +21,8 @@ public class Comment {
     private RganUser author;
 
     @ManyToOne
-    @JoinColumn(name = "reply_to_id")
-    private RganUser replyTo;
+    @JoinColumn(name = "reply_to_id", nullable = true)
+    private Comment replyTo;
 
     @ManyToOne
     @JoinColumn(name = "blog_id")
@@ -92,11 +92,11 @@ public class Comment {
         this.author = author;
     }
 
-    public RganUser getReplyTo() {
+    public Comment getReplyTo() {
         return replyTo;
     }
 
-    public void setReplyTo(RganUser replyTo) {
+    public void setReplyTo(Comment replyTo) {
         this.replyTo = replyTo;
     }
 

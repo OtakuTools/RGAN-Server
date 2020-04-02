@@ -62,7 +62,16 @@ public class VerificationController {
 
     @Autowired
     private JavaMailSender javaMailSender;
-
+//
+//    @PostMapping("/code/send")
+//    public String sendVerificationCode(){
+//
+//    }
+//
+//    @PostMapping("/code/receive")
+//    public String receiveVerificationCode(){
+//
+//    }
 
     @PostMapping("/email/send")
     public String sendVerificationEmail(@Valid @RequestBody SendVerificationEmailParam verificationParam, @AuthenticationPrincipal RganUser user){
