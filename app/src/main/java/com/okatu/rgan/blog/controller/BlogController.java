@@ -1,7 +1,5 @@
 package com.okatu.rgan.blog.controller;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.LoadingCache;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
@@ -10,19 +8,18 @@ import com.okatu.rgan.blog.model.param.BlogEditParam;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.blog.repository.BlogRepository;
-import com.okatu.rgan.common.exception.EntityNotFoundException;
+import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -41,7 +38,8 @@ public class BlogController {
     @Autowired
     private UserRepository userRepository;
 
-    private LoadingCache<Long, Long> cache;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @GetMapping
     Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
@@ -59,8 +57,11 @@ public class BlogController {
         blog.setAuthor(userRepository.findByUsername(user.getUsername())
             .orElseThrow(() -> new ConstraintViolationException("Cannot find current request username in repository, username: " + user.getUsername()))
         );
+        blog.setVoteCount(0);
 
-        return BlogDTO.convertFrom(blogRepository.save(blog));
+        Blog saved = blogRepository.save(blog);
+//        applicationEventPublisher.publishEvent(new BlogPublishEvent(this, blog));
+        return BlogDTO.convertFrom(saved);
     }
 
     // visitor count problem:
@@ -82,15 +83,15 @@ public class BlogController {
     @GetMapping("/{id}")
     BlogDTO one(@PathVariable Long id, HttpSession session){
         return blogRepository.findById(id).map(BlogDTO::convertFrom)
-            .orElseThrow(() -> new EntityNotFoundException("blog", id));
+            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
     }
 
     @PutMapping("/{id}")
     BlogDTO edit(@PathVariable Long id, @RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
 
-        Blog blog = blogRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("blog", id));
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("blog", id));
 
-        if(!RganUser.isSame(blog.getAuthor(), user)){
+        if(RganUser.isNotSame(blog.getAuthor(), user)){
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
@@ -105,7 +106,7 @@ public class BlogController {
     @DeleteMapping("/{id}")
     void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         blogRepository.findById(id).ifPresent(blog -> {
-            if(!RganUser.isSame(blog.getAuthor(), user)){
+            if(RganUser.isNotSame(blog.getAuthor(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
             blogRepository.deleteById(id);
@@ -113,7 +114,7 @@ public class BlogController {
     }
 
     @GetMapping("/search")
-    Page<BlogSummaryDTO> search(@RequestParam("keyword") String keyword, @PageableDefault Pageable pageable){
+    Page<BlogSummaryDTO> search(@RequestParam(value = "keyword", required = false) String keyword, @PageableDefault Pageable pageable){
         if(StringUtils.isEmpty(keyword)){
             return blogRepository.findBy(pageable).map(BlogSummaryDTO::convertFrom);
         }
@@ -125,7 +126,7 @@ public class BlogController {
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
         return titles.stream().map(
-            title -> tagRepository.findByTitle(title).orElseThrow(() -> new EntityNotFoundException("Could not find Tag, title: " + title))
+            title -> tagRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFoundException("Could not find Tag, title: " + title))
         ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

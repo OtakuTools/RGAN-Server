@@ -26,7 +26,7 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +
                 "b.summary, " +
-                "b.upvoteCount, b.visitorCount, " +
+                "b.voteCount, b.visitorCount, " +
                 "b.author.username, " +
                 "b.createdTime, b.modifiedTime) FROM Blog b WHERE");
         // LOWER(firstname) like '%' + LOWER(?0) + '%'

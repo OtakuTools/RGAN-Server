@@ -14,13 +14,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -143,7 +141,7 @@ public class VerificationController {
         List<RganUser> userVerifications = userRepository.findByEmailOrVerificationEmail(email, email);
 
         for(RganUser user : userVerifications){
-            if(!RganUser.isSame(self, user) &&
+            if(RganUser.isNotSame(self, user) &&
                 (user.getVerificationStatus() == UserVerificationStatus.VERIFIED || !isVerificationDateExpired(user))){
                 throw new VerificationEmailUnavailableException(email);
             }

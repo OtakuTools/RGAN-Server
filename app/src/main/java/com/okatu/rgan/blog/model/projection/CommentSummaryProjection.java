@@ -15,6 +15,8 @@ public interface CommentSummaryProjection {
 
     LocalDateTime getModifiedTime();
 
+    Integer getVoteCount();
+
     interface AuthorSummary{
         String getUsername();
     }

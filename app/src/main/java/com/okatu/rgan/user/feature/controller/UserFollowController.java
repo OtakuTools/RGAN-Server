@@ -1,24 +1,21 @@
 package com.okatu.rgan.user.feature.controller;
 
-import com.okatu.rgan.common.exception.EntityNotFoundException;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
-import com.okatu.rgan.user.feature.model.entity.FollowRelationship;
+import com.okatu.rgan.common.exception.ResourceNotFoundException;
+import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
+import com.okatu.rgan.user.feature.model.entity.UserFollowRelationship;
+import com.okatu.rgan.user.feature.model.entity.UserFollowRelationshipId;
 import com.okatu.rgan.user.feature.model.param.FollowParam;
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.user.model.RganUserDTO;
-import com.okatu.rgan.user.repository.FollowRelationshipRepository;
+import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.Set;
 
 
 // The unsubscibe logic have two choice, delete or keep the history data from one’s inbox.
@@ -30,7 +27,7 @@ import java.util.Set;
 public class UserFollowController {
 
     @Autowired
-    private FollowRelationshipRepository followRelationshipRepository;
+    private UserFollowRelationshipRepository userFollowRelationshipRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -41,19 +38,25 @@ public class UserFollowController {
     @PostMapping("/user")
     public String follow(FollowParam param, @AuthenticationPrincipal RganUser user){
 
-        if(!userRepository.findById(param.getTargetUserId()).isPresent()){
-            throw new EntityNotFoundException("user", param.getTargetUserId());
+        RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
+            () -> new ResourceNotFoundException("user", param.getTargetUserId())
+        );
+
+        UserFollowRelationshipId id = new UserFollowRelationshipId(beFollowed, user);
+
+        Optional<UserFollowRelationship> optional = userFollowRelationshipRepository.findById(new UserFollowRelationshipId(beFollowed, user));
+        if(optional.isPresent()){
+            UserFollowRelationship userFollowRelationship = optional.get();
+            if(userFollowRelationship.getStatus().equals(UserFollowRelationshipStatus.UN_FOLLOW)){
+                userFollowRelationship.setStatus(UserFollowRelationshipStatus.FOLLOWING);
+                userFollowRelationshipRepository.save(userFollowRelationship);
+            }else{
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You have been following this user!");
+            }
+        }else {
+            UserFollowRelationship userFollowRelationship = new UserFollowRelationship(id, UserFollowRelationshipStatus.FOLLOWING);
+            userFollowRelationshipRepository.save(userFollowRelationship);
         }
-
-        FollowRelationship followRelationship = new FollowRelationship();
-        followRelationship.setBeFollowedId(param.getTargetUserId());
-        followRelationship.setFollowerId(user.getId());
-        followRelationship.setStatus(FollowRelationshipStatus.FOLLOWING);
-        followRelationship.setType(FollowRelationshipType.USER);
-
-        followRelationshipRepository.save(followRelationship);
-
-        // fill the initial inbox
 
         return "";
     }
@@ -61,11 +64,15 @@ public class UserFollowController {
     @DeleteMapping("/user")
     public String unFollow(FollowParam param, @AuthenticationPrincipal RganUser user){
 
-        followRelationshipRepository.findByBeFollowedIdAndFollowerIdAndTypeAndStatus(
-            param.getTargetUserId(), user.getId(), FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING).ifPresent(followRelationship -> {
-            followRelationship.setStatus(FollowRelationshipStatus.UN_FOLLOW);
-            followRelationshipRepository.save(followRelationship);
-        });
+        RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
+            () -> new ResourceNotFoundException("user", param.getTargetUserId())
+        );
+        UserFollowRelationshipId id = new UserFollowRelationshipId(userRepository.getOne(param.getTargetUserId()), user);
+        userFollowRelationshipRepository.findById(id).ifPresent(
+            userFollowRelationship -> {
+                userFollowRelationship.setStatus(UserFollowRelationshipStatus.UN_FOLLOW);
+                userFollowRelationshipRepository.save(userFollowRelationship);
+            });
 
         return "";
     }

@@ -14,7 +14,7 @@ public class BlogSummaryDTO{
 
     private String summary;
 
-    private Integer upvoteCount;
+    private Integer voteCount;
 
     private Integer visitorCount;
 
@@ -33,13 +33,13 @@ public class BlogSummaryDTO{
     public BlogSummaryDTO(
         Long id, String title,
         String summary,
-        Integer upvoteCount, Integer visitorCount,
+        Integer voteCount, Integer visitorCount,
         String authorName,
         LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.title = title;
         this.summary = summary;
-        this.upvoteCount = upvoteCount;
+        this.voteCount = voteCount;
         this.visitorCount = visitorCount;
         this.authorName = authorName;
         this.createdTime = createdTime;
@@ -58,8 +58,8 @@ public class BlogSummaryDTO{
         return summary;
     }
 
-    public Integer getUpvoteCount() {
-        return upvoteCount;
+    public Integer getVoteCount() {
+        return voteCount;
     }
 
     public Integer getVisitorCount() {
@@ -94,8 +94,8 @@ public class BlogSummaryDTO{
         this.summary = summary;
     }
 
-    public void setUpvoteCount(Integer upvoteCount) {
-        this.upvoteCount = upvoteCount;
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     public void setVisitorCount(Integer visitorCount) {
@@ -123,7 +123,7 @@ public class BlogSummaryDTO{
             blogSummaryProjection.getId(),
             blogSummaryProjection.getTitle(),
             blogSummaryProjection.getSummary(),
-            blogSummaryProjection.getUpvoteCount(),
+            blogSummaryProjection.getVoteCount(),
             blogSummaryProjection.getVisitorCount(),
             blogSummaryProjection.getAuthor().getUsername(),
             blogSummaryProjection.getCreatedTime(),

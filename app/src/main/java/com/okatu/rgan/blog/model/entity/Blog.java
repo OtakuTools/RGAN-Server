@@ -1,6 +1,8 @@
 package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.model.VoteAbleEntity;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -10,7 +12,7 @@ import java.util.Set;
 // but what about a `findTagIdByBlog`? never
 // unidirectional relationship is enough
 @Entity
-public class Blog {
+public class Blog implements VoteAbleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +22,8 @@ public class Blog {
     @Column(columnDefinition = "text")
     private String content;
 
-    private Integer upvoteCount = 0;
+    @Column(nullable = false)
+    private Integer voteCount = 0;
 
     private Integer visitorCount = 0;
 
@@ -106,12 +109,12 @@ public class Blog {
         this.title = title;
     }
 
-    public Integer getUpvoteCount() {
-        return upvoteCount;
+    public Integer getVoteCount() {
+        return voteCount;
     }
 
-    public void setUpvoteCount(Integer upvoteCount) {
-        this.upvoteCount = upvoteCount;
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     public Integer getVisitorCount() {
@@ -141,4 +144,13 @@ public class Blog {
     public Blog() {
     }
 
+    @Override
+    public void incrVoteCount(int value) {
+        this.voteCount += value;
+    }
+
+    @Override
+    public void decrVoteCount(int value) {
+        this.voteCount -= value;
+    }
 }

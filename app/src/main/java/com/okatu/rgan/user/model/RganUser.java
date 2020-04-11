@@ -2,15 +2,12 @@ package com.okatu.rgan.user.model;
 
 import com.okatu.rgan.user.authentication.constant.UserAccountStatus;
 import com.okatu.rgan.user.authentication.constant.UserVerificationStatus;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 
 // about the difference between lock and enable, see
@@ -54,6 +51,8 @@ public class RganUser implements UserDetails {
     private Integer verificationStatus = UserVerificationStatus.CREATED;
 
     private LocalDateTime verificationCreatedTime;
+
+    private String description;
 
     @Transient
     private Set<GrantedAuthority> grantedAuthorities;
@@ -161,7 +160,15 @@ public class RganUser implements UserDetails {
         this.lastLoginTime = lastLoginTime;
     }
 
-    public static boolean isSame(RganUser lhs, RganUser rhs){
-        return (lhs != null && lhs.getId().equals(rhs.getId())) || (lhs == rhs);
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public static boolean isNotSame(RganUser lhs, RganUser rhs){
+        return (lhs == null || !lhs.getId().equals(rhs.getId())) && (lhs != rhs);
     }
 }

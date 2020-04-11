@@ -17,6 +17,8 @@ public class CommentSummaryDTO {
 
     private LocalDateTime modifiedTime;
 
+    private Integer voteCount;
+
     public Long getId() {
         return id;
     }
@@ -65,16 +67,25 @@ public class CommentSummaryDTO {
         this.modifiedTime = modifiedTime;
     }
 
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
     public CommentSummaryDTO() {
     }
 
-    public CommentSummaryDTO(Long id, String content, String authorName, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime) {
+    public CommentSummaryDTO(Long id, String content, String authorName, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer voteCount) {
         this.id = id;
         this.content = content;
         this.authorName = authorName;
         this.replyTo = replyTo;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
+        this.voteCount = voteCount;
     }
 
     public static CommentSummaryDTO convertFrom(CommentSummaryProjection projection){
@@ -86,7 +97,8 @@ public class CommentSummaryDTO {
             projection.getAuthor().getUsername(),
             replyToCommentId,
             projection.getCreatedTime(),
-            projection.getModifiedTime()
+            projection.getModifiedTime(),
+            projection.getVoteCount()
         );
     }
 }

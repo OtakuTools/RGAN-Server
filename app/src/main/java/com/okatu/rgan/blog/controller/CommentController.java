@@ -7,7 +7,7 @@ import com.okatu.rgan.blog.model.CommentSummaryDTO;
 import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.repository.CommentRepository;
-import com.okatu.rgan.common.exception.EntityNotFoundException;
+import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
@@ -57,13 +57,14 @@ public class CommentController {
         comment.setContent(commentEditParam.getContent());
         comment.setAuthor(user);
         comment.setBlog(blogRepository.findById(blogId).orElseThrow(
-            () -> new EntityNotFoundException("blog", blogId)
+            () -> new ResourceNotFoundException("blog", blogId)
         ));
+        comment.setVoteCount(0);
 
         if(commentEditParam.getReplyTo() != null){
             comment.setReplyTo(commentRepository.findById(commentEditParam.getReplyTo())
                 .orElseThrow(
-                    () -> new EntityNotFoundException("comment", commentEditParam.getReplyTo())
+                    () -> new ResourceNotFoundException("comment", commentEditParam.getReplyTo())
                 ));
         }
 
@@ -76,9 +77,9 @@ public class CommentController {
     @PutMapping("/comments/{commentId}")
     public String edit(@PathVariable("commentId") Long commentId,
                        @RequestBody CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
-        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new EntityNotFoundException("comment", commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("comment", commentId));
 
-        if(!RganUser.isSame(comment.getAuthor(), user)){
+        if(RganUser.isNotSame(comment.getAuthor(), user)){
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
@@ -98,7 +99,7 @@ public class CommentController {
     @DeleteMapping("/comments/{commentId}")
     public void deleteComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal RganUser user){
         commentRepository.findById(commentId).ifPresent(comment -> {
-            if(!RganUser.isSame(comment.getAuthor(), user)){
+            if(RganUser.isNotSame(comment.getAuthor(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
             }
 

@@ -15,7 +15,7 @@ public class FeedMessage {
 
     private Long entityId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 

@@ -1,12 +1,13 @@
 package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.model.VoteAbleEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Comment {
+public class Comment implements VoteAbleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -17,20 +18,22 @@ public class Comment {
     private Integer status;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
     @ManyToOne
     @JoinColumn(name = "reply_to_id", nullable = true)
     private Comment replyTo;
 
-    @ManyToOne
-    @JoinColumn(name = "blog_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;
+
+    private Integer voteCount = 0;
 
     @PrePersist
     private void prePersist(){
@@ -42,6 +45,14 @@ public class Comment {
     @PreUpdate
     private void preUpdate(){
         modifiedTime = LocalDateTime.now();
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -106,5 +117,15 @@ public class Comment {
 
     public void setBlog(Blog blog) {
         this.blog = blog;
+    }
+
+    @Override
+    public void incrVoteCount(int value) {
+        this.voteCount += value;
+    }
+
+    @Override
+    public void decrVoteCount(int value) {
+        this.voteCount -= value;
     }
 }

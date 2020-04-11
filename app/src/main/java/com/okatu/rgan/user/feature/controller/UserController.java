@@ -1,17 +1,17 @@
 package com.okatu.rgan.user.feature.controller;
 
-import com.okatu.rgan.common.exception.EntityNotFoundException;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
+import com.okatu.rgan.common.exception.ResourceNotFoundException;
+import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
 import com.okatu.rgan.user.feature.model.param.UserProfileEditParam;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.model.RganUserDTO;
-import com.okatu.rgan.user.repository.FollowRelationshipRepository;
+import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +35,12 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    private FollowRelationshipRepository followRelationshipRepository;
+    private UserFollowRelationshipRepository followRelationshipRepository;
 
     @GetMapping("/{id}")
     public RganUserDTO getUserInfo(@PathVariable Long id){
         return userRepository.findById(id).map(RganUserDTO::convertFrom)
-            .orElseThrow(() -> new EntityNotFoundException("user", id));
+            .orElseThrow(() -> new ResourceNotFoundException("user", id));
     }
 
     @PutMapping("/{id}/profile")
@@ -52,17 +52,30 @@ public class UserController {
 
     @GetMapping("/{id}/followers")
     public Page<RganUserDTO> getFollowers(@PathVariable("id") Long id, @PageableDefault Pageable pageable){
+        RganUser user = checkRequestUserExist(id);
         return followRelationshipRepository
-            .findByBeFollowedIdAndTypeAndStatus(id, FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING, pageable)
-            .map(followRelationship -> userRepository.findById(followRelationship.getFollowerId()).get())
+            .findById_BeFollowedAndStatus(user, UserFollowRelationshipStatus.FOLLOWING, pageable)
+            .map(followRelationship -> followRelationship.getId().getFollower())
             .map(RganUserDTO::convertFrom);
     }
 
     @GetMapping("/{id}/following")
     public Page<RganUserDTO> getFollowing(@PathVariable("id") Long id, @PageableDefault Pageable pageable){
+        RganUser user = checkRequestUserExist(id);
         return followRelationshipRepository
-            .findByFollowerIdAndTypeAndStatus(id, FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING, pageable)
-            .map(followRelationship -> userRepository.findById(followRelationship.getBeFollowedId()).get())
+            .findById_FollowerAndStatusIs(user, UserFollowRelationshipStatus.FOLLOWING, pageable)
+            .map(followRelationship -> followRelationship.getId().getBeFollowed())
             .map(RganUserDTO::convertFrom);
+    }
+
+//    @GetMapping("/{id}/followers/size")
+//    public Integer getFollowersSize(@PathVariable("id") Long id, @PageableDefault Pageable pageable){
+//        RganUser user = checkRequestUserExist(id);
+//    }
+
+    private RganUser checkRequestUserExist(@NonNull Long id){
+        return userRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("user", id)
+        );
     }
 }

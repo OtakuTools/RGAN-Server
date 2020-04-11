@@ -1,6 +1,7 @@
 package com.okatu.rgan.feed.service;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.blog.model.event.BlogPublishEvent;
 import com.okatu.rgan.blog.model.event.CommentPublishEvent;
 import com.okatu.rgan.feed.constant.FeedMessageType;
 import com.okatu.rgan.feed.model.entity.FeedMessage;
@@ -8,6 +9,8 @@ import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.feed.repository.FeedMessageRepository;
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.model.entity.VoteItem;
+import com.okatu.rgan.vote.model.event.VotePublishEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -37,7 +40,7 @@ public class FeedMessagePublishService {
         feedMessage.setType(FeedMessageType.COMMENT);
         FeedMessage savedFeedMessage = feedMessageRepository.save(feedMessage);
 
-        if(!RganUser.isSame(comment.getAuthor(), comment.getBlog().getAuthor())){
+        if(RganUser.isNotSame(comment.getAuthor(), comment.getBlog().getAuthor())){
             FeedMessageBoxItem commentAuthorMessageBoxItem = new FeedMessageBoxItem();
             commentAuthorMessageBoxItem.setFeedMessage(savedFeedMessage);
             commentAuthorMessageBoxItem.setMessageType(FeedMessageType.COMMENT);
@@ -54,4 +57,12 @@ public class FeedMessagePublishService {
             feedMessageBoxRepository.save(replyToUserMessageBoxItem);
         }
     }
+
+    @Async
+    @EventListener
+    public void processVotePublishEvent(VotePublishEvent votePublishEvent){
+        VoteItem voteItem = votePublishEvent.getVoteItem();
+
+    }
+
 }

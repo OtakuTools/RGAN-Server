@@ -16,7 +16,7 @@ public class BlogDTO {
 
     private String content;
 
-    private Integer upvoteCount = 0;
+    private Integer voteCount;
 
     private Integer visitorCount = 0;
 
@@ -61,11 +61,11 @@ public class BlogDTO {
     }
 
     public Integer getUpvoteCount() {
-        return upvoteCount;
+        return voteCount;
     }
 
     public void setUpvoteCount(Integer upvoteCount) {
-        this.upvoteCount = upvoteCount;
+        this.voteCount = upvoteCount;
     }
 
     public Integer getVisitorCount() {
@@ -114,7 +114,7 @@ public class BlogDTO {
             "id=" + id +
             ", title='" + title + '\'' +
             ", content='" + content + '\'' +
-            ", upvoteCount=" + upvoteCount +
+            ", voteCount=" + voteCount +
             ", visitorCount=" + visitorCount +
             ", tags=" + tags +
             ", username='" + authorName + '\'' +
@@ -133,7 +133,7 @@ public class BlogDTO {
         blogDTO.setModifiedTime(blog.getModifiedTime());
         blogDTO.setTags(blog.getTags());
         blogDTO.setAuthorName(blog.getAuthor().getUsername());
-        blogDTO.setUpvoteCount(blog.getUpvoteCount());
+        blogDTO.setUpvoteCount(blog.getVoteCount());
         blogDTO.setVisitorCount(blog.getVisitorCount());
         return blogDTO;
     }

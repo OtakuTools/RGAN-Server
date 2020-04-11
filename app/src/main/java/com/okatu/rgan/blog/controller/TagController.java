@@ -2,7 +2,7 @@ package com.okatu.rgan.blog.controller;
 
 import com.okatu.rgan.blog.model.param.TagEditParam;
 import com.okatu.rgan.blog.model.entity.Tag;
-import com.okatu.rgan.common.exception.EntityNotFoundException;
+import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
 import com.okatu.rgan.common.exception.UniquenessViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/tags")
@@ -37,7 +36,7 @@ public class TagController {
     @GetMapping("/{id}")
     Tag one(@PathVariable Long id){
         return tagRepository.findById(id).
-                orElseThrow(() -> new EntityNotFoundException("tag", id));
+                orElseThrow(() -> new ResourceNotFoundException("tag", id));
     }
 
     @PutMapping("/{id}")
@@ -49,7 +48,7 @@ public class TagController {
                     tag.setDescription(tagEditParam.getDescription());
                     return tagRepository.save(tag);
                 }
-        ).orElseThrow(() -> new EntityNotFoundException("tag", id));
+        ).orElseThrow(() -> new ResourceNotFoundException("tag", id));
     }
 
     @GetMapping("/search")

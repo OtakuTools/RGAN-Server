@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,9 +21,9 @@ public class ApplicationExceptionAdvice {
     private static Logger logger = LoggerFactory.getLogger(ApplicationExceptionAdvice.class);
 
     @ResponseBody
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    String entityNotFoundHandler(EntityNotFoundException exception){
+    String entityNotFoundHandler(ResourceNotFoundException exception){
         logger.error("entity not found in repository", exception);
         return exception.getMessage();
     }
@@ -87,5 +88,14 @@ public class ApplicationExceptionAdvice {
     String uniquenessViolationExceptionHandler(UniquenessViolationException exception){
         logger.error(exception.getMessage(), exception);
         return exception.getMessage();
+    }
+
+    // missing RequestParam
+    @ResponseBody
+    @ExceptionHandler({MissingServletRequestParameterException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException exception){
+        logger.error("parameter of type {}, name {} is missing", exception.getParameterType(), exception.getParameterName(), exception);
+        return "parameter " + exception.getParameterName() + " is missing";
     }
 }

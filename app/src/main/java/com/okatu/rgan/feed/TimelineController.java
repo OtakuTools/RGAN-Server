@@ -7,11 +7,10 @@ import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.feed.constant.FeedMessageType;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipStatus;
-import com.okatu.rgan.user.feature.constant.FollowRelationshipType;
-import com.okatu.rgan.user.feature.model.entity.FollowRelationship;
+import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
+import com.okatu.rgan.user.feature.model.entity.UserFollowRelationship;
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.user.repository.FollowRelationshipRepository;
+import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,13 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/timeline")
 public class TimelineController {
+
     @Autowired
-    private FollowRelationshipRepository followRelationshipRepository;
+    private UserFollowRelationshipRepository userFollowRelationshipRepository;
 
     @Autowired
     private BlogRepository blogRepository;
@@ -45,12 +46,10 @@ public class TimelineController {
 
     @GetMapping("/blogs")
     public Page<BlogSummaryDTO> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
-        List<Long> followingIds = followRelationshipRepository
-            .findByFollowerIdAndTypeAndStatus(user.getId(), FollowRelationshipType.USER, FollowRelationshipStatus.FOLLOWING)
-            .stream().map(FollowRelationship::getBeFollowedId).collect(Collectors.toList());
+        Set<RganUser> followingUsers = userFollowRelationshipRepository.findById_FollowerAndStatus(user, UserFollowRelationshipStatus.FOLLOWING)
+            .stream().map(userFollowRelationship -> userFollowRelationship.getId().getBeFollowed()).collect(Collectors.toSet());
 
-
-        return blogRepository.findByAuthor_IdInOrderByCreatedTimeDesc(followingIds, pageable).map(BlogSummaryDTO::convertFrom);
+        return blogRepository.findByAuthorInOrderByCreatedTimeDesc(followingUsers, pageable).map(BlogSummaryDTO::convertFrom);
     }
 
     @GetMapping("/comments")
@@ -62,4 +61,5 @@ public class TimelineController {
             .map(feedMessageBoxItem -> commentRepository.findByIdIs(feedMessageBoxItem.getFeedMessage().getEntityId()))
             .map(CommentSummaryDTO::convertFrom);
     }
+
 }

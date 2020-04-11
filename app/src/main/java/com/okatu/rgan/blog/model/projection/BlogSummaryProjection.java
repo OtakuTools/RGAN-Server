@@ -11,7 +11,7 @@ public interface BlogSummaryProjection {
 
     String getSummary();
 
-    Integer getUpvoteCount();
+    Integer getVoteCount();
 
     Integer getVisitorCount();
 
