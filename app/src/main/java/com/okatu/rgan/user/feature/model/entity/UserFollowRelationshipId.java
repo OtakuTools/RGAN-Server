@@ -4,15 +4,18 @@ import com.okatu.rgan.user.model.RganUser;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
 public class UserFollowRelationshipId implements Serializable {
 
+    @ManyToOne(optional = false)
     @JoinColumn(name = "be_followed_id", nullable = false)
     private RganUser beFollowed;
 
+    @ManyToOne(optional = false)
     @JoinColumn(name = "follower_id", nullable = false)
     private RganUser follower;
 
