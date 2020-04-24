@@ -36,7 +36,7 @@ public class UserFollowController {
     private ApplicationEventPublisher eventPublisher;
 
     @PostMapping("/user")
-    public String follow(FollowParam param, @AuthenticationPrincipal RganUser user){
+    public String follow(@RequestBody FollowParam param, @AuthenticationPrincipal RganUser user){
 
         RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
             () -> new ResourceNotFoundException("user", param.getTargetUserId())
@@ -62,7 +62,7 @@ public class UserFollowController {
     }
 
     @DeleteMapping("/user")
-    public String unFollow(FollowParam param, @AuthenticationPrincipal RganUser user){
+    public String unFollow(@RequestParam FollowParam param, @AuthenticationPrincipal RganUser user){
 
         RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
             () -> new ResourceNotFoundException("user", param.getTargetUserId())
