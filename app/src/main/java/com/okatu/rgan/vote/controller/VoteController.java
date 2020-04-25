@@ -74,12 +74,12 @@ public class VoteController {
     }
 
     @GetMapping("/blogs/vote/status")
-    public List<VoteStatusDTO> selfBlogVoteStatus(@RequestParam("id") List<Long> blogIds, @AuthenticationPrincipal RganUser user){
+    public List<VoteStatusDTO> selfBlogVoteStatus(@RequestParam("id[]") List<Long> blogIds, @AuthenticationPrincipal RganUser user){
         return blogVoteItemRepository.findByBlog_IdInAndAuthor(blogIds, user).stream().map(VoteStatusDTO::convertFrom).collect(Collectors.toList());
     }
 
     @GetMapping("/comments/vote/status")
-    public List<VoteStatusDTO> selfCommentVoteStatus(@RequestParam("id") List<Long> commentIds, @AuthenticationPrincipal RganUser user){
+    public List<VoteStatusDTO> selfCommentVoteStatus(@RequestParam("id[]") List<Long> commentIds, @AuthenticationPrincipal RganUser user){
         return commentVoteItemRepository.findByComment_IdInAndAuthor(commentIds, user).stream().map(VoteStatusDTO::convertFrom).collect(Collectors.toList());
     }
 }

@@ -62,7 +62,7 @@ public class UserFollowController {
     }
 
     @DeleteMapping("/user")
-    public String unFollow(@RequestParam FollowParam param, @AuthenticationPrincipal RganUser user){
+    public String unFollow(@RequestBody FollowParam param, @AuthenticationPrincipal RganUser user){
 
         RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
             () -> new ResourceNotFoundException("user", param.getTargetUserId())
