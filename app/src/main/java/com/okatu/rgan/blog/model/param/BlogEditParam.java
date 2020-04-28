@@ -11,6 +11,8 @@ public class BlogEditParam {
 
     private String title;
 
+    private String type;
+
     private String summary;
 
     private String content;
@@ -25,6 +27,10 @@ public class BlogEditParam {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 
     public String getContent() {
         return content;

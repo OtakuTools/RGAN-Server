@@ -12,6 +12,8 @@ public class BlogDTO {
 
     private String title;
 
+    private String type;
+
     private String summary;
 
     private String content;
@@ -51,6 +53,10 @@ public class BlogDTO {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 
     public String getContent() {
         return content;
@@ -113,6 +119,7 @@ public class BlogDTO {
         return "BlogDTO{" +
             "id=" + id +
             ", title='" + title + '\'' +
+            ", type='" + type + '\'' +
             ", content='" + content + '\'' +
             ", voteCount=" + voteCount +
             ", visitorCount=" + visitorCount +
@@ -127,6 +134,7 @@ public class BlogDTO {
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setId(blog.getId());
         blogDTO.setTitle(blog.getTitle());
+        blogDTO.setType(blog.getType());
         blogDTO.setSummary(blog.getSummary());
         blogDTO.setContent(blog.getContent());
         blogDTO.setCreatedTime(blog.getCreatedTime());

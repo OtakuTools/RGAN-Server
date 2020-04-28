@@ -51,6 +51,7 @@ public class BlogController {
         LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
+        blog.setType(blogEditParam.getType());
         blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
         blog.setTags(tags);
@@ -95,6 +96,7 @@ public class BlogController {
             throw new ResourceAccessDeniedException("you have no permission to edit this blog");
         }
 
+        blog.setType(blogEditParam.getType());
         blog.setTitle(blogEditParam.getTitle());
         blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
@@ -125,8 +127,11 @@ public class BlogController {
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
+//        return titles.stream().map(
+//            title -> tagRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFoundException("Could not find Tag, title: " + title))
+//        ).collect(Collectors.toCollection(LinkedHashSet::new));
         return titles.stream().map(
-            title -> tagRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFoundException("Could not find Tag, title: " + title))
+            title -> tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(new Tag(title, title)))
         ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
