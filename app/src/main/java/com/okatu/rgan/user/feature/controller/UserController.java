@@ -37,10 +37,20 @@ public class UserController {
     @Autowired
     private UserFollowRelationshipRepository followRelationshipRepository;
 
-    @GetMapping("/{id}")
-    public RganUserDTO getUserInfo(@PathVariable Long id){
-        return userRepository.findById(id).map(RganUserDTO::convertFrom)
-            .orElseThrow(() -> new ResourceNotFoundException("user", id));
+//    @GetMapping("/{id}")
+//    public RganUserDTO getUserInfo(@PathVariable Long id){
+//        return userRepository.findById(id).map(RganUserDTO::convertFrom)
+//            .orElseThrow(() -> new ResourceNotFoundException("user", id));
+//    }
+    @GetMapping("")
+    public RganUserDTO getUserInfo(@RequestParam(value = "name", required = false) String name,  @RequestParam(value = "id", required = false) Long id){
+        if (name != null) {
+            return userRepository.findByUsername(name).map(RganUserDTO::convertFrom)
+                    .orElseThrow(() -> new ResourceNotFoundException("user", new Long(0)));
+        } else {
+            return userRepository.findById(id).map(RganUserDTO::convertFrom)
+                    .orElseThrow(() -> new ResourceNotFoundException("user", new Long(1)));
+        }
     }
 
     @PutMapping("/{id}/profile")

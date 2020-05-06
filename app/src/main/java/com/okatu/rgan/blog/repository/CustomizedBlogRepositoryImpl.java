@@ -65,4 +65,46 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
 
         return new PageImpl<>(res, pageable, res.size());
     }
+
+    @Override
+    public Page<BlogSummaryDTO> findByAuthorContainsAnyOfKeywords(String name, Pageable pageable) {
+        // tags field needs another query
+        StringBuilder based = new StringBuilder(
+                "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
+                        "b.id, b.title, " +
+                        "b.summary, " +
+                        "b.voteCount, b.visitorCount, " +
+                        "b.author.username, " +
+                        "b.createdTime, b.modifiedTime) FROM Blog b " +
+                        "WHERE b.author.username=?1 " +
+                        "Order By b.createdTime DESC"
+                );
+
+        TypedQuery<BlogSummaryDTO> query = entityManager.createQuery(based.toString(), BlogSummaryDTO.class);
+
+        query.setParameter(1, name);
+
+        // pageNumber start from 0
+        query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        query.setMaxResults(pageable.getPageSize());
+
+        List<BlogSummaryDTO> res = query.getResultList();
+
+        res.forEach(blogSummaryDTO -> {
+            @SuppressWarnings("unchecked")
+            List<TagSummaryDTO> tags = entityManager.createNativeQuery(
+                    "SELECT tag.id as id, tag.title as title FROM blog_tag_association association " +
+                            "INNER JOIN tag ON association.tag_id=tag.id " +
+                            "WHERE association.blog_id=?1")
+                    .setParameter(1, blogSummaryDTO.getId())
+                    .getResultList();
+
+//            LinkedHashSet<TagSummaryDTO> tags = tuples.stream()
+//                .map(tuple -> new TagSummaryDTO(tuple.get("id", Long.class), tuple.get("title", String.class)))
+//                .collect(Collectors.toCollection(LinkedHashSet::new));
+            blogSummaryDTO.setTags(new LinkedHashSet<>(tags));
+        });
+
+        return new PageImpl<>(res, pageable, res.size());
+    }
 }

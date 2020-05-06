@@ -42,12 +42,12 @@ public class BlogController {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @GetMapping
-    Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
+    public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
         return blogRepository.findByOrderByCreatedTimeDesc(pageable).map(BlogSummaryDTO::convertFrom);
     }
 
     @PostMapping
-    BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
+    public BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
         LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
         Blog blog = new Blog();
         blog.setTitle(blogEditParam.getTitle());
@@ -82,13 +82,13 @@ public class BlogController {
     // This will protect the attribute collection inside the HttpSession object from concurrent access,
     // eliminating the opportunity for an application to cause that collection to become corrupted.
     @GetMapping("/{id}")
-    BlogDTO one(@PathVariable Long id, HttpSession session){
+    public BlogDTO one(@PathVariable Long id, HttpSession session){
         return blogRepository.findById(id).map(BlogDTO::convertFrom)
             .orElseThrow(() -> new ResourceNotFoundException("blog", id));
     }
 
     @PutMapping("/{id}")
-    BlogDTO edit(@PathVariable Long id, @RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
+    public BlogDTO edit(@PathVariable Long id, @RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
 
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("blog", id));
 
@@ -106,7 +106,7 @@ public class BlogController {
     }
 
     @DeleteMapping("/{id}")
-    void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
+    public void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         blogRepository.findById(id).ifPresent(blog -> {
             if(RganUser.isNotSame(blog.getAuthor(), user)){
                 throw new ResourceAccessDeniedException("you have no permission to delete this blog");
@@ -116,7 +116,7 @@ public class BlogController {
     }
 
     @GetMapping("/search")
-    Page<BlogSummaryDTO> search(@RequestParam(value = "keyword", required = false) String keyword, @PageableDefault Pageable pageable){
+    public Page<BlogSummaryDTO> search(@RequestParam(value = "keyword", required = false) String keyword, @PageableDefault Pageable pageable){
         if(StringUtils.isEmpty(keyword)){
             return blogRepository.findBy(pageable).map(BlogSummaryDTO::convertFrom);
         }
@@ -124,6 +124,12 @@ public class BlogController {
         String[] keywords = keyword.split(" ");
 
         return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords), pageable);
+    }
+
+    @GetMapping("/user")
+    public Page<BlogSummaryDTO> users(@RequestParam(value = "name") String name, @PageableDefault Pageable pageable) {
+        System.out.println(name);
+        return blogRepository.findByAuthorContainsAnyOfKeywords(name, pageable);
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){

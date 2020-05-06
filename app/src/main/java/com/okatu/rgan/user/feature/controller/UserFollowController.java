@@ -35,6 +35,24 @@ public class UserFollowController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @GetMapping("/user")
+    public Boolean check(@RequestParam(value = "targetUserId") Long id, @AuthenticationPrincipal RganUser user) {
+        RganUser beFollowed = userRepository.findById(id).orElseThrow(
+            () -> new ResourceNotFoundException("user", id)
+        );
+        Optional<UserFollowRelationship> optional = userFollowRelationshipRepository.findById(new UserFollowRelationshipId(beFollowed, user));
+        if (optional.isPresent()) {
+            UserFollowRelationship userFollowRelationship = optional.get();
+            if (userFollowRelationship.getStatus().equals(UserFollowRelationshipStatus.UN_FOLLOW)) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
     @PostMapping("/user")
     public String follow(@RequestBody FollowParam param, @AuthenticationPrincipal RganUser user){
 

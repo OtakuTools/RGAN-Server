@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.repository;
 
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
+import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.user.model.RganUser;
 import org.springframework.data.domain.Page;
