@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.userDetailsService(userDetailsService())
             .addFilterAt(acceptJsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
@@ -55,16 +56,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
             .antMatchers(
-    "/register",
+                "/register",
                 "/login",
                 "/logout"
             ).permitAll()
             .antMatchers(
                 HttpMethod.GET,
-                "/blogs/**",
-                "/tags/**",
-                "/users/**"
+                "/blogs",
+                "/tags",
+                "/users/{id:\\d+}/**",
+                "/blogs/{id:\\d+}/**",
+                "/tags/{id:\\d+}/**",
+                "/blogs/search"
             ).permitAll()
+            .antMatchers(
+                HttpMethod.GET,
+                "/blogs/vote/status",
+                "/comments/vote/status"
+            ).authenticated()
             .antMatchers(
                 HttpMethod.POST,
                 "/verification/email/receive"

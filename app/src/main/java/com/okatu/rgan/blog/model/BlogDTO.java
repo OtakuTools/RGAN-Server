@@ -12,7 +12,7 @@ public class BlogDTO {
 
     private String title;
 
-    private String type;
+    private Integer type;
 
     private String summary;
 
@@ -54,9 +54,9 @@ public class BlogDTO {
         this.title = title;
     }
 
-    public String getType() { return type; }
+    public Integer getType() { return type; }
 
-    public void setType(String type) { this.type = type; }
+    public void setType(Integer type) { this.type = type; }
 
     public String getContent() {
         return content;

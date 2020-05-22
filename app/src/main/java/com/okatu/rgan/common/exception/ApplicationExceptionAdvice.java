@@ -3,7 +3,9 @@ package com.okatu.rgan.common.exception;
 import com.okatu.rgan.common.model.MethodArgumentNotValidErrorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
 public class ApplicationExceptionAdvice {
@@ -95,7 +98,14 @@ public class ApplicationExceptionAdvice {
     @ExceptionHandler({MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     String missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException exception){
-        logger.error("parameter of type {}, name {} is missing", exception.getParameterType(), exception.getParameterName(), exception);
+        logger.error("Parameter of type {}, name {} is missing", exception.getParameterType(), exception.getParameterName(), exception);
         return "parameter " + exception.getParameterName() + " is missing";
     }
+
+//    @ResponseBody
+//    @ExceptionHandler({ResponseStatusException.class})
+//    ResponseEntity<String> responseStatusExceptionHandler(ResponseStatusException exception){
+//        logger.error("Response status exception", exception);
+//        return new ResponseEntity<>(exception.getMessage(), exception.getStatus());
+//    }
 }

@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue(VoteType.COMMENT)
 public class CommentVoteItem extends VoteItem{
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
     @JoinColumn(name = "entity_id", nullable = false)
     private Comment comment;
 

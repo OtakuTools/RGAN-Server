@@ -19,6 +19,5 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
 
     boolean existsByTitle(String title);
 
-    <S extends Tag> S save(S entity);
 }
 

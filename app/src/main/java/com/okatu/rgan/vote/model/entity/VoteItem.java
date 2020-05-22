@@ -4,6 +4,7 @@ import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.VoteAbleEntity;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -13,11 +14,18 @@ public abstract class VoteItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
     private Integer status;
+
+    private LocalDateTime createdTime;
+
+    @PrePersist
+    private void prePersist(){
+        createdTime = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -41,6 +49,14 @@ public abstract class VoteItem {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public void setCreatedTime(LocalDateTime createdTime) {
+        this.createdTime = createdTime;
     }
 
     public abstract VoteAbleEntity getAssociateVoteAbleEntity();

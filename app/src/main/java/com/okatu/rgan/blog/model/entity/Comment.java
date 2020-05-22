@@ -17,7 +17,7 @@ public class Comment implements VoteAbleEntity {
     @Transient
     private Integer status;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
@@ -25,7 +25,7 @@ public class Comment implements VoteAbleEntity {
     @JoinColumn(name = "reply_to_id", nullable = true)
     private Comment replyTo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 

@@ -20,5 +20,4 @@ public interface UserRepository extends JpaRepository<RganUser, Long> {
 
     List<RganUser> findByEmailOrVerificationEmail(String email, String verificationEmail);
 
-    Optional<RganUser> findById(Long id);
 }

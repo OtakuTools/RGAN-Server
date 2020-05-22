@@ -1,8 +1,7 @@
-package com.okatu.rgan.vote.controller;
+package com.okatu.rgan.user.feature.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.okatu.rgan.vote.constant.VoteStatus;
-import com.okatu.rgan.vote.model.param.VoteParam;
+import com.okatu.rgan.user.feature.model.param.FollowParam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,35 +18,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class VoteControllerTest {
+class UserFollowControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper;
 
-    @Test
-    @WithUserDetails("test")
-    void voteBlog() throws Exception {
-        VoteParam voteParam = new VoteParam();
-        voteParam.setStatus(VoteStatus.DOWNVOTE);
-
-        RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .post("/blogs/6/vote")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(voteParam));
-
-        mockMvc.perform(requestBuilder)
-            .andExpect(MockMvcResultMatchers.status().isOk())
-            .andDo(print());
-    }
-
-    @Test
     @WithUserDetails("test1")
-    void selfBlogVoteStatus() throws Exception {
+    @Test
+    void follow() throws Exception{
+        FollowParam followParam = new FollowParam();
+        followParam.setTargetUserId(1L);
+
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .get("/blogs/vote/status?id[]=5&id[]=6");
+            .post("/follow/user")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(followParam));
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

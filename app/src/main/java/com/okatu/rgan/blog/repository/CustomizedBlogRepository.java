@@ -10,6 +10,4 @@ import java.util.List;
 
 public interface CustomizedBlogRepository {
     Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywords(Collection<String> keywords, Pageable pageable);
-
-    Page<BlogSummaryDTO> findByAuthorContainsAnyOfKeywords(String name, Pageable pageable);
 }

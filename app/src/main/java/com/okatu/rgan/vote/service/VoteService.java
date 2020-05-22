@@ -36,11 +36,11 @@ public class VoteService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public <T extends VoteAbleEntity> void doVote(T entity, RganUser user, int newStatus, @NonNull Class<T> entityClass){
+    public <T extends VoteAbleEntity> void doVote(@NonNull T entity, RganUser user, int newStatus){
         Optional optional;
         VoteItem voteItem;
 
-        if(entityClass.equals(Blog.class)){
+        if(entity.getClass().equals(Blog.class)){
             optional = blogVoteItemRepository.findByBlogAndAuthor((Blog) entity, user);
             if(optional.isPresent()){
                 voteItem = (VoteItem) optional.get();
@@ -54,7 +54,10 @@ public class VoteService {
                 applyOnCancelOrNotExistStatus(voteItem, newStatus);
             }
             blogVoteItemRepository.save((BlogVoteItem) voteItem);
-        }else if(entityClass.equals(Comment.class)){
+            if(newStatus == VoteStatus.UPVOTE){
+                applicationEventPublisher.publishEvent(new VotePublishEvent<>(this, (BlogVoteItem) voteItem));
+            }
+        }else if(entity.getClass().equals(Comment.class)){
             optional = commentVoteItemRepository.findByCommentAndAuthor((Comment) entity, user);
             if(optional.isPresent()){
                 voteItem = (VoteItem) optional.get();
@@ -68,13 +71,13 @@ public class VoteService {
                 applyOnCancelOrNotExistStatus(voteItem, newStatus);
             }
             commentVoteItemRepository.save((CommentVoteItem) voteItem);
+            if(newStatus == VoteStatus.UPVOTE){
+                applicationEventPublisher.publishEvent(new VotePublishEvent<>(this, (CommentVoteItem) voteItem));
+            }
         }else{
             throw new ConstraintViolationException("Not support, should not hit here");
         }
 
-        if(newStatus == VoteStatus.UPVOTE){
-            applicationEventPublisher.publishEvent(new VotePublishEvent(this, voteItem));
-        }
     }
 
     private void applyStateTransition(VoteItem voteItem, int newStatus){

@@ -14,10 +14,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlo
 
     Page<BlogSummaryProjection> findByAuthorInOrderByCreatedTimeDesc(Collection<RganUser> usersId, Pageable pageable);
 
-    Page<Blog> findAllByOrderByCreatedTimeDesc(Pageable pageable);
-
     Page<BlogSummaryProjection> findByOrderByCreatedTimeDesc(Pageable pageable);
 
-    Page<BlogSummaryProjection> findBy(Pageable pageable);
-
+    Page<BlogSummaryProjection> findByAuthor_UsernameOrderByCreatedTimeDesc(String username, Pageable pageable);
 }

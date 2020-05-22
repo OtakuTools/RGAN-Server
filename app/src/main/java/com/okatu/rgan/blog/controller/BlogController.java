@@ -118,7 +118,7 @@ public class BlogController {
     @GetMapping("/search")
     public Page<BlogSummaryDTO> search(@RequestParam(value = "keyword", required = false) String keyword, @PageableDefault Pageable pageable){
         if(StringUtils.isEmpty(keyword)){
-            return blogRepository.findBy(pageable).map(BlogSummaryDTO::convertFrom);
+            return blogRepository.findByOrderByCreatedTimeDesc(pageable).map(BlogSummaryDTO::convertFrom);
         }
 
         String[] keywords = keyword.split(" ");
@@ -128,8 +128,7 @@ public class BlogController {
 
     @GetMapping("/user")
     public Page<BlogSummaryDTO> users(@RequestParam(value = "name") String name, @PageableDefault Pageable pageable) {
-        System.out.println(name);
-        return blogRepository.findByAuthorContainsAnyOfKeywords(name, pageable);
+        return blogRepository.findByAuthor_UsernameOrderByCreatedTimeDesc(name, pageable).map(BlogSummaryDTO::convertFrom);
     }
 
     private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){

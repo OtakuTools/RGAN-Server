@@ -1,13 +1,13 @@
 package com.okatu.rgan.user.feature.model.param;
 
 public class FollowParam {
-    private long targetUserId;
+    private Long targetUserId;
 
-    public long getTargetUserId() {
+    public Long getTargetUserId() {
         return targetUserId;
     }
 
-    public void setTargetUserId(long targetUserId) {
+    public void setTargetUserId(Long targetUserId) {
         this.targetUserId = targetUserId;
     }
 }

@@ -12,11 +12,11 @@ public class FeedMessageBoxItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiver_id", nullable = false)
     private RganUser receiver;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "message_id", nullable = false)
     private FeedMessage feedMessage;
 

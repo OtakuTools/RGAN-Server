@@ -19,7 +19,7 @@ public class Blog implements VoteAbleEntity {
 
     private String title;
 
-    private String type;
+    private Integer type;
 
     @Column(columnDefinition = "text")
     private String content;
@@ -42,8 +42,8 @@ public class Blog implements VoteAbleEntity {
     )
     private Set<Tag> tags = new LinkedHashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
 //    @Temporal(TemporalType.TIMESTAMP)
@@ -111,9 +111,9 @@ public class Blog implements VoteAbleEntity {
         this.title = title;
     }
 
-    public String getType() { return type; }
+    public Integer getType() { return type; }
 
-    public void setType(String type) { this.type = type; }
+    public void setType(Integer type) { this.type = type; }
 
     public Integer getVoteCount() {
         return voteCount;

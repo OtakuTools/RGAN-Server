@@ -9,6 +9,8 @@ import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.feed.repository.FeedMessageRepository;
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.model.entity.BlogVoteItem;
+import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 import com.okatu.rgan.vote.model.entity.VoteItem;
 import com.okatu.rgan.vote.model.event.VotePublishEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,8 +62,13 @@ public class FeedMessagePublishService {
 
     @Async
     @EventListener
-    public void processVotePublishEvent(VotePublishEvent votePublishEvent){
-        VoteItem voteItem = votePublishEvent.getVoteItem();
+    public void processCommentVotePublishEvent(VotePublishEvent<CommentVoteItem> votePublishEvent){
+
+    }
+
+    @Async
+    @EventListener
+    public void processBlogVotePublishEvent(VotePublishEvent<BlogVoteItem> votePublishEvent){
 
     }
 

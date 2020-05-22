@@ -20,6 +20,8 @@ public class RganUser implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // https://stackoverflow.com/questions/2593722/hibernate-one-to-one-getid-without-fetching-entire-object
+    // https://stackoverflow.com/questions/32220951/just-getting-id-column-value-not-using-join-in-hibernate-object-one-to-many-rela
     private Long id;
 
     private String username;

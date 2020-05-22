@@ -10,6 +10,8 @@ import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.format.Formatter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -36,21 +38,14 @@ public class UserFollowController {
     private ApplicationEventPublisher eventPublisher;
 
     @GetMapping("/user")
-    public Boolean check(@RequestParam(value = "targetUserId") Long id, @AuthenticationPrincipal RganUser user) {
-        RganUser beFollowed = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("user", id)
+    public Boolean checkIfFollowingUser(@RequestParam(value = "targetUserId") Long userId, @AuthenticationPrincipal RganUser user) {
+        RganUser beFollowed = userRepository.findById(userId).orElseThrow(
+            () -> new ResourceNotFoundException("user", userId)
         );
-        Optional<UserFollowRelationship> optional = userFollowRelationshipRepository.findById(new UserFollowRelationshipId(beFollowed, user));
-        if (optional.isPresent()) {
-            UserFollowRelationship userFollowRelationship = optional.get();
-            if (userFollowRelationship.getStatus().equals(UserFollowRelationshipStatus.UN_FOLLOW)) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
+
+        return userFollowRelationshipRepository.findById(new UserFollowRelationshipId(beFollowed, user))
+            .filter(userFollowRelationship -> userFollowRelationship.getStatus().equals(UserFollowRelationshipStatus.FOLLOWING))
+            .isPresent();
     }
 
     @PostMapping("/user")

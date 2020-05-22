@@ -46,10 +46,10 @@ public class UserController {
     public RganUserDTO getUserInfo(@RequestParam(value = "name", required = false) String name,  @RequestParam(value = "id", required = false) Long id){
         if (name != null) {
             return userRepository.findByUsername(name).map(RganUserDTO::convertFrom)
-                    .orElseThrow(() -> new ResourceNotFoundException("user", new Long(0)));
+                    .orElseThrow(() -> new ResourceNotFoundException("user", name));
         } else {
             return userRepository.findById(id).map(RganUserDTO::convertFrom)
-                    .orElseThrow(() -> new ResourceNotFoundException("user", new Long(1)));
+                    .orElseThrow(() -> new ResourceNotFoundException("user", id));
         }
     }
 

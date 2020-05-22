@@ -57,7 +57,7 @@ class UserAuthenticationControllerTest {
 
         params.put("username", "test1");
         params.put("password", "password length > 8");
-//        params.put("rememberMe", "true");
+        params.put("rememberMe", "true");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
             .post("/login")
