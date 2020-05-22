@@ -14,6 +14,8 @@ import com.okatu.rgan.vote.model.entity.VoteItem;
 import com.okatu.rgan.vote.model.event.VotePublishEvent;
 import com.okatu.rgan.vote.repository.BlogVoteItemRepository;
 import com.okatu.rgan.vote.repository.CommentVoteItemRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.lang.NonNull;
@@ -25,6 +27,8 @@ import java.util.Optional;
 // extremely ugly code
 @Component
 public class VoteService {
+
+    private static Logger logger = LoggerFactory.getLogger(VoteService.class);
 
     @Autowired
     private BlogVoteItemRepository blogVoteItemRepository;
@@ -82,7 +86,7 @@ public class VoteService {
 
     private void applyStateTransition(VoteItem voteItem, int newStatus){
         if(voteItem.getStatus().equals(newStatus)){
-            throw new UniquenessViolationException("You cannot re-vote/downvote/cancel the same blog!");
+            throw new UniquenessViolationException("You cannot re-vote/downvote/cancel the same entity, voteItem id: " + voteItem.getId());
         }
 
         switch (voteItem.getStatus()){
