@@ -72,7 +72,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers(
                 HttpMethod.GET,
                 "/blogs/vote/status",
-                "/comments/vote/status"
+                "/comments/vote/status",
+                "/users/self/blogs"
             ).authenticated()
             .antMatchers(
                 HttpMethod.POST,

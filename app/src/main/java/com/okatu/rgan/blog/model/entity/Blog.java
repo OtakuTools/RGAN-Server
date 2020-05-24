@@ -1,5 +1,7 @@
 package com.okatu.rgan.blog.model.entity;
 
+import com.okatu.rgan.blog.constant.BlogStatus;
+import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.VoteAbleEntity;
 
@@ -19,7 +21,13 @@ public class Blog implements VoteAbleEntity {
 
     private String title;
 
-    private Integer type;
+    @Column(nullable = false)
+    @Convert(converter = BlogType.Converter.class)
+    private BlogType type;
+
+    @Column(nullable = false)
+    @Convert(converter = BlogStatus.Converter.class)
+    private BlogStatus status;
 
     @Column(columnDefinition = "text")
     private String content;
@@ -79,6 +87,14 @@ public class Blog implements VoteAbleEntity {
         this.summary = summary;
     }
 
+    public BlogStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BlogStatus status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -111,9 +127,9 @@ public class Blog implements VoteAbleEntity {
         this.title = title;
     }
 
-    public Integer getType() { return type; }
+    public BlogType getType() { return type; }
 
-    public void setType(Integer type) { this.type = type; }
+    public void setType(BlogType type) { this.type = type; }
 
     public Integer getVoteCount() {
         return voteCount;

@@ -19,21 +19,22 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
     private EntityManager entityManager;
 
     @Override
-    public Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywords(Collection<String> keywords, Pageable pageable) {
+    public Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywordsAndStatusPublished(Collection<String> keywords, Pageable pageable) {
         Assert.notEmpty(keywords, "keywords should not be empty");
         // tags field needs another query
         StringBuilder based = new StringBuilder(
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +
-                "b.summary, " +
+                "b.summary, b.type, b.status" +
                 "b.voteCount, b.visitorCount, " +
                 "b.author.username, " +
-                "b.createdTime, b.modifiedTime) FROM Blog b WHERE");
+                "b.createdTime, b.modifiedTime) FROM Blog b WHERE b.status=com.okatu.rgan.blog.constant.BlogStatus.PUBLISHED AND ");
         // LOWER(firstname) like '%' + LOWER(?0) + '%'
-        based.append(" b.title like ?1");
+        based.append("(b.title like ?1");
         for(int i = 1, size = keywords.size(); i < size; i++){
-            based.append(" or b.title like ?").append(i + 1);
+            based.append(" OR b.title like ?").append(i + 1);
         }
+        based.append(')');
 
         TypedQuery<BlogSummaryDTO> query = entityManager.createQuery(based.toString(), BlogSummaryDTO.class);
 

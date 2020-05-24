@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.controller;
 
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
+import com.okatu.rgan.blog.service.BlogService;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.blog.model.BlogDTO;
@@ -30,39 +31,16 @@ import java.util.stream.Collectors;
 public class BlogController {
 
     @Autowired
-    private BlogRepository blogRepository;
-
-    @Autowired
-    private TagRepository tagRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private BlogService blogService;
 
     @GetMapping
     public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
-        return blogRepository.findByOrderByCreatedTimeDesc(pageable).map(BlogSummaryDTO::convertFrom);
+        return blogService.getAllPublishedBlogsOrderByCreatedTimeDesc(pageable);
     }
 
     @PostMapping
     public BlogDTO add(@RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
-        LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
-        Blog blog = new Blog();
-        blog.setTitle(blogEditParam.getTitle());
-        blog.setType(blogEditParam.getType());
-        blog.setSummary(blogEditParam.getSummary());
-        blog.setContent(blogEditParam.getContent());
-        blog.setTags(tags);
-        blog.setAuthor(userRepository.findByUsername(user.getUsername())
-            .orElseThrow(() -> new ConstraintViolationException("Cannot find current request username in repository, username: " + user.getUsername()))
-        );
-        blog.setVoteCount(0);
-
-        Blog saved = blogRepository.save(blog);
-//        applicationEventPublisher.publishEvent(new BlogPublishEvent(this, blog));
-        return BlogDTO.convertFrom(saved);
+        return blogService.addBlog(blogEditParam, user);
     }
 
     // visitor count problem:
@@ -82,61 +60,33 @@ public class BlogController {
     // This will protect the attribute collection inside the HttpSession object from concurrent access,
     // eliminating the opportunity for an application to cause that collection to become corrupted.
     @GetMapping("/{id}")
-    public BlogDTO one(@PathVariable Long id, HttpSession session){
-        return blogRepository.findById(id).map(BlogDTO::convertFrom)
-            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
+    public BlogDTO one(@PathVariable Long id){
+        return blogService.getPublishedBlogById(id);
     }
 
     @PutMapping("/{id}")
     public BlogDTO edit(@PathVariable Long id, @RequestBody BlogEditParam blogEditParam, @AuthenticationPrincipal RganUser user){
-
-        Blog blog = blogRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("blog", id));
-
-        if(RganUser.isNotSame(blog.getAuthor(), user)){
-            throw new ResourceAccessDeniedException("you have no permission to edit this blog");
-        }
-
-        blog.setType(blogEditParam.getType());
-        blog.setTitle(blogEditParam.getTitle());
-        blog.setSummary(blogEditParam.getSummary());
-        blog.setContent(blogEditParam.getContent());
-        blog.setTags(findTagsByTitles(blogEditParam.getTags()));
-
-        return BlogDTO.convertFrom(blogRepository.save(blog));
+        return blogService.editBlog(id, blogEditParam, user);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
-        blogRepository.findById(id).ifPresent(blog -> {
-            if(RganUser.isNotSame(blog.getAuthor(), user)){
-                throw new ResourceAccessDeniedException("you have no permission to delete this blog");
-            }
-            blogRepository.deleteById(id);
-        });
+        blogService.deleteBlog(id, user);
     }
 
     @GetMapping("/search")
-    public Page<BlogSummaryDTO> search(@RequestParam(value = "keyword", required = false) String keyword, @PageableDefault Pageable pageable){
-        if(StringUtils.isEmpty(keyword)){
-            return blogRepository.findByOrderByCreatedTimeDesc(pageable).map(BlogSummaryDTO::convertFrom);
+    public Page<BlogSummaryDTO> search(
+        @RequestParam(value = "keyword", required = false) String keyword,
+        @RequestParam(value = "username", required = false) String username,
+        @PageableDefault Pageable pageable){
+        if(!StringUtils.isEmpty(keyword)){
+            String[] keywords = keyword.split(" ");
+
+            return blogService.searchPublishedBlogsByKeywordOrderByCreatedTimeDesc(Arrays.asList(keywords), pageable);
+        }else if(!StringUtils.isEmpty(username)){
+            return blogService.searchPublishedBlogsByUsernameOrderByCreatedTimeDesc(username, pageable);
         }
 
-        String[] keywords = keyword.split(" ");
-
-        return blogRepository.findByTitleContainsAnyOfKeywords(Arrays.asList(keywords), pageable);
-    }
-
-    @GetMapping("/user")
-    public Page<BlogSummaryDTO> users(@RequestParam(value = "name") String name, @PageableDefault Pageable pageable) {
-        return blogRepository.findByAuthor_UsernameOrderByCreatedTimeDesc(name, pageable).map(BlogSummaryDTO::convertFrom);
-    }
-
-    private LinkedHashSet<Tag> findTagsByTitles(LinkedHashSet<String> titles){
-//        return titles.stream().map(
-//            title -> tagRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFoundException("Could not find Tag, title: " + title))
-//        ).collect(Collectors.toCollection(LinkedHashSet::new));
-        return titles.stream().map(
-            title -> tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(new Tag(title, title)))
-        ).collect(Collectors.toCollection(LinkedHashSet::new));
+        return blogService.getAllPublishedBlogsOrderByCreatedTimeDesc(pageable);
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -42,6 +43,7 @@ public class CommentController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+
     @GetMapping("/{blogId}/comments")
     public Page<CommentSummaryDTO> all(@PathVariable("blogId") Long blogId, @PageableDefault(size = 20) Pageable pageable){
         Page<CommentSummaryProjection> commentSummaryProjections = commentRepository.findByBlog_Id(blogId, pageable);
@@ -52,7 +54,7 @@ public class CommentController {
     // https://www.javacodemonk.com/difference-between-getone-and-findbyid-in-spring-data-jpa-3a96c3ff
     // Request URL: https://stackoverflow.com/posts/60629950/comments
     @PostMapping("/{blogId}/comments")
-    public String add(@PathVariable("blogId") Long blogId, @RequestBody CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
+    public String add(@PathVariable("blogId") Long blogId, @RequestBody @Valid CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
         Comment comment = new Comment();
         comment.setContent(commentEditParam.getContent());
         comment.setAuthor(user);
@@ -76,7 +78,7 @@ public class CommentController {
 
     @PutMapping("/comments/{commentId}")
     public String edit(@PathVariable("commentId") Long commentId,
-                       @RequestBody CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
+                       @RequestBody @Valid CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("comment", commentId));
 
         if(RganUser.isNotSame(comment.getAuthor(), user)){

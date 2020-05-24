@@ -1,6 +1,8 @@
 package com.okatu.rgan.blog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.okatu.rgan.blog.constant.BlogStatus;
+import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.blog.model.param.BlogEditParam;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,8 @@ class BlogControllerTest {
         BlogEditParam blogEditParam = new BlogEditParam();
         blogEditParam.setTitle("post 12");
         blogEditParam.setContent("##2");
+        blogEditParam.setStatus(BlogStatus.PUBLISHED);
+        blogEditParam.setType(BlogType.ORIGINAL);
 //        Set<String> tags = new HashSet<>();
 //        tags.add("测试1");
 //        blogEditParam.setTags(tags);

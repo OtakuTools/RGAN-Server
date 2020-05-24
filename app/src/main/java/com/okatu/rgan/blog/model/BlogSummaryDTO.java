@@ -14,6 +14,10 @@ public class BlogSummaryDTO{
 
     private String summary;
 
+    private Integer type;
+
+    private Integer status;
+
     private Integer voteCount;
 
     private Integer visitorCount;
@@ -33,12 +37,15 @@ public class BlogSummaryDTO{
     public BlogSummaryDTO(
         Long id, String title,
         String summary,
+        Integer type, Integer status,
         Integer voteCount, Integer visitorCount,
         String authorName,
         LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.title = title;
         this.summary = summary;
+        this.type = type;
+        this.status = status;
         this.voteCount = voteCount;
         this.visitorCount = visitorCount;
         this.authorName = authorName;
@@ -118,11 +125,29 @@ public class BlogSummaryDTO{
         this.modifiedTime = modifiedTime;
     }
 
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     public static BlogSummaryDTO convertFrom(BlogSummaryProjection blogSummaryProjection){
         BlogSummaryDTO blogSummaryDTO = new BlogSummaryDTO(
             blogSummaryProjection.getId(),
             blogSummaryProjection.getTitle(),
             blogSummaryProjection.getSummary(),
+            blogSummaryProjection.getType().getValue(),
+            blogSummaryProjection.getStatus().getValue(),
             blogSummaryProjection.getVoteCount(),
             blogSummaryProjection.getVisitorCount(),
             blogSummaryProjection.getAuthor().getUsername(),

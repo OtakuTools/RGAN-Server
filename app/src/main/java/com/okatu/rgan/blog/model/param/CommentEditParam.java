@@ -1,6 +1,9 @@
 package com.okatu.rgan.blog.model.param;
 
+import javax.validation.constraints.Size;
+
 public class CommentEditParam {
+    @Size(max = 255)
     private String content;
 
     // identify the reply to COMMENT_ID

@@ -1,5 +1,8 @@
 package com.okatu.rgan.user.feature.controller;
 
+import com.okatu.rgan.blog.constant.BlogStatus;
+import com.okatu.rgan.blog.model.BlogSummaryDTO;
+import com.okatu.rgan.blog.service.BlogService;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
 import com.okatu.rgan.user.feature.model.param.UserProfileEditParam;
@@ -29,13 +32,16 @@ import org.springframework.web.bind.annotation.*;
 //
 @RestController
 @RequestMapping("/users")
-public class UserController {
+public class UserCenterController {
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private UserFollowRelationshipRepository followRelationshipRepository;
+
+    @Autowired
+    private BlogService blogService;
 
 //    @GetMapping("/{id}")
 //    public RganUserDTO getUserInfo(@PathVariable Long id){
@@ -77,6 +83,16 @@ public class UserController {
             .map(followRelationship -> followRelationship.getId().getBeFollowed())
             .map(RganUserDTO::convertFrom);
     }
+
+    @GetMapping("/self/blogs")
+    public Page<BlogSummaryDTO> getSelfBlogs(@RequestParam(value = "status", required = false) Integer status, @AuthenticationPrincipal RganUser self, @PageableDefault Pageable pageable){
+        if(status == null){
+            return blogService.getAuthorAllBlogsOrderByCreatedTimeDesc(self, pageable);
+        }
+
+        return blogService.getAuthorSpecificStatusBlogsOrderByCreatedTimeDesc(self, BlogStatus.selectByValue(status), pageable);
+    }
+
 
 //    @GetMapping("/{id}/followers/size")
 //    public Integer getFollowersSize(@PathVariable("id") Long id, @PageableDefault Pageable pageable){

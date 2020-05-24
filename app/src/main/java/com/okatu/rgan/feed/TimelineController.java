@@ -4,6 +4,7 @@ import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.model.CommentSummaryDTO;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.repository.CommentRepository;
+import com.okatu.rgan.blog.service.BlogService;
 import com.okatu.rgan.feed.constant.FeedMessageType;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
@@ -33,9 +34,6 @@ public class TimelineController {
     private UserFollowRelationshipRepository userFollowRelationshipRepository;
 
     @Autowired
-    private BlogRepository blogRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -44,12 +42,15 @@ public class TimelineController {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private BlogService blogService;
+
     @GetMapping("/blogs")
     public Page<BlogSummaryDTO> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
         Set<RganUser> followingUsers = userFollowRelationshipRepository.findById_FollowerAndStatus(user, UserFollowRelationshipStatus.FOLLOWING)
             .stream().map(userFollowRelationship -> userFollowRelationship.getId().getBeFollowed()).collect(Collectors.toSet());
 
-        return blogRepository.findByAuthorInOrderByCreatedTimeDesc(followingUsers, pageable).map(BlogSummaryDTO::convertFrom);
+        return blogService.getAuthorsPublishedBlogsOrderByCreatedTimeDesc(followingUsers, pageable);
     }
 
     @GetMapping("/comments")

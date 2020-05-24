@@ -14,6 +14,8 @@ public class BlogDTO {
 
     private Integer type;
 
+    private Integer status;
+
     private String summary;
 
     private String content;
@@ -36,6 +38,22 @@ public class BlogDTO {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public Integer getVoteCount() {
+        return voteCount;
+    }
+
+    public void setVoteCount(Integer voteCount) {
+        this.voteCount = voteCount;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     public Long getId() {
@@ -64,14 +82,6 @@ public class BlogDTO {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Integer getUpvoteCount() {
-        return voteCount;
-    }
-
-    public void setUpvoteCount(Integer upvoteCount) {
-        this.voteCount = upvoteCount;
     }
 
     public Integer getVisitorCount() {
@@ -134,14 +144,15 @@ public class BlogDTO {
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setId(blog.getId());
         blogDTO.setTitle(blog.getTitle());
-        blogDTO.setType(blog.getType());
+        blogDTO.setType(blog.getType().getValue());
+        blogDTO.setStatus(blog.getStatus().getValue());
         blogDTO.setSummary(blog.getSummary());
         blogDTO.setContent(blog.getContent());
         blogDTO.setCreatedTime(blog.getCreatedTime());
         blogDTO.setModifiedTime(blog.getModifiedTime());
         blogDTO.setTags(blog.getTags());
         blogDTO.setAuthorName(blog.getAuthor().getUsername());
-        blogDTO.setUpvoteCount(blog.getVoteCount());
+        blogDTO.setVoteCount(blog.getVoteCount());
         blogDTO.setVisitorCount(blog.getVisitorCount());
         return blogDTO;
     }

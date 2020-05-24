@@ -1,11 +1,13 @@
 package com.okatu.rgan.user.authentication.model.param;
 
+import com.okatu.rgan.user.authentication.annotation.ValidUsername;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class UserRegisterParam {
 
-    @NotBlank
+    @ValidUsername
     private String username;
 
     @NotBlank

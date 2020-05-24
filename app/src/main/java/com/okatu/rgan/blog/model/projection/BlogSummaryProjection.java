@@ -1,5 +1,8 @@
 package com.okatu.rgan.blog.model.projection;
 
+import com.okatu.rgan.blog.constant.BlogStatus;
+import com.okatu.rgan.blog.constant.BlogType;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -10,6 +13,10 @@ public interface BlogSummaryProjection {
     String getTitle();
 
     String getSummary();
+
+    BlogType getType();
+
+    BlogStatus getStatus();
 
     Integer getVoteCount();
 

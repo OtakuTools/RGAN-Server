@@ -9,5 +9,5 @@ import java.util.Collection;
 import java.util.List;
 
 public interface CustomizedBlogRepository {
-    Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywords(Collection<String> keywords, Pageable pageable);
+    Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywordsAndStatusPublished(Collection<String> keywords, Pageable pageable);
 }

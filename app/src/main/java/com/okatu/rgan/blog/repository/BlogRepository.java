@@ -1,5 +1,6 @@
 package com.okatu.rgan.blog.repository;
 
+import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.model.entity.Blog;
@@ -9,12 +10,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
 
-    Page<BlogSummaryProjection> findByAuthorInOrderByCreatedTimeDesc(Collection<RganUser> usersId, Pageable pageable);
+    Page<BlogSummaryProjection> findByAuthorInAndStatusOrderByCreatedTimeDesc(Collection<RganUser> author, BlogStatus status, Pageable pageable);
 
-    Page<BlogSummaryProjection> findByOrderByCreatedTimeDesc(Pageable pageable);
+    Page<BlogSummaryProjection> findByStatusOrderByCreatedTimeDesc(BlogStatus status, Pageable pageable);
 
-    Page<BlogSummaryProjection> findByAuthor_UsernameOrderByCreatedTimeDesc(String username, Pageable pageable);
+    Page<BlogSummaryProjection> findByAuthor_UsernameAndStatusOrderByCreatedTimeDesc(String username, BlogStatus status, Pageable pageable);
+
+    Page<BlogSummaryProjection> findByAuthorOrderByCreatedTime(RganUser author, Pageable pageable);
+
+    Page<BlogSummaryProjection> findByAuthorAndStatusOrderByCreatedTimeDesc(RganUser author, BlogStatus status, Pageable pageable);
+
+    Optional<Blog> findByIdAndStatus(Long id, BlogStatus status);
 }
