@@ -1,4 +1,4 @@
-package com.okatu.rgan.feed;
+package com.okatu.rgan.feed.controller;
 
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.model.CommentSummaryDTO;
@@ -6,6 +6,7 @@ import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.blog.service.BlogService;
 import com.okatu.rgan.feed.constant.FeedMessageType;
+import com.okatu.rgan.feed.model.TimelineCommentDTO;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
@@ -13,6 +14,7 @@ import com.okatu.rgan.user.feature.model.entity.UserFollowRelationship;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
+import com.okatu.rgan.vote.model.VoteStatusDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,13 +56,24 @@ public class TimelineController {
     }
 
     @GetMapping("/comments")
-    public Page<CommentSummaryDTO> getReplyComment(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
-        Page<FeedMessageBoxItem> items = feedMessageBoxRepository
-            .findByReceiverAndMessageTypeOrderByFeedMessageDesc(user, FeedMessageType.COMMENT, pageable);
+    public Page<TimelineCommentDTO> getReplyComment(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
         return feedMessageBoxRepository
             .findByReceiverAndMessageTypeOrderByFeedMessageDesc(user, FeedMessageType.COMMENT, pageable)
-            .map(feedMessageBoxItem -> commentRepository.findByIdIs(feedMessageBoxItem.getFeedMessage().getEntityId()))
-            .map(CommentSummaryDTO::convertFrom);
+            .map(feedMessageBoxItem -> commentRepository.findById(feedMessageBoxItem.getFeedMessage().getEntityId()).get())
+            .map(TimelineCommentDTO::convertFrom);
     }
 
+    @GetMapping("/votes")
+    public Page<VoteStatusDTO> get(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
+        Page<FeedMessageBoxItem> items = feedMessageBoxRepository
+            .findByReceiverAndMessageTypeOrderByFeedMessageDesc(user, FeedMessageType.VOTE, pageable);
+
+        // who vote you for... ?
+        // you have two options
+        // feedMessage add an... or feedMessageBox?
+        // when will a feedMessage exist in multiple MessageBox?
+        // except for blog?
+        //
+        return null;
+    }
 }

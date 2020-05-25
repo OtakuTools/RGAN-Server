@@ -1,27 +1,25 @@
-package com.okatu.rgan.blog.model;
+package com.okatu.rgan.feed.model;
 
-import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
+import com.okatu.rgan.blog.model.entity.Comment;
 
 import java.time.LocalDateTime;
 
-public class CommentSummaryDTO {
+public class TimelineCommentDTO {
     private Long id;
 
     private String content;
 
     private String authorName;
 
-    private Long replyTo;
-
     private Long blogId;
 
     private String blogTitle;
 
+    private Long replyTo;
+
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;
-
-    private Integer voteCount;
 
     public Long getId() {
         return id;
@@ -45,6 +43,22 @@ public class CommentSummaryDTO {
 
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
+    }
+
+    public Long getBlogId() {
+        return blogId;
+    }
+
+    public void setBlogId(Long blogId) {
+        this.blogId = blogId;
+    }
+
+    public String getBlogTitle() {
+        return blogTitle;
+    }
+
+    public void setBlogTitle(String blogTitle) {
+        this.blogTitle = blogTitle;
     }
 
     public Long getReplyTo() {
@@ -71,38 +85,31 @@ public class CommentSummaryDTO {
         this.modifiedTime = modifiedTime;
     }
 
-    public Integer getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(Integer voteCount) {
-        this.voteCount = voteCount;
-    }
-
-    public CommentSummaryDTO() {
-    }
-
-    public CommentSummaryDTO(Long id, String content, String authorName, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer voteCount) {
+    public TimelineCommentDTO(Long id, String content, String authorName, Long blogId, String blogTitle, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.content = content;
         this.authorName = authorName;
+        this.blogId = blogId;
+        this.blogTitle = blogTitle;
         this.replyTo = replyTo;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
-        this.voteCount = voteCount;
     }
 
-    public static CommentSummaryDTO convertFrom(CommentSummaryProjection projection){
-        Long replyToCommentId = projection.getReplyTo() != null ?
-            projection.getReplyTo().getId() : null;
-        return new CommentSummaryDTO(
-            projection.getId(),
-            projection.getContent(),
-            projection.getAuthor().getUsername(),
+    public static TimelineCommentDTO convertFrom(Comment comment){
+        Long replyToCommentId = comment.getReplyTo() != null ?
+            comment.getReplyTo().getId() : null;
+
+        return new TimelineCommentDTO(
+            comment.getId(),
+            comment.getContent(),
+            comment.getAuthor().getUsername(),
+            comment.getBlog().getId(),
+            comment.getBlog().getTitle(),
             replyToCommentId,
-            projection.getCreatedTime(),
-            projection.getModifiedTime(),
-            projection.getVoteCount()
+            comment.getCreatedTime(),
+            comment.getModifiedTime()
         );
     }
 }
+

@@ -59,7 +59,7 @@ public class VoteService {
             }
             blogVoteItemRepository.save((BlogVoteItem) voteItem);
             if(newStatus == VoteStatus.UPVOTE){
-                applicationEventPublisher.publishEvent(new VotePublishEvent<>(this, (BlogVoteItem) voteItem));
+                applicationEventPublisher.publishEvent(new VotePublishEvent(this, voteItem));
             }
         }else if(entity.getClass().equals(Comment.class)){
             optional = commentVoteItemRepository.findByCommentAndAuthor((Comment) entity, user);
@@ -76,7 +76,7 @@ public class VoteService {
             }
             commentVoteItemRepository.save((CommentVoteItem) voteItem);
             if(newStatus == VoteStatus.UPVOTE){
-                applicationEventPublisher.publishEvent(new VotePublishEvent<>(this, (CommentVoteItem) voteItem));
+                applicationEventPublisher.publishEvent(new VotePublishEvent(this, voteItem));
             }
         }else{
             throw new ConstraintViolationException("Not support, should not hit here");

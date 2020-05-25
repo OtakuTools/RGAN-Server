@@ -28,7 +28,7 @@ class VoteControllerTest {
     private ObjectMapper mapper;
 
     @Test
-    @WithUserDetails("test")
+    @WithUserDetails("test1")
     void voteBlog() throws Exception {
         VoteParam voteParam = new VoteParam();
         voteParam.setStatus(VoteStatus.DOWNVOTE);

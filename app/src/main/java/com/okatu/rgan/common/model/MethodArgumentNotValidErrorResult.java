@@ -3,18 +3,11 @@ package com.okatu.rgan.common.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MethodArgumentNotValidErrorResult {
-    private String message;
+public class MethodArgumentNotValidErrorResult extends GeneralErrorResult{
 
     private List<FieldError> fieldErrors = new ArrayList<>();
 
-    public String getMessage() {
-        return message;
-    }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     public List<FieldError> getFieldErrors() {
         return fieldErrors;

@@ -43,12 +43,12 @@ public class FeedMessagePublishService {
         FeedMessage savedFeedMessage = feedMessageRepository.save(feedMessage);
 
         if(RganUser.isNotSame(comment.getAuthor(), comment.getBlog().getAuthor())){
-            FeedMessageBoxItem commentAuthorMessageBoxItem = new FeedMessageBoxItem();
-            commentAuthorMessageBoxItem.setFeedMessage(savedFeedMessage);
-            commentAuthorMessageBoxItem.setMessageType(FeedMessageType.COMMENT);
+            FeedMessageBoxItem blogAuthorMessageBoxItem = new FeedMessageBoxItem();
+            blogAuthorMessageBoxItem.setFeedMessage(savedFeedMessage);
+            blogAuthorMessageBoxItem.setMessageType(FeedMessageType.COMMENT);
             // the author of blog which the comment belongs to
-            commentAuthorMessageBoxItem.setReceiver(comment.getBlog().getAuthor());
-            feedMessageBoxRepository.save(commentAuthorMessageBoxItem);
+            blogAuthorMessageBoxItem.setReceiver(comment.getBlog().getAuthor());
+            feedMessageBoxRepository.save(blogAuthorMessageBoxItem);
         }
 
         if(comment.getReplyTo() != null){
@@ -62,13 +62,21 @@ public class FeedMessagePublishService {
 
     @Async
     @EventListener
-    public void processCommentVotePublishEvent(VotePublishEvent<CommentVoteItem> votePublishEvent){
+    public void processCommentVotePublishEvent(VotePublishEvent votePublishEvent){
+        VoteItem voteItem = votePublishEvent.getVoteItem();
 
-    }
+        FeedMessage feedMessage = new FeedMessage();
+        feedMessage.setAuthor(voteItem.getAuthor());
+        feedMessage.setCreatedTime(voteItem.getCreatedTime());
+        feedMessage.setEntityId(voteItem.getId());
+        feedMessage.setType(FeedMessageType.VOTE);
+        FeedMessage savedFeedMessage = feedMessageRepository.save(feedMessage);
 
-    @Async
-    @EventListener
-    public void processBlogVotePublishEvent(VotePublishEvent<BlogVoteItem> votePublishEvent){
+        FeedMessageBoxItem voteTargetAuthorMessageBoxItem = new FeedMessageBoxItem();
+        voteTargetAuthorMessageBoxItem.setFeedMessage(savedFeedMessage);
+        voteTargetAuthorMessageBoxItem.setMessageType(FeedMessageType.VOTE);
+        voteTargetAuthorMessageBoxItem.setReceiver(voteItem.getAssociateVoteAbleEntity().getAuthor());
+        feedMessageBoxRepository.save(voteTargetAuthorMessageBoxItem);
 
     }
 
