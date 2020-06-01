@@ -1,5 +1,7 @@
 package com.okatu.rgan.blog.model;
 
+import com.okatu.rgan.blog.constant.BlogStatus;
+import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 
 import java.time.LocalDateTime;
@@ -37,15 +39,15 @@ public class BlogSummaryDTO{
     public BlogSummaryDTO(
         Long id, String title,
         String summary,
-        Integer type, Integer status,
+        BlogType type, BlogStatus blogStatus,
         Integer voteCount, Integer visitorCount,
         String authorName,
         LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.title = title;
         this.summary = summary;
-        this.type = type;
-        this.status = status;
+        this.type = type.getValue();
+        this.status = blogStatus.getValue();
         this.voteCount = voteCount;
         this.visitorCount = visitorCount;
         this.authorName = authorName;
@@ -146,8 +148,8 @@ public class BlogSummaryDTO{
             blogSummaryProjection.getId(),
             blogSummaryProjection.getTitle(),
             blogSummaryProjection.getSummary(),
-            blogSummaryProjection.getType().getValue(),
-            blogSummaryProjection.getStatus().getValue(),
+            blogSummaryProjection.getType(),
+            blogSummaryProjection.getStatus(),
             blogSummaryProjection.getVoteCount(),
             blogSummaryProjection.getVisitorCount(),
             blogSummaryProjection.getAuthor().getUsername(),
