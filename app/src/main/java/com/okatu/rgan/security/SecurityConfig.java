@@ -120,6 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder(){
+        // need not to explicitly provide salt
         return new BCryptPasswordEncoder();
     }
 

@@ -25,7 +25,7 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
         StringBuilder based = new StringBuilder(
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +
-                "b.summary, b.type, b.status" +
+                "b.summary, b.type, b.status, " +
                 "b.voteCount, b.visitorCount, " +
                 "b.author.username, " +
                 "b.createdTime, b.modifiedTime) FROM Blog b WHERE b.status=com.okatu.rgan.blog.constant.BlogStatus.PUBLISHED AND ");
