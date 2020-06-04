@@ -2,7 +2,9 @@ package com.okatu.rgan.user.feature.controller;
 
 import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
+import com.okatu.rgan.blog.model.CommentSummaryDTO;
 import com.okatu.rgan.blog.service.BlogService;
+import com.okatu.rgan.blog.service.CommentService;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
 import com.okatu.rgan.user.feature.model.param.UserProfileEditParam;
@@ -42,6 +44,9 @@ public class UserCenterController {
 
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private CommentService commentService;
 
 //    @GetMapping("/{id}")
 //    public RganUserDTO getUserInfo(@PathVariable Long id){
@@ -91,6 +96,11 @@ public class UserCenterController {
         }
 
         return blogService.getAuthorSpecificStatusBlogsOrderByCreatedTimeDesc(self, BlogStatus.selectByValue(status), pageable);
+    }
+
+    @GetMapping("/self/comments")
+    public Page<CommentSummaryDTO> getSelfComments(@AuthenticationPrincipal RganUser self, @PageableDefault Pageable pageable){
+        return commentService.getAuthorAllCommentsOrderByCreatedTimeDesc(self, pageable);
     }
 
 
