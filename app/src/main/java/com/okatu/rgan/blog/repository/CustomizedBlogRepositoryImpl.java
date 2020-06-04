@@ -22,6 +22,7 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
     public Page<BlogSummaryDTO> findByTitleContainsAnyOfKeywordsAndStatusPublished(Collection<String> keywords, Pageable pageable) {
         Assert.notEmpty(keywords, "keywords should not be empty");
         // tags field needs another query
+        // very vulnerable
         StringBuilder based = new StringBuilder(
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +

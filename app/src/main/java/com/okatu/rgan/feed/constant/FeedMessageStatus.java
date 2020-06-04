@@ -1,7 +1,38 @@
 package com.okatu.rgan.feed.constant;
 
-public final class FeedMessageStatus {
-    public final static int VISIBLE = 1;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.okatu.rgan.common.model.RganAbstractPersistableEnumConverter;
+import com.okatu.rgan.common.model.RganPersistableEnum;
 
-    public final static int INVISIBLE = 2;
+import java.util.Arrays;
+
+public enum FeedMessageStatus implements RganPersistableEnum {
+
+    @JsonProperty("0")
+    ENABLED(0),
+
+    @JsonProperty("1")
+    DELETED(1);
+
+    private final int value;
+
+    FeedMessageStatus(int value) {
+        this.value = value;
+    }
+
+    @Override
+    public int getValue() {
+        return value;
+    }
+
+    public static FeedMessageStatus selectByValue(int value){
+        return Arrays.stream(values()).filter(status -> status.getValue() == value).findAny()
+            .orElseThrow(() -> new IllegalArgumentException("No such value: " + value + " for enum class FeedMessageStatus"));
+    }
+
+    public static class Converter extends RganAbstractPersistableEnumConverter<FeedMessageStatus> {
+        public Converter() {
+            super(FeedMessageStatus.class);
+        }
+    }
 }

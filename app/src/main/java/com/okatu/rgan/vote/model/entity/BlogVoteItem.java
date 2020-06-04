@@ -8,7 +8,7 @@ import com.okatu.rgan.vote.model.VoteAbleEntity;
 import javax.persistence.*;
 
 @Entity
-@DiscriminatorValue(VoteType.BLOG)
+@DiscriminatorValue(VoteType.BLOG_DISCRIMINATOR)
 public class BlogVoteItem extends VoteItem{
 
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)

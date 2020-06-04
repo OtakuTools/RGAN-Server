@@ -1,15 +1,15 @@
 package com.okatu.rgan.feed.model;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 
 import java.time.LocalDateTime;
 
-public class TimelineCommentDTO {
-    private Long id;
+public class TimelineCommentDTO extends TimelineResultDTO{
+
+    private Long commentId;
 
     private String content;
-
-    private String authorName;
 
     private Long blogId;
 
@@ -17,17 +17,7 @@ public class TimelineCommentDTO {
 
     private Long replyTo;
 
-    private LocalDateTime createdTime;
-
     private LocalDateTime modifiedTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getContent() {
         return content;
@@ -35,14 +25,6 @@ public class TimelineCommentDTO {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getAuthorName() {
-        return authorName;
-    }
-
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
     }
 
     public Long getBlogId() {
@@ -69,14 +51,6 @@ public class TimelineCommentDTO {
         this.replyTo = replyTo;
     }
 
-    public LocalDateTime getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(LocalDateTime createdTime) {
-        this.createdTime = createdTime;
-    }
-
     public LocalDateTime getModifiedTime() {
         return modifiedTime;
     }
@@ -85,31 +59,35 @@ public class TimelineCommentDTO {
         this.modifiedTime = modifiedTime;
     }
 
-    public TimelineCommentDTO(Long id, String content, String authorName, Long blogId, String blogTitle, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime) {
-        this.id = id;
-        this.content = content;
-        this.authorName = authorName;
-        this.blogId = blogId;
-        this.blogTitle = blogTitle;
-        this.replyTo = replyTo;
-        this.createdTime = createdTime;
-        this.modifiedTime = modifiedTime;
+    public Long getCommentId() {
+        return commentId;
     }
 
-    public static TimelineCommentDTO convertFrom(Comment comment){
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
+    }
+
+    public TimelineCommentDTO() {
+    }
+
+    public TimelineCommentDTO(FeedMessageBoxItem feedMessageBoxItem) {
+        super(feedMessageBoxItem);
+    }
+
+    public static TimelineCommentDTO createFrom(FeedMessageBoxItem feedMessageBoxItem, Comment comment){
+        TimelineCommentDTO timelineCommentDTO = new TimelineCommentDTO(feedMessageBoxItem);
+
         Long replyToCommentId = comment.getReplyTo() != null ?
             comment.getReplyTo().getId() : null;
 
-        return new TimelineCommentDTO(
-            comment.getId(),
-            comment.getContent(),
-            comment.getAuthor().getUsername(),
-            comment.getBlog().getId(),
-            comment.getBlog().getTitle(),
-            replyToCommentId,
-            comment.getCreatedTime(),
-            comment.getModifiedTime()
-        );
+        timelineCommentDTO.setCommentId(comment.getId());
+        timelineCommentDTO.setContent(comment.getContent());
+        timelineCommentDTO.setBlogId(comment.getBlog().getId());
+        timelineCommentDTO.setBlogTitle(comment.getBlog().getTitle());
+        timelineCommentDTO.setReplyTo(replyToCommentId);
+        timelineCommentDTO.setModifiedTime(comment.getModifiedTime());
+
+        return timelineCommentDTO;
     }
 }
 

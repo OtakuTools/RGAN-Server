@@ -11,7 +11,10 @@ import com.okatu.rgan.vote.model.VoteAbleEntity;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 import com.okatu.rgan.vote.model.entity.VoteItem;
-import com.okatu.rgan.vote.model.event.VotePublishEvent;
+import com.okatu.rgan.vote.model.event.BlogUpVoteCancelEvent;
+import com.okatu.rgan.vote.model.event.BlogVotePublishEvent;
+import com.okatu.rgan.vote.model.event.CommentUpVoteCancelEvent;
+import com.okatu.rgan.vote.model.event.CommentVotePublishEvent;
 import com.okatu.rgan.vote.repository.BlogVoteItemRepository;
 import com.okatu.rgan.vote.repository.CommentVoteItemRepository;
 import org.slf4j.Logger;
@@ -40,48 +43,51 @@ public class VoteService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public <T extends VoteAbleEntity> void doVote(@NonNull T entity, RganUser user, int newStatus){
-        Optional optional;
-        VoteItem voteItem;
+    public void doVote(Blog blog, RganUser user, int newStatus){
+        Optional<BlogVoteItem> optional = blogVoteItemRepository.findByBlogAndAuthor(blog, user);
+        BlogVoteItem voteItem;
 
-        if(entity.getClass().equals(Blog.class)){
-            optional = blogVoteItemRepository.findByBlogAndAuthor((Blog) entity, user);
-            if(optional.isPresent()){
-                voteItem = (VoteItem) optional.get();
-                applyStateTransition(voteItem, newStatus);
-            }else{
-                if(newStatus == VoteStatus.CANCELED){
-                    throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
-                }
-
-                voteItem = new BlogVoteItem(user, (Blog) entity);
-                applyOnCancelOrNotExistStatus(voteItem, newStatus);
-            }
-            blogVoteItemRepository.save((BlogVoteItem) voteItem);
-            if(newStatus == VoteStatus.UPVOTE){
-                applicationEventPublisher.publishEvent(new VotePublishEvent(this, voteItem));
-            }
-        }else if(entity.getClass().equals(Comment.class)){
-            optional = commentVoteItemRepository.findByCommentAndAuthor((Comment) entity, user);
-            if(optional.isPresent()){
-                voteItem = (VoteItem) optional.get();
-                applyStateTransition(voteItem, newStatus);
-            }else{
-                if(newStatus == VoteStatus.CANCELED){
-                    throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
-                }
-
-                voteItem = new CommentVoteItem(user, (Comment) entity);
-                applyOnCancelOrNotExistStatus(voteItem, newStatus);
-            }
-            commentVoteItemRepository.save((CommentVoteItem) voteItem);
-            if(newStatus == VoteStatus.UPVOTE){
-                applicationEventPublisher.publishEvent(new VotePublishEvent(this, voteItem));
-            }
+        if(optional.isPresent()){
+            voteItem = optional.get();
+            applyStateTransition(voteItem, newStatus);
         }else{
-            throw new ConstraintViolationException("Not support, should not hit here");
-        }
+            if(newStatus == VoteStatus.CANCELED){
+                throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
+            }
 
+            voteItem = new BlogVoteItem(user, blog);
+            applyOnCancelOrNotExistStatus(voteItem, newStatus);
+        }
+        blogVoteItemRepository.save(voteItem);
+        if(newStatus == VoteStatus.UPVOTE){
+            applicationEventPublisher.publishEvent(new BlogVotePublishEvent(this, voteItem));
+        }else{
+            applicationEventPublisher.publishEvent(new BlogUpVoteCancelEvent(this, voteItem));
+        }
+    }
+
+    @Transactional
+    public void doVote(Comment comment, RganUser user, int newStatus){
+        Optional<CommentVoteItem> optional = commentVoteItemRepository.findByCommentAndAuthor(comment, user);
+        CommentVoteItem voteItem;
+
+        if(optional.isPresent()){
+            voteItem = optional.get();
+            applyStateTransition(voteItem, newStatus);
+        }else{
+            if(newStatus == VoteStatus.CANCELED){
+                throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
+            }
+
+            voteItem = new CommentVoteItem(user, comment);
+            applyOnCancelOrNotExistStatus(voteItem, newStatus);
+        }
+        commentVoteItemRepository.save(voteItem);
+        if(newStatus == VoteStatus.UPVOTE){
+            applicationEventPublisher.publishEvent(new CommentVotePublishEvent(this, voteItem));
+        }else{
+            applicationEventPublisher.publishEvent(new CommentUpVoteCancelEvent(this, voteItem));
+        }
     }
 
     private void applyStateTransition(VoteItem voteItem, int newStatus){
