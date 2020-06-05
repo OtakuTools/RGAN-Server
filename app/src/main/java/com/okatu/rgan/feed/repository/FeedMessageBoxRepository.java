@@ -37,6 +37,7 @@ public interface FeedMessageBoxRepository extends JpaRepository<FeedMessageBoxIt
     @Query(value = "SELECT COUNT(item) FROM FeedMessageBoxItem item " +
         "WHERE item.receiver= ?1 AND " +
         "item.messageStatus = ?2 AND " +
+        "item.read = FALSE AND" +
         "(item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.BLOG_VOTE OR item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.COMMENT_VOTE)"
     )
     int countUnreadVoteItemByReceiverAndMessageStatus(RganUser receiver, FeedMessageStatus messageStatus);
