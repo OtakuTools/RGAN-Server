@@ -3,13 +3,13 @@ package com.okatu.rgan.feed.model.param;
 import java.util.Set;
 
 public class TimelineMessageReadStatusUpdateParam {
-    private Set<Long> messageIds;
+    private Set<Long> messageItemIds;
 
-    public Set<Long> getMessageIds() {
-        return messageIds;
+    public Set<Long> getMessageItemIds() {
+        return messageItemIds;
     }
 
-    public void setMessageIds(Set<Long> messageIds) {
-        this.messageIds = messageIds;
+    public void setMessageItemIds(Set<Long> messageItemIds) {
+        this.messageItemIds = messageItemIds;
     }
 }

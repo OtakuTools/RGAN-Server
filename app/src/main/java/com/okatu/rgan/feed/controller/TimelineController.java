@@ -59,7 +59,7 @@ public class TimelineController {
     public void updateTimelineMessageReadStatus(@RequestBody TimelineMessageReadStatusUpdateParam param, @AuthenticationPrincipal RganUser user){
 
         feedMessageBoxRepository.saveAll(
-            feedMessageBoxRepository.findAllByIdInAndReceiver(param.getMessageIds(), user)
+            feedMessageBoxRepository.findAllByIdInAndReceiver(param.getMessageItemIds(), user)
                 .stream().peek(feedMessageBoxItem -> feedMessageBoxItem.setRead(true)).collect(Collectors.toList())
         );
     }
