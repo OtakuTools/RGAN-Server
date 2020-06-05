@@ -3,10 +3,11 @@ package com.okatu.rgan.feed.controller;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.blog.service.BlogService;
+import com.okatu.rgan.feed.constant.FeedMessageStatus;
 import com.okatu.rgan.feed.constant.FeedMessageType;
-import com.okatu.rgan.feed.model.TimelineCommentDTO;
-import com.okatu.rgan.feed.model.TimelineUpVoteDTO;
-import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
+import com.okatu.rgan.feed.model.dto.TimelineCommentDTO;
+import com.okatu.rgan.feed.model.dto.TimelineMessageUnreadNumberDTO;
+import com.okatu.rgan.feed.model.dto.TimelineUpVoteDTO;
 import com.okatu.rgan.feed.model.param.TimelineMessageReadStatusUpdateParam;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.feed.service.TimelineService;
@@ -14,7 +15,6 @@ import com.okatu.rgan.user.feature.constant.UserFollowRelationshipStatus;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserFollowRelationshipRepository;
 import com.okatu.rgan.user.repository.UserRepository;
-import com.okatu.rgan.vote.model.VoteStatusDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -48,8 +48,11 @@ public class TimelineController {
     private TimelineService timelineService;
 
     @GetMapping("/news")
-    public boolean checkNewTimelineMessage(@AuthenticationPrincipal RganUser user){
-        return feedMessageBoxRepository.existsByReceiverAndReadIsFalse(user);
+    public TimelineMessageUnreadNumberDTO checkNewTimelineMessage(@AuthenticationPrincipal RganUser user){
+        TimelineMessageUnreadNumberDTO unreadNumberDTO = new TimelineMessageUnreadNumberDTO();
+        unreadNumberDTO.setCommentNum(feedMessageBoxRepository.countByReceiverAndMessageTypeAndMessageStatusAndReadIsFalse(user, FeedMessageType.COMMENT, FeedMessageStatus.ENABLED));
+        unreadNumberDTO.setUpVoteNum(feedMessageBoxRepository.countUnreadVoteItemByReceiverAndMessageStatus(user, FeedMessageStatus.ENABLED));
+        return unreadNumberDTO;
     }
 
     @PostMapping("/read")

@@ -31,4 +31,13 @@ public interface FeedMessageBoxRepository extends JpaRepository<FeedMessageBoxIt
     boolean existsByReceiverAndReadIsFalse(RganUser receiver);
 
     List<FeedMessageBoxItem> findAllByIdInAndReceiver(Collection<Long> id, RganUser receiver);
+
+    int countByReceiverAndMessageTypeAndMessageStatusAndReadIsFalse(RganUser receiver, FeedMessageType messageType, FeedMessageStatus messageStatus);
+
+    @Query(value = "SELECT COUNT(item) FROM FeedMessageBoxItem item " +
+        "WHERE item.receiver= ?1 AND " +
+        "item.messageStatus = ?2 AND " +
+        "(item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.BLOG_VOTE OR item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.COMMENT_VOTE)"
+    )
+    int countUnreadVoteItemByReceiverAndMessageStatus(RganUser receiver, FeedMessageStatus messageStatus);
 }

@@ -1,10 +1,10 @@
-package com.okatu.rgan.feed.model;
+package com.okatu.rgan.feed.model.dto;
 
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 
 import java.time.LocalDateTime;
 
-public abstract class TimelineResultDTO {
+public abstract class TimelineDetailResultBasic {
     // feed message self id
     private Long id;
 
@@ -46,10 +46,10 @@ public abstract class TimelineResultDTO {
         this.createdTime = createdTime;
     }
 
-    public TimelineResultDTO() {
+    public TimelineDetailResultBasic() {
     }
 
-    public TimelineResultDTO(FeedMessageBoxItem feedMessageBoxItem){
+    public TimelineDetailResultBasic(FeedMessageBoxItem feedMessageBoxItem){
         this.id = feedMessageBoxItem.getId();
         this.read = feedMessageBoxItem.isRead();
         this.authorName = feedMessageBoxItem.getAuthor().getUsername();

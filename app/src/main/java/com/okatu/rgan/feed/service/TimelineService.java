@@ -1,18 +1,14 @@
 package com.okatu.rgan.feed.service;
 
-import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
 import com.okatu.rgan.feed.constant.FeedMessageStatus;
 import com.okatu.rgan.feed.constant.FeedMessageType;
-import com.okatu.rgan.feed.model.TimelineCommentDTO;
-import com.okatu.rgan.feed.model.TimelineResultDTO;
-import com.okatu.rgan.feed.model.TimelineUpVoteDTO;
-import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
+import com.okatu.rgan.feed.model.dto.TimelineCommentDTO;
+import com.okatu.rgan.feed.model.dto.TimelineUpVoteDTO;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.vote.constant.VoteType;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 import com.okatu.rgan.vote.repository.BlogVoteItemRepository;

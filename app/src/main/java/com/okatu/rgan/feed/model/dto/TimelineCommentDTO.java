@@ -1,11 +1,11 @@
-package com.okatu.rgan.feed.model;
+package com.okatu.rgan.feed.model.dto;
 
 import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 
 import java.time.LocalDateTime;
 
-public class TimelineCommentDTO extends TimelineResultDTO{
+public class TimelineCommentDTO extends TimelineDetailResultBasic {
 
     private Long commentId;
 

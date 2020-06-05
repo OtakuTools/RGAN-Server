@@ -1,13 +1,12 @@
-package com.okatu.rgan.feed.model;
+package com.okatu.rgan.feed.model.dto;
 
+import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.vote.constant.VoteType;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 
-import java.time.LocalDateTime;
-
-public class TimelineUpVoteDTO extends TimelineResultDTO{
+public class TimelineUpVoteDTO extends TimelineDetailResultBasic {
 
     // blog, comment
     // what else?
@@ -16,12 +15,15 @@ public class TimelineUpVoteDTO extends TimelineResultDTO{
     // always provide
     private Long blogId;
 
+    // always provide
+    private String blogTitle;
+
     // for blog vote, null
     private Long targetCommentId;
 
-    // for blog, title
+    // for blog, null
     // for comment, comment content
-    private String voteTargetSummary;
+    private String targetCommentContent;
 
     public Integer getVoteType() {
         return voteType;
@@ -47,12 +49,20 @@ public class TimelineUpVoteDTO extends TimelineResultDTO{
         this.targetCommentId = targetCommentId;
     }
 
-    public String getVoteTargetSummary() {
-        return voteTargetSummary;
+    public String getTargetCommentContent() {
+        return targetCommentContent;
     }
 
-    public void setVoteTargetSummary(String voteTargetSummary) {
-        this.voteTargetSummary = voteTargetSummary;
+    public void setTargetCommentContent(String targetCommentContent) {
+        this.targetCommentContent = targetCommentContent;
+    }
+
+    public String getBlogTitle() {
+        return blogTitle;
+    }
+
+    public void setBlogTitle(String blogTitle) {
+        this.blogTitle = blogTitle;
     }
 
     public TimelineUpVoteDTO(FeedMessageBoxItem feedMessageBoxItem) {
@@ -62,10 +72,11 @@ public class TimelineUpVoteDTO extends TimelineResultDTO{
     public static TimelineUpVoteDTO createFrom(FeedMessageBoxItem feedMessageBoxItem, BlogVoteItem blogVoteItem){
         TimelineUpVoteDTO timelineUpVoteDTO = new TimelineUpVoteDTO(feedMessageBoxItem);
 
-        timelineUpVoteDTO.setBlogId(blogVoteItem.getId());
+        timelineUpVoteDTO.setBlogId(blogVoteItem.getBlog().getId());
+        timelineUpVoteDTO.setBlogTitle(blogVoteItem.getBlog().getTitle());
         timelineUpVoteDTO.setVoteType(VoteType.BLOG);
         timelineUpVoteDTO.setTargetCommentId(null);
-        timelineUpVoteDTO.setVoteTargetSummary(blogVoteItem.getBlog().getTitle());
+        timelineUpVoteDTO.setTargetCommentContent(null);
 
         return timelineUpVoteDTO;
     }
@@ -73,10 +84,12 @@ public class TimelineUpVoteDTO extends TimelineResultDTO{
     public static TimelineUpVoteDTO createFrom(FeedMessageBoxItem feedMessageBoxItem, CommentVoteItem commentVoteItem){
         TimelineUpVoteDTO timelineUpVoteDTO = new TimelineUpVoteDTO(feedMessageBoxItem);
 
-        timelineUpVoteDTO.setBlogId(commentVoteItem.getId());
+        Comment comment = commentVoteItem.getComment();
+        timelineUpVoteDTO.setBlogId(comment.getBlog().getId());
+        timelineUpVoteDTO.setBlogTitle(comment.getBlog().getTitle());
         timelineUpVoteDTO.setVoteType(VoteType.COMMENT);
-        timelineUpVoteDTO.setTargetCommentId(commentVoteItem.getComment().getId());
-        timelineUpVoteDTO.setVoteTargetSummary(commentVoteItem.getComment().getContent());
+        timelineUpVoteDTO.setTargetCommentId(comment.getId());
+        timelineUpVoteDTO.setTargetCommentContent(comment.getContent());
 
         return timelineUpVoteDTO;
     }

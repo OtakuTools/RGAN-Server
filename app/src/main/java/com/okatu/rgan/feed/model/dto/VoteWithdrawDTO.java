@@ -1,4 +1,4 @@
-package com.okatu.rgan.feed.model;
+package com.okatu.rgan.feed.model.dto;
 
 public class VoteWithdrawDTO {
     private Long id;
