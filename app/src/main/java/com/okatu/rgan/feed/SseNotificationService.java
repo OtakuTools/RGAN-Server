@@ -28,6 +28,8 @@ public class SseNotificationService {
         // I'm still confused with this shit
         // https://stackoverflow.com/questions/62191420/in-exactly-what-situation-a-spring-sseemitter-instance-will-time-out
         SseEmitter sseEmitter = new SseEmitter(1800_000L);
+        sseEmitterConcurrentHashMap.put(user.getId(), sseEmitter);
+
         sseEmitter.onCompletion(() -> sseEmitterConcurrentHashMap.remove(user.getId()));
         sseEmitter.onTimeout(() -> sseEmitterConcurrentHashMap.remove(user.getId()));
         sseEmitter.onError(throwable -> {

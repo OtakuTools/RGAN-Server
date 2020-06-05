@@ -48,6 +48,9 @@ public class Blog implements VoteAbleEntity {
         joinColumns = @JoinColumn(name = "blog_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    // use @ManyToMany only here, since the relationship here is quite stable and simple,
+    // unlike follow or favourite, both of which need extra column for description,
+    // and mapping such join table with extra column seems a bit of tricky in jpa.
     private Set<Tag> tags = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

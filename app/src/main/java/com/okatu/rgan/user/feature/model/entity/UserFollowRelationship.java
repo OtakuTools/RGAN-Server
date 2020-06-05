@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 
+// the reason why don't we use @ManyToMany to map the relationship,
+// see the comment in class Blog
 @Entity
 public class UserFollowRelationship {
     @EmbeddedId
