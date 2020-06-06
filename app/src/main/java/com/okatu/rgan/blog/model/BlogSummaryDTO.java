@@ -2,6 +2,7 @@ package com.okatu.rgan.blog.model;
 
 import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.constant.BlogType;
+import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
 
 import java.time.LocalDateTime;
@@ -157,6 +158,24 @@ public class BlogSummaryDTO{
             blogSummaryProjection.getModifiedTime()
         );
         blogSummaryDTO.setTags(blogSummaryProjection.getTags().stream().map(TagSummaryDTO::convertFrom).collect(Collectors.toCollection(LinkedHashSet::new)));
+        return blogSummaryDTO;
+    }
+
+    public static BlogSummaryDTO convertFrom(Blog blog){
+        BlogSummaryDTO blogSummaryDTO = new BlogSummaryDTO(
+            blog.getId(),
+            blog.getTitle(),
+            blog.getSummary(),
+            blog.getType(),
+            blog.getStatus(),
+            blog.getVoteCount(),
+            blog.getVisitorCount(),
+            blog.getAuthor().getUsername(),
+            blog.getCreatedTime(),
+            blog.getModifiedTime()
+        );
+
+        blogSummaryDTO.setTags(blog.getTags().stream().map(TagSummaryDTO::convertFrom).collect(Collectors.toSet()));
         return blogSummaryDTO;
     }
 }

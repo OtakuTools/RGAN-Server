@@ -80,7 +80,7 @@ public class UserFollowController {
         RganUser beFollowed = userRepository.findById(param.getTargetUserId()).orElseThrow(
             () -> new ResourceNotFoundException("user", param.getTargetUserId())
         );
-        UserFollowRelationshipId id = new UserFollowRelationshipId(userRepository.getOne(param.getTargetUserId()), user);
+        UserFollowRelationshipId id = new UserFollowRelationshipId(beFollowed, user);
         userFollowRelationshipRepository.findById(id).ifPresent(
             userFollowRelationship -> {
                 userFollowRelationship.setStatus(UserFollowRelationshipStatus.UN_FOLLOW);

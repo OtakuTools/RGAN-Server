@@ -120,4 +120,8 @@ public class BlogService {
             title -> tagRepository.findByTitle(title).orElseGet(() -> tagRepository.save(new Tag(title, title)))
         ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
+
+    public void addBlogToUserFavouriteList(long blogId, @NonNull RganUser user){
+
+    }
 }

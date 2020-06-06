@@ -1,5 +1,6 @@
 package com.okatu.rgan.blog.model;
 
+import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.blog.model.projection.TagSummaryProjection;
 
 public class TagSummaryDTO {
@@ -33,5 +34,9 @@ public class TagSummaryDTO {
 
     public static TagSummaryDTO convertFrom(TagSummaryProjection projection){
         return new TagSummaryDTO(projection.getId(), projection.getTitle());
+    }
+
+    public static TagSummaryDTO convertFrom(Tag tag){
+        return new TagSummaryDTO(tag.getId(), tag.getTitle());
     }
 }

@@ -11,6 +11,7 @@ import com.okatu.rgan.blog.model.entity.Tag;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.blog.repository.TagRepository;
+import com.okatu.rgan.user.feature.service.UserFavouriteListService;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public class BlogController {
 
     @Autowired
     private BlogService blogService;
+
+    @Autowired
+    private UserFavouriteListService userFavouriteListService;
 
     @GetMapping
     public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
@@ -88,5 +92,15 @@ public class BlogController {
         }
 
         return blogService.getAllPublishedBlogsOrderByCreatedTimeDesc(pageable);
+    }
+
+    @PostMapping("/{id}/favourite")
+    public void addBlogToUserFavouriteList(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
+        userFavouriteListService.addBlogToUserFavouriteList(id, user);
+    }
+
+    @DeleteMapping("/{id}/favourite")
+    public void deleteBlogFromUserFavouriteList(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
+        userFavouriteListService.deleteBlogFromUserFavouriteList(id, user);
     }
 }

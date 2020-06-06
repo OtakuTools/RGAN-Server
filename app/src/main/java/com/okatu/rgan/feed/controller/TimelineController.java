@@ -65,6 +65,10 @@ public class TimelineController {
     }
 
     @GetMapping("/blogs")
+    // What's the problem?
+    // a read list (blogId, receiverId)
+    // each time when get, check the difference?
+    // but how?
     public Page<BlogSummaryDTO> getTimeline(@PageableDefault Pageable pageable, @AuthenticationPrincipal RganUser user){
         Set<RganUser> followingUsers = userFollowRelationshipRepository.findById_FollowerAndStatus(user, UserFollowRelationshipStatus.FOLLOWING)
             .stream().map(userFollowRelationship -> userFollowRelationship.getId().getBeFollowed()).collect(Collectors.toSet());
