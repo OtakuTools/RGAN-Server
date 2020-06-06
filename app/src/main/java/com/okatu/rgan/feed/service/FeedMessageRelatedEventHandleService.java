@@ -17,6 +17,8 @@ import com.okatu.rgan.vote.model.event.BlogVotePublishEvent;
 import com.okatu.rgan.vote.model.event.CommentUpVoteCancelEvent;
 import com.okatu.rgan.vote.model.event.CommentVotePublishEvent;
 import com.okatu.rgan.vote.model.event.BlogUpVoteCancelEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -34,6 +36,8 @@ public class FeedMessageRelatedEventHandleService {
     private static String BLOG_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME = "blog_vote_withdraw";
 
     private static String COMMENT_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME = "comment_vote_withdraw";
+
+    private static Logger logger = LoggerFactory.getLogger(FeedMessageRelatedEventHandleService.class);
 
     @Autowired
     private FeedMessageBoxRepository feedMessageBoxRepository;
@@ -63,6 +67,8 @@ public class FeedMessageRelatedEventHandleService {
 
             sseNotificationService.sendMessage(blogAuthor, COMMENT_NEW_NOTIFICATION_EVENT_NAME,
                 TimelineCommentDTO.createFrom(blogAuthorMessageBoxItem, comment));
+
+            logSseSendInfo(blogAuthorMessageBoxItem, blogAuthor);
         }
 
         if(comment.getReplyTo() != null){
@@ -78,8 +84,9 @@ public class FeedMessageRelatedEventHandleService {
 
             sseNotificationService.sendMessage(receiver, COMMENT_NEW_NOTIFICATION_EVENT_NAME,
                 TimelineCommentDTO.createFrom(replyToUserMessageBoxItem, comment));
-        }
 
+            logSseSendInfo(replyToUserMessageBoxItem, receiver);
+        }
 
     }
 
@@ -99,6 +106,8 @@ public class FeedMessageRelatedEventHandleService {
 
         sseNotificationService.sendMessage(receiver, COMMENT_VOTE_NOTIFICATION_EVENT_NAME,
             TimelineUpVoteDTO.createFrom(messageBoxItem, commentVoteItem));
+
+        logSseSendInfo(messageBoxItem, receiver);
     }
 
     @Async
@@ -117,6 +126,8 @@ public class FeedMessageRelatedEventHandleService {
 
         sseNotificationService.sendMessage(receiver, BLOG_VOTE_NOTIFICATION_EVENT_NAME,
             TimelineUpVoteDTO.createFrom(messageBoxItem, blogVoteItem));
+
+        logSseSendInfo(messageBoxItem, receiver);
     }
 
     @Async
@@ -129,6 +140,8 @@ public class FeedMessageRelatedEventHandleService {
 
                 sseNotificationService.sendMessage(feedMessageBoxItem.getReceiver(), BLOG_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME,
                     new VoteWithdrawDTO(feedMessageBoxItem.getId()));
+
+                logSseSendInfo(feedMessageBoxItem, feedMessageBoxItem.getReceiver());
             });
     }
 
@@ -142,6 +155,12 @@ public class FeedMessageRelatedEventHandleService {
 
                 sseNotificationService.sendMessage(feedMessageBoxItem.getReceiver(), COMMENT_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME,
                     new VoteWithdrawDTO(feedMessageBoxItem.getId()));
+
+                logSseSendInfo(feedMessageBoxItem, feedMessageBoxItem.getReceiver());
             });
+    }
+
+    private void logSseSendInfo(FeedMessageBoxItem feedMessageBoxItem, RganUser receiver){
+        logger.info("Send message id {} to receiver {}", feedMessageBoxItem.getId(), receiver.getId());
     }
 }
