@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    Page<CommentSummaryProjection> findByBlog_Id(Long blogId, Pageable pageable);
+    List<CommentSummaryProjection> findByBlog_Id(Long blogId);
     Page<CommentSummaryProjection> findByAuthorOrderByCreatedTimeDesc(RganUser author, Pageable pageable);
 
     CommentSummaryProjection findByIdIs(Long id);

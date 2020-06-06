@@ -121,7 +121,4 @@ public class BlogService {
         ).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
-    public void addBlogToUserFavouriteList(long blogId, @NonNull RganUser user){
-
-    }
 }

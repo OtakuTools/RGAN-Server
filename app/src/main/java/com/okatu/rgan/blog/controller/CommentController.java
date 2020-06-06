@@ -24,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.validation.Valid;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/blogs")
@@ -45,9 +47,8 @@ public class CommentController {
 
 
     @GetMapping("/{blogId}/comments")
-    public Page<CommentSummaryDTO> all(@PathVariable("blogId") Long blogId, @PageableDefault(size = 20) Pageable pageable){
-        Page<CommentSummaryProjection> commentSummaryProjections = commentRepository.findByBlog_Id(blogId, pageable);
-        return commentRepository.findByBlog_Id(blogId, pageable).map(CommentSummaryDTO::convertFrom);
+    public List<CommentSummaryDTO> all(@PathVariable("blogId") Long blogId){
+        return commentRepository.findByBlog_Id(blogId).stream().map(CommentSummaryDTO::convertFrom).collect(Collectors.toList());
     }
 
     // about getOne and findById:
