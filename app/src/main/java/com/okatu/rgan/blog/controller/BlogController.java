@@ -103,4 +103,9 @@ public class BlogController {
     public void deleteBlogFromUserFavouriteList(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
         userFavouriteListService.deleteBlogFromUserFavouriteList(id, user);
     }
+
+    @GetMapping("/{id}/favourite/status")
+    public boolean checkBlogFavouriteStatus(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
+        return userFavouriteListService.checkBlogFavouriteStatus(id, user);
+    }
 }

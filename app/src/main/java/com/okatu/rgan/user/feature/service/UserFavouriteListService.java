@@ -72,4 +72,8 @@ public class UserFavouriteListService {
                 return userFavouriteListDTO;
             });
     }
+
+    public boolean checkBlogFavouriteStatus(long blogId, @NonNull RganUser user){
+        return userFavouriteListRepository.existsByIdAndEnabledTrue(new UserFavouriteListId(blogRepository.getOne(blogId), user));
+    }
 }

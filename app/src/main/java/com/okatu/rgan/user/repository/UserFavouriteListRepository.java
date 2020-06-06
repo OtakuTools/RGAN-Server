@@ -13,4 +13,6 @@ public interface UserFavouriteListRepository extends JpaRepository<UserFavourite
     Page<UserFavouriteList> findById_UserAndEnabledTrueOrderByCreatedTimeDesc(RganUser user, Pageable pageable);
 
     Optional<UserFavouriteList> findByIdAndEnabledTrue(UserFavouriteListId id);
+
+    boolean existsByIdAndEnabledTrue(UserFavouriteListId id);
 }
