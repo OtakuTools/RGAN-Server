@@ -9,7 +9,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feed_message_box")
+@Table(name = "feed_message_box",
+    uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"message_id", "message_type", "receiver_id"})
+})
 public class FeedMessageBoxItem {
 
     @Id
@@ -24,10 +27,10 @@ public class FeedMessageBoxItem {
     @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "message_id")
     private Long messageId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "message_type")
     @Convert(converter = FeedMessageType.Converter.class)
     private FeedMessageType messageType;
 

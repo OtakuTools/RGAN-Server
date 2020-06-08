@@ -22,9 +22,17 @@ public abstract class VoteItem {
 
     private LocalDateTime createdTime;
 
+    private LocalDateTime modifiedTime;
+
     @PrePersist
     private void prePersist(){
         createdTime = LocalDateTime.now();
+        modifiedTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    private void preUpdate(){
+        modifiedTime = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -57,6 +65,14 @@ public abstract class VoteItem {
 
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
+    }
+
+    public LocalDateTime getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
     public abstract VoteAbleEntity getAssociateVoteAbleEntity();

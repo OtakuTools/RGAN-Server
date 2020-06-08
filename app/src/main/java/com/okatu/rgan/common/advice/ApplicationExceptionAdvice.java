@@ -12,12 +12,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.server.ResponseStatusException;
 
 @ControllerAdvice
@@ -110,6 +112,12 @@ public class ApplicationExceptionAdvice {
         logger.error("Response status exception", exception);
         GeneralErrorResult generalErrorResult = new GeneralErrorResult(exception.getMessage());
         return new ResponseEntity<>(generalErrorResult, exception.getStatus());
+    }
+
+    @ExceptionHandler({HttpMediaTypeNotAcceptableException.class, AsyncRequestTimeoutException.class})
+    void possibleSseTimeoutThrowExceptionHandler(Exception e){
+        // see the comment in SseNotificationService
+        logger.error("Possible Sse Timeout Exception", e);
     }
 
     @ResponseBody

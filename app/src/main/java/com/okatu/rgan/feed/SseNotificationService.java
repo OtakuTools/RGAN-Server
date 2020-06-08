@@ -23,6 +23,16 @@ public class SseNotificationService {
 
     private static Logger logger = LoggerFactory.getLogger(SseNotificationService.class);
 
+    // each time reload, must refresh the <userId, SseEmitter> pair
+    // the shit happen: when user exit the web page, the corresponding SseEmitter remains in the memory
+    // however, when another user vote to this exited user, the FeedMessageHandleService successfully retrieve
+    // SseEmitter from memory, and send message to the client side
+    // thus report an error?
+    // Experiment tell me that it issue a ClientAbortException
+
+    // Fact is, when timeout, throw such exception
+    // HttpMediaTypeNotAcceptableException and AsyncRequestTimeoutException
+    // https://stackoverflow.com/a/55262629/8510613 ?
     public SseEmitter createConnection(@NonNull RganUser user){
         // 30min
         // I'm still confused with this shit
@@ -57,7 +67,7 @@ public class SseNotificationService {
                 logger.error("Exception while send message to userId: {}, eventName: {}", user.getId(), eventName, e);
                 // complete method seems no help here, since it will check sendFail status
                 sseEmitterConcurrentHashMap.remove(user.getId());
-                sseEmitter.complete();
+                sseEmitter.completeWithError(e);
             }
         }
     }
@@ -67,5 +77,9 @@ public class SseNotificationService {
         if(sseEmitter != null){
             sseEmitter.complete();
         }
+    }
+
+    public void removeConnectionIfExist(){
+
     }
 }

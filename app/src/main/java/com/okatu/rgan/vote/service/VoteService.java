@@ -11,10 +11,7 @@ import com.okatu.rgan.vote.model.VoteAbleEntity;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 import com.okatu.rgan.vote.model.entity.VoteItem;
-import com.okatu.rgan.vote.model.event.BlogUpVoteCancelEvent;
-import com.okatu.rgan.vote.model.event.BlogVotePublishEvent;
-import com.okatu.rgan.vote.model.event.CommentUpVoteCancelEvent;
-import com.okatu.rgan.vote.model.event.CommentVotePublishEvent;
+import com.okatu.rgan.vote.model.event.*;
 import com.okatu.rgan.vote.repository.BlogVoteItemRepository;
 import com.okatu.rgan.vote.repository.CommentVoteItemRepository;
 import org.slf4j.Logger;
@@ -46,6 +43,7 @@ public class VoteService {
     public void doVote(Blog blog, RganUser user, int newStatus){
         Optional<BlogVoteItem> optional = blogVoteItemRepository.findByBlogAndAuthor(blog, user);
         BlogVoteItem voteItem;
+        boolean firstVote = true;
 
         if(optional.isPresent()){
             voteItem = optional.get();
@@ -57,10 +55,24 @@ public class VoteService {
 
             voteItem = new BlogVoteItem(user, blog);
             applyOnCancelOrNotExistStatus(voteItem, newStatus);
+            firstVote = false;
         }
         blogVoteItemRepository.save(voteItem);
         if(newStatus == VoteStatus.UPVOTE){
-            applicationEventPublisher.publishEvent(new BlogVotePublishEvent(this, voteItem));
+            // we can have such kind information(firstVote/reVote) in service layer
+            // so keep it, in the format of static type
+            // however, this might trigger more question
+            //              BlogVotePublishEvent
+            // eventSource                            Repository
+            //              BlogReUpVotePublishEvent
+            // if one vote, then cancel, then revote
+            // but the time sequence arrived in db can ensure?
+            // like revote first, then cancel, then vote?
+            if(firstVote){
+                applicationEventPublisher.publishEvent(new BlogVotePublishEvent(this, voteItem));
+            }else{
+                applicationEventPublisher.publishEvent(new BlogReUpVoteEvent(this, voteItem));
+            }
         }else{
             applicationEventPublisher.publishEvent(new BlogUpVoteCancelEvent(this, voteItem));
         }
@@ -70,6 +82,7 @@ public class VoteService {
     public void doVote(Comment comment, RganUser user, int newStatus){
         Optional<CommentVoteItem> optional = commentVoteItemRepository.findByCommentAndAuthor(comment, user);
         CommentVoteItem voteItem;
+        boolean firstVote = true;
 
         if(optional.isPresent()){
             voteItem = optional.get();
@@ -81,10 +94,15 @@ public class VoteService {
 
             voteItem = new CommentVoteItem(user, comment);
             applyOnCancelOrNotExistStatus(voteItem, newStatus);
+            firstVote = false;
         }
         commentVoteItemRepository.save(voteItem);
         if(newStatus == VoteStatus.UPVOTE){
-            applicationEventPublisher.publishEvent(new CommentVotePublishEvent(this, voteItem));
+            if(firstVote){
+                applicationEventPublisher.publishEvent(new CommentVotePublishEvent(this, voteItem));
+            }else{
+                applicationEventPublisher.publishEvent(new CommentReUpVoteEvent(this, voteItem));
+            }
         }else{
             applicationEventPublisher.publishEvent(new CommentUpVoteCancelEvent(this, voteItem));
         }

@@ -25,8 +25,20 @@ public interface FeedMessageBoxRepository extends JpaRepository<FeedMessageBoxIt
         "(item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.BLOG_VOTE OR item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.COMMENT_VOTE)" +
         "ORDER BY item.id DESC ")
     Page<FeedMessageBoxItem> findAllVoteItemByReceiverAndMessageStatusOrderByIdDesc(RganUser receiver, FeedMessageStatus status, Pageable pageable);
+    
+    // we know that only for this two kind of situation, the FeedMessageBoxItem is unique
+    // since a vote item will not have two receiver
+    // but for other situation, you can determine a single FeedMessageBoxItem by message_id and message_type,
+    // have to provide receiver_id
+    @Query(value = "SELECT item FROM FeedMessageBoxItem item " +
+        "WHERE item.messageId = ?1 AND " +
+        "item.messageType = com.okatu.rgan.feed.constant.FeedMessageType.BLOG_VOTE")
+    Optional<FeedMessageBoxItem> findBlogVoteItemByMessageId(Long messageId);
 
-    Optional<FeedMessageBoxItem> findByMessageIdAndMessageType(Long messageId, FeedMessageType messageType);
+    @Query(value = "SELECT item FROM FeedMessageBoxItem item " +
+        "WHERE item.messageId = ?1 AND " +
+        "item.messageType = com.okatu.rgan.feed.constant.FeedMessageType.COMMENT_VOTE")
+    Optional<FeedMessageBoxItem> findCommentVoteItemByMessageId(Long messageId);
 
     boolean existsByReceiverAndReadIsFalse(RganUser receiver);
 

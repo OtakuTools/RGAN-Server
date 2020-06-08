@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 HttpMethod.GET,
                 "/blogs",
                 "/tags",
+                "/users",
                 "/users/{id:\\d+}/**",
                 "/blogs/{id:\\d+}/**",
                 "/tags/{id:\\d+}/**",

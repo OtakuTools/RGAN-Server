@@ -13,10 +13,7 @@ import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
-import com.okatu.rgan.vote.model.event.BlogVotePublishEvent;
-import com.okatu.rgan.vote.model.event.CommentUpVoteCancelEvent;
-import com.okatu.rgan.vote.model.event.CommentVotePublishEvent;
-import com.okatu.rgan.vote.model.event.BlogUpVoteCancelEvent;
+import com.okatu.rgan.vote.model.event.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +109,30 @@ public class FeedMessageRelatedEventHandleService {
 
     @Async
     @EventListener
+    public void processCommentReUpVoteEvent(CommentReUpVoteEvent commentReUpVoteEvent){
+        CommentVoteItem commentVoteItem = commentReUpVoteEvent.getVoteItem();
+
+        feedMessageBoxRepository.findCommentVoteItemByMessageId(commentVoteItem.getId()).ifPresent(feedMessageBoxItem ->{
+            RganUser receiver = commentVoteItem.getComment().getAuthor();
+
+            feedMessageBoxItem.setCreatedTime(commentVoteItem.getModifiedTime());
+            feedMessageBoxItem.setMessageStatus(FeedMessageStatus.ENABLED);
+
+            feedMessageBoxRepository.save(feedMessageBoxItem);
+
+            sseNotificationService.sendMessage(receiver, COMMENT_VOTE_NOTIFICATION_EVENT_NAME,
+                TimelineUpVoteDTO.createFrom(feedMessageBoxItem, commentVoteItem));
+
+            logSseSendInfo(feedMessageBoxItem, receiver);
+        });
+    }
+
+    // if one cancel, it will generate a cancel event
+    // however, if one reVote, it will generate a vote event
+    // which has the same messageId(vote_item_id) and messageType
+    // might be reVote!!
+    @Async
+    @EventListener
     public void processBlogVotePublishEvent(BlogVotePublishEvent blogVotePublishEvent){
         FeedMessageBoxItem messageBoxItem = new FeedMessageBoxItem();
         BlogVoteItem blogVoteItem = blogVotePublishEvent.getVoteItem();
@@ -132,8 +153,28 @@ public class FeedMessageRelatedEventHandleService {
 
     @Async
     @EventListener
+    public void processBlogReUpVoteEvent(BlogReUpVoteEvent blogReUpVoteEvent){
+        BlogVoteItem blogVoteItem = blogReUpVoteEvent.getVoteItem();
+
+        feedMessageBoxRepository.findBlogVoteItemByMessageId(blogVoteItem.getId()).ifPresent(feedMessageBoxItem ->{
+            RganUser receiver = blogVoteItem.getBlog().getAuthor();
+
+            feedMessageBoxItem.setCreatedTime(blogVoteItem.getModifiedTime());
+            feedMessageBoxItem.setMessageStatus(FeedMessageStatus.ENABLED);
+
+            feedMessageBoxRepository.save(feedMessageBoxItem);
+
+            sseNotificationService.sendMessage(receiver, BLOG_VOTE_NOTIFICATION_EVENT_NAME,
+                TimelineUpVoteDTO.createFrom(feedMessageBoxItem, blogVoteItem));
+
+            logSseSendInfo(feedMessageBoxItem, receiver);
+        });
+    }
+
+    @Async
+    @EventListener
     public void processBlogUpVoteCancelEvent(BlogUpVoteCancelEvent blogUpVoteCancelEvent){
-        feedMessageBoxRepository.findByMessageIdAndMessageType(blogUpVoteCancelEvent.getVoteItem().getId(), FeedMessageType.BLOG_VOTE)
+        feedMessageBoxRepository.findBlogVoteItemByMessageId(blogUpVoteCancelEvent.getVoteItem().getId())
             .ifPresent(feedMessageBoxItem -> {
                 feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
                 feedMessageBoxRepository.save(feedMessageBoxItem);
@@ -148,7 +189,7 @@ public class FeedMessageRelatedEventHandleService {
     @Async
     @EventListener
     public void processCommentUpVoteCancelEvent(CommentUpVoteCancelEvent commentUpVoteCancelEvent){
-        feedMessageBoxRepository.findByMessageIdAndMessageType(commentUpVoteCancelEvent.getVoteItem().getId(), FeedMessageType.COMMENT_VOTE)
+        feedMessageBoxRepository.findCommentVoteItemByMessageId(commentUpVoteCancelEvent.getVoteItem().getId())
             .ifPresent(feedMessageBoxItem -> {
                 feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
                 feedMessageBoxRepository.save(feedMessageBoxItem);
