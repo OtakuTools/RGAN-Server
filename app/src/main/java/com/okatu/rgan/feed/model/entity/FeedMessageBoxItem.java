@@ -8,6 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+// 对于撤回逻辑，改动这个消息队列的中间项是好主意吗？
+// 还是说只追加撤回事件？
+// 但是这个模型实际上不是消息队列的抽象，而是一个用户维度的inbox
+// 目前系统中是没有一条全局的feed消息队列抽象的
 @Entity
 @Table(name = "feed_message_box",
     uniqueConstraints = {
