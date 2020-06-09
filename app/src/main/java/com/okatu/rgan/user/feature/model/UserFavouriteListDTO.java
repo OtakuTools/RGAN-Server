@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class UserFavouriteListDTO {
     private LocalDateTime enlistTime;
 
-    private BlogSummaryDTO blogSummaryDTO;
+    private BlogSummaryDTO blogSummary;
 
     public LocalDateTime getEnlistTime() {
         return enlistTime;
@@ -17,11 +17,11 @@ public class UserFavouriteListDTO {
         this.enlistTime = enlistTime;
     }
 
-    public BlogSummaryDTO getBlogSummaryDTO() {
-        return blogSummaryDTO;
+    public BlogSummaryDTO getBlogSummary() {
+        return blogSummary;
     }
 
-    public void setBlogSummaryDTO(BlogSummaryDTO blogSummaryDTO) {
-        this.blogSummaryDTO = blogSummaryDTO;
+    public void setBlogSummary(BlogSummaryDTO blogSummary) {
+        this.blogSummary = blogSummary;
     }
 }

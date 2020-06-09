@@ -1,9 +1,7 @@
 package com.okatu.rgan.user.feature.service;
 
 import com.okatu.rgan.blog.constant.BlogStatus;
-import com.okatu.rgan.blog.model.BlogDTO;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
-import com.okatu.rgan.blog.model.TagSummaryDTO;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Component
 public class UserFavouriteListService {
@@ -68,7 +65,7 @@ public class UserFavouriteListService {
 
                 UserFavouriteListDTO userFavouriteListDTO = new UserFavouriteListDTO();
                 userFavouriteListDTO.setEnlistTime(userFavouriteList.getCreatedTime());
-                userFavouriteListDTO.setBlogSummaryDTO(blog.getStatus().equals(BlogStatus.PUBLISHED) ? BlogSummaryDTO.convertFrom(blog) : null);
+                userFavouriteListDTO.setBlogSummary(blog.getStatus().equals(BlogStatus.PUBLISHED) ? BlogSummaryDTO.convertFrom(blog) : null);
                 return userFavouriteListDTO;
             });
     }

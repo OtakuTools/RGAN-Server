@@ -1,6 +1,5 @@
 package com.okatu.rgan.vote.model;
 
-import com.okatu.rgan.vote.constant.VoteStatus;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 
@@ -31,10 +30,10 @@ public class VoteStatusDTO {
     }
 
     public static VoteStatusDTO convertFrom(BlogVoteItem blogVoteItem){
-        return new VoteStatusDTO(blogVoteItem.getBlog().getId(), blogVoteItem.getStatus());
+        return new VoteStatusDTO(blogVoteItem.getBlog().getId(), blogVoteItem.getStatus().getValue());
     }
 
     public static VoteStatusDTO convertFrom(CommentVoteItem commentVoteItem){
-        return new VoteStatusDTO(commentVoteItem.getComment().getId(), commentVoteItem.getStatus());
+        return new VoteStatusDTO(commentVoteItem.getComment().getId(), commentVoteItem.getStatus().getValue());
     }
 }

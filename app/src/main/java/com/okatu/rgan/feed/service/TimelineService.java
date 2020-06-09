@@ -34,7 +34,7 @@ public class TimelineService {
     private BlogVoteItemRepository blogVoteItemRepository;
 
     public Page<TimelineCommentDTO> getTimelineCommentByReceiver(RganUser user, Pageable pageable){
-        return feedMessageBoxRepository.findByReceiverAndMessageTypeAndMessageStatusOrderByIdDesc(
+        return feedMessageBoxRepository.findByReceiverAndMessageTypeAndMessageStatusOrderByCreatedTimeDesc(
             user, FeedMessageType.COMMENT, FeedMessageStatus.ENABLED, pageable)
             .map(feedMessageBoxItem -> {
                 Comment comment = commentRepository.findById(feedMessageBoxItem.getMessageId()).get();
@@ -43,7 +43,7 @@ public class TimelineService {
     }
 
     public Page<TimelineUpVoteDTO> getTimelineUpVoteByReceiver(RganUser user, Pageable pageable){
-        return feedMessageBoxRepository.findAllVoteItemByReceiverAndMessageStatusOrderByIdDesc(user, FeedMessageStatus.ENABLED, pageable)
+        return feedMessageBoxRepository.findAllVoteItemByReceiverAndMessageStatusOrderByCreatedTimeDesc(user, FeedMessageStatus.ENABLED, pageable)
             .map(feedMessageBoxItem -> {
                 TimelineUpVoteDTO timelineUpVoteDTO;
                 if(FeedMessageType.BLOG_VOTE.equals(feedMessageBoxItem.getMessageType())){

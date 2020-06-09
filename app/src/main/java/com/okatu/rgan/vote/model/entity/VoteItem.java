@@ -1,6 +1,7 @@
 package com.okatu.rgan.vote.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.constant.VoteStatus;
 import com.okatu.rgan.vote.model.VoteAbleEntity;
 
 import javax.persistence.*;
@@ -18,7 +19,9 @@ public abstract class VoteItem {
     @JoinColumn(name = "author_id", nullable = false)
     private RganUser author;
 
-    private Integer status;
+    @Column(nullable = false)
+    @Convert(converter = VoteStatus.Converter.class)
+    private VoteStatus status;
 
     private LocalDateTime createdTime;
 
@@ -51,11 +54,11 @@ public abstract class VoteItem {
         this.author = author;
     }
 
-    public Integer getStatus() {
+    public VoteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(VoteStatus status) {
         this.status = status;
     }
 

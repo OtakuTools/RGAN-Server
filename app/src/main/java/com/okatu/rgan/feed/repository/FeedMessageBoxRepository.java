@@ -17,14 +17,14 @@ public interface FeedMessageBoxRepository extends JpaRepository<FeedMessageBoxIt
 
     Page<FeedMessageBoxItem> findByReceiverAndMessageTypeAndMessageStatusAndReadIsFalseOrderByIdDesc(RganUser receiver, FeedMessageType messageType, FeedMessageStatus messageStatus, Pageable pageable);
 
-    Page<FeedMessageBoxItem> findByReceiverAndMessageTypeAndMessageStatusOrderByIdDesc(RganUser receiver, FeedMessageType messageType, FeedMessageStatus messageStatus, Pageable pageable);
+    Page<FeedMessageBoxItem> findByReceiverAndMessageTypeAndMessageStatusOrderByCreatedTimeDesc(RganUser receiver, FeedMessageType messageType, FeedMessageStatus messageStatus, Pageable pageable);
 
     @Query(value = "SELECT item FROM FeedMessageBoxItem item " +
         "WHERE item.receiver = ?1 AND " +
         "item.messageStatus = ?2 AND " +
         "(item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.BLOG_VOTE OR item.messageType=com.okatu.rgan.feed.constant.FeedMessageType.COMMENT_VOTE)" +
-        "ORDER BY item.id DESC ")
-    Page<FeedMessageBoxItem> findAllVoteItemByReceiverAndMessageStatusOrderByIdDesc(RganUser receiver, FeedMessageStatus status, Pageable pageable);
+        "ORDER BY item.createdTime DESC ")
+    Page<FeedMessageBoxItem> findAllVoteItemByReceiverAndMessageStatusOrderByCreatedTimeDesc(RganUser receiver, FeedMessageStatus status, Pageable pageable);
     
     // we know that only for this two kind of situation, the FeedMessageBoxItem is unique
     // since a vote item will not have two receiver

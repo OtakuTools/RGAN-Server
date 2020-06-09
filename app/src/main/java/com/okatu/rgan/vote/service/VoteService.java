@@ -40,7 +40,7 @@ public class VoteService {
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
-    public void doVote(Blog blog, RganUser user, int newStatus){
+    public void doVote(Blog blog, RganUser user, @NonNull VoteStatus newStatus){
         Optional<BlogVoteItem> optional = blogVoteItemRepository.findByBlogAndAuthor(blog, user);
         BlogVoteItem voteItem;
         boolean firstVote = true;
@@ -79,7 +79,7 @@ public class VoteService {
     }
 
     @Transactional
-    public void doVote(Comment comment, RganUser user, int newStatus){
+    public void doVote(Comment comment, RganUser user, @NonNull VoteStatus newStatus){
         Optional<CommentVoteItem> optional = commentVoteItemRepository.findByCommentAndAuthor(comment, user);
         CommentVoteItem voteItem;
         boolean firstVote = true;
@@ -108,32 +108,32 @@ public class VoteService {
         }
     }
 
-    private void applyStateTransition(VoteItem voteItem, int newStatus){
+    private void applyStateTransition(VoteItem voteItem, VoteStatus newStatus){
         if(voteItem.getStatus().equals(newStatus)){
             throw new UniquenessViolationException("You cannot re-vote/downvote/cancel the same entity, voteItem id: " + voteItem.getId());
         }
 
         switch (voteItem.getStatus()){
-            case VoteStatus.DOWNVOTE:
+            case DOWNVOTE:
                 applyOnDownVoteStatus(voteItem, newStatus);
                 break;
-            case VoteStatus.CANCELED:
+            case CANCELED:
                 applyOnCancelOrNotExistStatus(voteItem, newStatus);
                 break;
-            case VoteStatus.UPVOTE:
+            case UPVOTE:
                 applyOnUpVoteStatus(voteItem, newStatus);
                 break;
         }
     }
 
-    private void applyOnCancelOrNotExistStatus(@NonNull VoteItem voteItem, int newStatus){
+    private void applyOnCancelOrNotExistStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
         switch (newStatus){
-            case VoteStatus.DOWNVOTE:
+            case DOWNVOTE:
                 voteItem.setStatus(VoteStatus.DOWNVOTE);
                 voteAble.decrVoteCount(1);
                 break;
-            case VoteStatus.UPVOTE:
+            case UPVOTE:
                 voteItem.setStatus(VoteStatus.UPVOTE);
                 voteAble.incrVoteCount(1);
                 break;
@@ -142,14 +142,14 @@ public class VoteService {
         }
     }
 
-    private void applyOnUpVoteStatus(@NonNull VoteItem voteItem, int newStatus){
+    private void applyOnUpVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
         switch (newStatus){
-            case VoteStatus.DOWNVOTE:
+            case DOWNVOTE:
                 voteItem.setStatus(VoteStatus.DOWNVOTE);
                 voteAble.decrVoteCount(2);
                 break;
-            case VoteStatus.CANCELED:
+            case CANCELED:
                 voteItem.setStatus(VoteStatus.CANCELED);
                 voteAble.decrVoteCount(1);
                 break;
@@ -158,14 +158,14 @@ public class VoteService {
         }
     }
 
-    private void applyOnDownVoteStatus(@NonNull VoteItem voteItem, int newStatus){
+    private void applyOnDownVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
         switch (newStatus){
-            case VoteStatus.CANCELED:
+            case CANCELED:
                 voteItem.setStatus(VoteStatus.CANCELED);
                 voteAble.incrVoteCount(1);
                 break;
-            case VoteStatus.UPVOTE:
+            case UPVOTE:
                 voteItem.setStatus(VoteStatus.UPVOTE);
                 voteAble.incrVoteCount(2);
                 break;

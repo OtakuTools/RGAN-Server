@@ -9,15 +9,13 @@ import javax.validation.constraints.NotNull;
 public class VoteParam {
 
     @NotNull
-    @Max(value = VoteStatus.UPVOTE)
-    @Min(value = VoteStatus.DOWNVOTE)
-    private Integer status;
+    private VoteStatus status;
 
-    public Integer getStatus() {
+    public VoteStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(VoteStatus status) {
         this.status = status;
     }
 }
