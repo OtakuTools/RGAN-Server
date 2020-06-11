@@ -42,7 +42,7 @@ public class ApplicationExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     GeneralErrorResult InvalidInputParameterHandler(HttpMessageNotReadableException exception){
         logger.error("Invalid request parameter", exception);
-        return new GeneralErrorResult(exception.getMessage());
+        return new GeneralErrorResult("Invalid request parameter");
     }
 
     // MethodArgumentNotValidException是违反了请求参数体中的@Valid注解约束而抛出的

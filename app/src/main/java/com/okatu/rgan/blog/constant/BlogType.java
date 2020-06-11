@@ -1,9 +1,12 @@
 package com.okatu.rgan.blog.constant;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.okatu.rgan.common.model.RganAbstractPersistableEnumConverter;
 import com.okatu.rgan.common.model.RganPersistableEnum;
+
+import java.util.Arrays;
 
 public enum BlogType implements RganPersistableEnum {
 //    @JsonProperty("0")
@@ -33,4 +36,11 @@ public enum BlogType implements RganPersistableEnum {
             super(BlogType.class);
         }
     }
+
+    @JsonCreator
+    public static BlogType selectByValue(int value){
+        return Arrays.stream(values()).filter(status -> status.getValue() == value).findAny()
+            .orElseThrow(() -> new IllegalArgumentException("No such value: " + value + " for enum class BlogType"));
+    }
+
 }

@@ -36,4 +36,10 @@ public enum VoteStatus implements RganPersistableEnum {
         }
     }
 
+
+    @JsonCreator
+    public static VoteStatus selectByValue(int value){
+        return Arrays.stream(values()).filter(status -> status.getValue() == value).findAny()
+            .orElseThrow(() -> new IllegalArgumentException("No such value: " + value + " for enum class VoteStatus"));
+    }
 }

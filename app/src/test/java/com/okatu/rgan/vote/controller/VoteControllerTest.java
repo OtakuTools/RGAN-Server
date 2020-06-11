@@ -33,12 +33,12 @@ class VoteControllerTest {
     @WithUserDetails("test1")
     void voteBlog() throws Exception {
         Map<String, Object> param = new HashMap<>();
-        param.put("status", 1);
+        param.put("status", -1);
         VoteParam voteParam = new VoteParam();
         voteParam.setStatus(VoteStatus.UPVOTE);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .post("/blogs/41/vote")
+            .post("/blogs/42/vote")
             .contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(param));
 
