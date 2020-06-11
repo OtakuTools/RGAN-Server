@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.controller;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.blog.model.event.CommentDeleteEvent;
 import com.okatu.rgan.blog.model.event.CommentPublishEvent;
 import com.okatu.rgan.blog.model.param.CommentEditParam;
 import com.okatu.rgan.blog.model.CommentSummaryDTO;
@@ -107,6 +108,8 @@ public class CommentController {
             }
 
             commentRepository.deleteById(commentId);
+
+            eventPublisher.publishEvent(new CommentDeleteEvent(this, commentId));
         });
     }
 

@@ -1,13 +1,14 @@
 package com.okatu.rgan.feed.service;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.blog.model.event.CommentDeleteEvent;
 import com.okatu.rgan.blog.model.event.CommentPublishEvent;
 import com.okatu.rgan.feed.SseNotificationService;
 import com.okatu.rgan.feed.constant.FeedMessageStatus;
 import com.okatu.rgan.feed.constant.FeedMessageType;
 import com.okatu.rgan.feed.model.dto.TimelineCommentDTO;
+import com.okatu.rgan.feed.model.dto.TimelineMessageWithdrawDTO;
 import com.okatu.rgan.feed.model.dto.TimelineUpVoteDTO;
-import com.okatu.rgan.feed.model.dto.VoteWithdrawDTO;
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
 import com.okatu.rgan.feed.repository.FeedMessageBoxRepository;
 import com.okatu.rgan.user.model.RganUser;
@@ -18,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component;
 public class FeedMessageRelatedEventHandleService {
 
     private static String COMMENT_NEW_NOTIFICATION_EVENT_NAME = "comment_new";
+
+    private static String COMMENT_WITHDRAW_EVENT_NAME = "comment_withdraw";
 
     private static String COMMENT_VOTE_NOTIFICATION_EVENT_NAME = "comment_vote";
 
@@ -85,6 +89,20 @@ public class FeedMessageRelatedEventHandleService {
             logSseSendInfo(replyToUserMessageBoxItem, receiver);
         }
 
+    }
+
+    @Async
+    @EventListener
+    public void processCommentDeleteEvent(CommentDeleteEvent commentDeleteEvent){
+        feedMessageBoxRepository.findByMessageIdAndMessageType(commentDeleteEvent.getCommentId(), FeedMessageType.COMMENT).stream()
+            .map(feedMessageBoxItem -> {
+                feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
+                FeedMessageBoxItem saved = feedMessageBoxRepository.save(feedMessageBoxItem);
+                return Pair.of(saved.getId(), saved.getReceiver());
+            }).forEach(pair -> {
+                sseNotificationService.sendMessage(pair.getSecond(), COMMENT_WITHDRAW_EVENT_NAME,
+                    new TimelineMessageWithdrawDTO(pair.getFirst()));
+            });
     }
 
     @Async
@@ -180,7 +198,7 @@ public class FeedMessageRelatedEventHandleService {
                 feedMessageBoxRepository.save(feedMessageBoxItem);
 
                 sseNotificationService.sendMessage(feedMessageBoxItem.getReceiver(), BLOG_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME,
-                    new VoteWithdrawDTO(feedMessageBoxItem.getId()));
+                    new TimelineMessageWithdrawDTO(feedMessageBoxItem.getId()));
 
                 logSseSendInfo(feedMessageBoxItem, feedMessageBoxItem.getReceiver());
             });
@@ -195,7 +213,7 @@ public class FeedMessageRelatedEventHandleService {
                 feedMessageBoxRepository.save(feedMessageBoxItem);
 
                 sseNotificationService.sendMessage(feedMessageBoxItem.getReceiver(), COMMENT_VOTE_WITHDRAW_NOTIFICATION_EVENT_NAME,
-                    new VoteWithdrawDTO(feedMessageBoxItem.getId()));
+                    new TimelineMessageWithdrawDTO(feedMessageBoxItem.getId()));
 
                 logSseSendInfo(feedMessageBoxItem, feedMessageBoxItem.getReceiver());
             });

@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Component
 public class TimelineService {
 
@@ -37,8 +39,8 @@ public class TimelineService {
         return feedMessageBoxRepository.findByReceiverAndMessageTypeAndMessageStatusOrderByCreatedTimeDesc(
             user, FeedMessageType.COMMENT, FeedMessageStatus.ENABLED, pageable)
             .map(feedMessageBoxItem -> {
-                Comment comment = commentRepository.findById(feedMessageBoxItem.getMessageId()).get();
-                return TimelineCommentDTO.createFrom(feedMessageBoxItem, comment);
+                Optional<Comment> optional = commentRepository.findById(feedMessageBoxItem.getMessageId());
+                return optional.map(comment -> TimelineCommentDTO.createFrom(feedMessageBoxItem, comment)).orElse(null);
             });
     }
 

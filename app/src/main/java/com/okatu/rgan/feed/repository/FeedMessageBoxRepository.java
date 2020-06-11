@@ -19,6 +19,8 @@ public interface FeedMessageBoxRepository extends JpaRepository<FeedMessageBoxIt
 
     Page<FeedMessageBoxItem> findByReceiverAndMessageTypeAndMessageStatusOrderByCreatedTimeDesc(RganUser receiver, FeedMessageType messageType, FeedMessageStatus messageStatus, Pageable pageable);
 
+    List<FeedMessageBoxItem> findByMessageIdAndMessageType(Long messageId, FeedMessageType messageType);
+
     @Query(value = "SELECT item FROM FeedMessageBoxItem item " +
         "WHERE item.receiver = ?1 AND " +
         "item.messageStatus = ?2 AND " +

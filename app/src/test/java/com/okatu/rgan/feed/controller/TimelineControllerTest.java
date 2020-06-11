@@ -29,7 +29,7 @@ class TimelineControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @WithUserDetails("test1")
+    @WithUserDetails("test")
     void getReplyComment() throws Exception {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/timeline/comments");
 
@@ -54,5 +54,4 @@ class TimelineControllerTest {
             .andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(print());
     }
-
 }

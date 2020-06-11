@@ -1,9 +1,9 @@
 package com.okatu.rgan.feed.model.dto;
 
-public class VoteWithdrawDTO {
+public class TimelineMessageWithdrawDTO {
     private Long id;
 
-    public VoteWithdrawDTO(Long id) {
+    public TimelineMessageWithdrawDTO(Long id) {
         this.id = id;
     }
 
