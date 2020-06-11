@@ -19,6 +19,8 @@ public interface CommentSummaryProjection {
 
     interface AuthorSummary{
         String getUsername();
+
+        String getProfilePicturePath();
     }
 
     interface ReplyToSummary{

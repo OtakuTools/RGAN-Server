@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.model;
 
 import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
+import com.okatu.rgan.user.model.AuthorInCreateEntityDTO;
 
 import java.time.LocalDateTime;
 
@@ -9,7 +10,7 @@ public class CommentSummaryDTO {
 
     private String content;
 
-    private String authorName;
+    private AuthorInCreateEntityDTO author;
 
     private Long replyTo;
 
@@ -39,12 +40,12 @@ public class CommentSummaryDTO {
         this.content = content;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public AuthorInCreateEntityDTO getAuthor() {
+        return author;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthor(AuthorInCreateEntityDTO author) {
+        this.author = author;
     }
 
     public Long getReplyTo() {
@@ -82,10 +83,10 @@ public class CommentSummaryDTO {
     public CommentSummaryDTO() {
     }
 
-    public CommentSummaryDTO(Long id, String content, String authorName, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer voteCount) {
+    public CommentSummaryDTO(Long id, String content, String authorName, String authorProfilePicturePath, Long replyTo, LocalDateTime createdTime, LocalDateTime modifiedTime, Integer voteCount) {
         this.id = id;
         this.content = content;
-        this.authorName = authorName;
+        this.author = new AuthorInCreateEntityDTO(authorName, authorProfilePicturePath);
         this.replyTo = replyTo;
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
@@ -99,6 +100,7 @@ public class CommentSummaryDTO {
             projection.getId(),
             projection.getContent(),
             projection.getAuthor().getUsername(),
+            projection.getAuthor().getProfilePicturePath(),
             replyToCommentId,
             projection.getCreatedTime(),
             projection.getModifiedTime(),

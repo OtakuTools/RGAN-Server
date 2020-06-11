@@ -33,5 +33,7 @@ public interface BlogSummaryProjection {
 
     interface AuthorSummary {
         String getUsername();
+
+        String getProfilePicturePath();
     }
 }

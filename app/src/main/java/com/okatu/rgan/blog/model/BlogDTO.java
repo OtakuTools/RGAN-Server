@@ -2,6 +2,7 @@ package com.okatu.rgan.blog.model;
 
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.entity.Tag;
+import com.okatu.rgan.user.model.AuthorInCreateEntityDTO;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -26,7 +27,7 @@ public class BlogDTO {
 
     private Set<Tag> tags = new LinkedHashSet<>();
 
-    private String authorName;
+    private AuthorInCreateEntityDTO author;
 
     private LocalDateTime createdTime;
 
@@ -100,12 +101,12 @@ public class BlogDTO {
         this.tags = tags;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public AuthorInCreateEntityDTO getAuthor() {
+        return author;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthor(AuthorInCreateEntityDTO author) {
+        this.author = author;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -124,22 +125,6 @@ public class BlogDTO {
         this.modifiedTime = modifiedTime;
     }
 
-    @Override
-    public String toString() {
-        return "BlogDTO{" +
-            "id=" + id +
-            ", title='" + title + '\'' +
-            ", type='" + type + '\'' +
-            ", content='" + content + '\'' +
-            ", voteCount=" + voteCount +
-            ", visitorCount=" + visitorCount +
-            ", tags=" + tags +
-            ", username='" + authorName + '\'' +
-            ", createdTime=" + createdTime +
-            ", modifiedTime=" + modifiedTime +
-            '}';
-    }
-
     public static BlogDTO convertFrom(Blog blog){
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setId(blog.getId());
@@ -151,7 +136,7 @@ public class BlogDTO {
         blogDTO.setCreatedTime(blog.getCreatedTime());
         blogDTO.setModifiedTime(blog.getModifiedTime());
         blogDTO.setTags(blog.getTags());
-        blogDTO.setAuthorName(blog.getAuthor().getUsername());
+        blogDTO.setAuthor(new AuthorInCreateEntityDTO(blog.getAuthor().getUsername(), blog.getAuthor().getProfilePicturePath()));
         blogDTO.setVoteCount(blog.getVoteCount());
         blogDTO.setVisitorCount(blog.getVisitorCount());
         return blogDTO;

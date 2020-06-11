@@ -4,6 +4,7 @@ import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.blog.model.projection.BlogSummaryProjection;
+import com.okatu.rgan.user.model.AuthorInCreateEntityDTO;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -25,7 +26,7 @@ public class BlogSummaryDTO{
 
     private Integer visitorCount;
 
-    private String authorName;
+    private AuthorInCreateEntityDTO author;
 
     private Set<TagSummaryDTO> tags;
 
@@ -42,7 +43,7 @@ public class BlogSummaryDTO{
         String summary,
         BlogType type, BlogStatus blogStatus,
         Integer voteCount, Integer visitorCount,
-        String authorName,
+        String authorName, String authorProfilePicturePath,
         LocalDateTime createdTime, LocalDateTime modifiedTime) {
         this.id = id;
         this.title = title;
@@ -51,7 +52,7 @@ public class BlogSummaryDTO{
         this.status = blogStatus.getValue();
         this.voteCount = voteCount;
         this.visitorCount = visitorCount;
-        this.authorName = authorName;
+        this.author = new AuthorInCreateEntityDTO(authorName, authorProfilePicturePath);
         this.createdTime = createdTime;
         this.modifiedTime = modifiedTime;
     }
@@ -74,10 +75,6 @@ public class BlogSummaryDTO{
 
     public Integer getVisitorCount() {
         return visitorCount;
-    }
-
-    public String getAuthorName() {
-        return authorName;
     }
 
     public Set<TagSummaryDTO> getTags() {
@@ -112,8 +109,12 @@ public class BlogSummaryDTO{
         this.visitorCount = visitorCount;
     }
 
-    public void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public AuthorInCreateEntityDTO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(AuthorInCreateEntityDTO author) {
+        this.author = author;
     }
 
     public void setTags(Set<TagSummaryDTO> tags) {
@@ -154,6 +155,7 @@ public class BlogSummaryDTO{
             blogSummaryProjection.getVoteCount(),
             blogSummaryProjection.getVisitorCount(),
             blogSummaryProjection.getAuthor().getUsername(),
+            blogSummaryProjection.getAuthor().getProfilePicturePath(),
             blogSummaryProjection.getCreatedTime(),
             blogSummaryProjection.getModifiedTime()
         );
@@ -171,6 +173,7 @@ public class BlogSummaryDTO{
             blog.getVoteCount(),
             blog.getVisitorCount(),
             blog.getAuthor().getUsername(),
+            blog.getAuthor().getProfilePicturePath(),
             blog.getCreatedTime(),
             blog.getModifiedTime()
         );

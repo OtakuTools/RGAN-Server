@@ -9,6 +9,8 @@ public class RganUserDTO {
 
     private LocalDateTime createdTime;
 
+    private String profilePicturePath;
+
     public Long getId() {
         return id;
     }
@@ -33,11 +35,20 @@ public class RganUserDTO {
         this.createdTime = createdTime;
     }
 
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
+    }
+
     public static RganUserDTO convertFrom(RganUser user){
         RganUserDTO rganUserDTO = new RganUserDTO();
         rganUserDTO.setId(user.getId());
         rganUserDTO.setUsername(user.getUsername());
         rganUserDTO.setCreatedTime(user.getCreatedTime());
+        rganUserDTO.setProfilePicturePath(user.getProfilePicturePath());
         return rganUserDTO;
     }
 }

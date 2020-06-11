@@ -67,6 +67,8 @@ public class UserCenterController {
     @PutMapping("/{id}/profile")
     public RganUserDTO editUserProfile(@PathVariable Long id, @RequestBody UserProfileEditParam userProfileEditParam,
                                        @AuthenticationPrincipal RganUser user){
+        user.setProfilePicturePath(userProfileEditParam.getProfilePicturePath());
+        user.setDescription(userProfileEditParam.getDescription());
         return RganUserDTO.convertFrom(userRepository.save(user));
     }
 

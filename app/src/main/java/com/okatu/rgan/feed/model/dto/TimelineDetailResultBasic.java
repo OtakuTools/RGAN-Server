@@ -1,6 +1,7 @@
 package com.okatu.rgan.feed.model.dto;
 
 import com.okatu.rgan.feed.model.entity.FeedMessageBoxItem;
+import com.okatu.rgan.user.model.AuthorInCreateEntityDTO;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +9,7 @@ public abstract class TimelineDetailResultBasic {
     // feed message self id
     private Long id;
 
-    private String authorName;
+    private AuthorInCreateEntityDTO author;
 
     private LocalDateTime createdTime;
 
@@ -30,12 +31,12 @@ public abstract class TimelineDetailResultBasic {
         this.id = id;
     }
 
-    public String getAuthorName() {
-        return authorName;
+    public AuthorInCreateEntityDTO getAuthor() {
+        return author;
     }
 
-    public final void setAuthorName(String authorName) {
-        this.authorName = authorName;
+    public void setAuthor(AuthorInCreateEntityDTO author) {
+        this.author = author;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -52,7 +53,7 @@ public abstract class TimelineDetailResultBasic {
     public TimelineDetailResultBasic(FeedMessageBoxItem feedMessageBoxItem){
         this.id = feedMessageBoxItem.getId();
         this.read = feedMessageBoxItem.isRead();
-        this.authorName = feedMessageBoxItem.getAuthor().getUsername();
+        this.author = new AuthorInCreateEntityDTO(feedMessageBoxItem.getAuthor().getUsername(), feedMessageBoxItem.getAuthor().getProfilePicturePath());
         this.createdTime = feedMessageBoxItem.getCreatedTime();
     }
 }

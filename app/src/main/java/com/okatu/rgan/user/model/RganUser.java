@@ -56,6 +56,8 @@ public class RganUser implements UserDetails {
 
     private String description;
 
+    private String profilePicturePath;
+
     @Transient
     private Set<GrantedAuthority> grantedAuthorities;
 
@@ -84,6 +86,14 @@ public class RganUser implements UserDetails {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getProfilePicturePath() {
+        return profilePicturePath;
+    }
+
+    public void setProfilePicturePath(String profilePicturePath) {
+        this.profilePicturePath = profilePicturePath;
     }
 
     @Override
