@@ -1,17 +1,21 @@
 package com.okatu.rgan.vote.constant;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.okatu.rgan.common.model.RganAbstractPersistableEnumConverter;
 import com.okatu.rgan.common.model.RganPersistableEnum;
 
+import java.util.Arrays;
+
 public enum VoteStatus implements RganPersistableEnum {
-    @JsonProperty("1")
+//    @JsonProperty("1")
     UPVOTE(1),
 
-    @JsonProperty("0")
+//    @JsonProperty("0")
     CANCELED(0),
 
-    @JsonProperty("-1")
+//    @JsonProperty("-1")
     DOWNVOTE(-1);
 
     private final int value;
@@ -21,6 +25,7 @@ public enum VoteStatus implements RganPersistableEnum {
     }
 
     @Override
+    @JsonValue
     public int getValue() {
         return value;
     }
@@ -30,4 +35,5 @@ public enum VoteStatus implements RganPersistableEnum {
             super(VoteStatus.class);
         }
     }
+
 }

@@ -1,19 +1,20 @@
 package com.okatu.rgan.blog.constant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.okatu.rgan.common.model.RganAbstractPersistableEnumConverter;
 import com.okatu.rgan.common.model.RganPersistableEnum;
 
 import java.util.Arrays;
 
 public enum BlogStatus implements RganPersistableEnum {
-    @JsonProperty("0")
+//    @JsonProperty("0")
     PUBLISHED(0),
 
-    @JsonProperty("1")
+//    @JsonProperty("1")
     DRAFT(1),
 
-    @JsonProperty("2")
+//    @JsonProperty("2")
     DELETED(2);
 
     private final int value;
@@ -23,6 +24,7 @@ public enum BlogStatus implements RganPersistableEnum {
         this.value = value;
     }
 
+    @JsonValue
     @Override
     public int getValue() {
         return value;

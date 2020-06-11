@@ -14,6 +14,9 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
@@ -29,13 +32,15 @@ class VoteControllerTest {
     @Test
     @WithUserDetails("test1")
     void voteBlog() throws Exception {
+        Map<String, Object> param = new HashMap<>();
+        param.put("status", 1);
         VoteParam voteParam = new VoteParam();
-        voteParam.setStatus(VoteStatus.DOWNVOTE);
+        voteParam.setStatus(VoteStatus.UPVOTE);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .post("/blogs/42/vote")
+            .post("/blogs/41/vote")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(voteParam));
+            .content(mapper.writeValueAsString(param));
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

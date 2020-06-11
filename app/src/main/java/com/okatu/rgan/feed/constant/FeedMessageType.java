@@ -1,6 +1,7 @@
 package com.okatu.rgan.feed.constant;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.okatu.rgan.common.model.RganAbstractPersistableEnumConverter;
 import com.okatu.rgan.common.model.RganPersistableEnum;
 
@@ -8,16 +9,16 @@ import java.util.Arrays;
 
 public enum FeedMessageType implements RganPersistableEnum {
 
-    @JsonProperty("0")
+//    @JsonProperty("0")
     BLOG(0),
 
-    @JsonProperty("1")
+//    @JsonProperty("1")
     COMMENT(1),
 
-    @JsonProperty("2")
+//    @JsonProperty("2")
     BLOG_VOTE(2),
 
-    @JsonProperty("3")
+//    @JsonProperty("3")
     COMMENT_VOTE(3);
 
     private final int value;
@@ -27,6 +28,7 @@ public enum FeedMessageType implements RganPersistableEnum {
     }
 
     @Override
+    @JsonValue
     public int getValue() {
         return value;
     }

@@ -94,7 +94,7 @@ public class ApplicationExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     GeneralErrorResult uniquenessViolationExceptionHandler(UniquenessViolationException exception){
         logger.error(exception.getMessage(), exception);
-        return new GeneralErrorResult(exception.getMessage());
+        return new GeneralErrorResult("Your request parameter violate some uniqueness constraint");
     }
 
     // missing RequestParam
