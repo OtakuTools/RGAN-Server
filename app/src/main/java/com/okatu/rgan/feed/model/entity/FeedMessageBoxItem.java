@@ -28,13 +28,13 @@ public class FeedMessageBoxItem {
     private RganUser receiver;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, updatable = false)
     private RganUser author;
 
-    @Column(nullable = false, name = "message_id")
+    @Column(nullable = false, name = "message_id", updatable = false)
     private Long messageId;
 
-    @Column(nullable = false, name = "message_type")
+    @Column(nullable = false, name = "message_type", updatable = false)
     @Convert(converter = FeedMessageType.Converter.class)
     private FeedMessageType messageType;
 

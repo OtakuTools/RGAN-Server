@@ -17,6 +17,7 @@ public class UsernameNotFoundExceptionHandler implements AuthenticationFailureHa
     public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
         httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-        httpServletResponse.getWriter().write(e.getMessage());
+//        httpServletResponse.getWriter().write(e.getMessage());
+        httpServletResponse.getWriter().write("Username or password incorrect");
     }
 }

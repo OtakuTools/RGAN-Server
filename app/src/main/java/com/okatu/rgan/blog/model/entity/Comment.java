@@ -18,7 +18,7 @@ public class Comment implements VoteAbleEntity {
     private Integer status;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, updatable = false)
     private RganUser author;
 
     @ManyToOne
@@ -26,11 +26,14 @@ public class Comment implements VoteAbleEntity {
     private Comment replyTo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "blog_id", nullable = false)
+    @JoinColumn(name = "blog_id", nullable = false, updatable = false)
     private Blog blog;
 
+    @Column(updatable = false)
     private LocalDateTime createdTime;
 
+    // see the comment in Blog
+    // same reason to remove the @PreUpdate
     private LocalDateTime modifiedTime;
 
     private Integer voteCount = 0;
@@ -41,11 +44,11 @@ public class Comment implements VoteAbleEntity {
         createdTime = now;
         modifiedTime = now;
     }
-
-    @PreUpdate
-    private void preUpdate(){
-        modifiedTime = LocalDateTime.now();
-    }
+//
+//    @PreUpdate
+//    private void preUpdate(){
+//        modifiedTime = LocalDateTime.now();
+//    }
 
     public Integer getVoteCount() {
         return voteCount;

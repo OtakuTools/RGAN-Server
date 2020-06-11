@@ -16,21 +16,23 @@ public abstract class VoteItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, updatable = false)
     private RganUser author;
 
     @Column(nullable = false)
     @Convert(converter = VoteStatus.Converter.class)
     private VoteStatus status;
 
+    @Column(updatable = false)
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;
 
     @PrePersist
     private void prePersist(){
-        createdTime = LocalDateTime.now();
-        modifiedTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        createdTime = now;
+        modifiedTime = now;
     }
 
     @PreUpdate

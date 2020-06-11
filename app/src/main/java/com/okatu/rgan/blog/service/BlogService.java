@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -90,6 +91,7 @@ public class BlogService {
         blog.setTitle(blogEditParam.getTitle());
         blog.setSummary(blogEditParam.getSummary());
         blog.setContent(blogEditParam.getContent());
+        blog.setModifiedTime(LocalDateTime.now());
         blog.setTags(findTagsByTitles(blogEditParam.getTags()));
 
         return BlogDTO.convertFrom(blogRepository.save(blog));
@@ -102,6 +104,7 @@ public class BlogService {
             }
 
             blog.setStatus(BlogStatus.DELETED);
+            blog.setModifiedTime(LocalDateTime.now());
             blogRepository.save(blog);
         });
     }

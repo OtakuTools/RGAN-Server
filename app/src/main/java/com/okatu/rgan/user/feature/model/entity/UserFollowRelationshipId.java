@@ -12,11 +12,11 @@ import java.util.Objects;
 public class UserFollowRelationshipId implements Serializable {
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "be_followed_id", nullable = false)
+    @JoinColumn(name = "be_followed_id", nullable = false, updatable = false)
     private RganUser beFollowed;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "follower_id", nullable = false)
+    @JoinColumn(name = "follower_id", nullable = false, updatable = false)
     private RganUser follower;
 
     public UserFollowRelationshipId() {

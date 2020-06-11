@@ -32,6 +32,9 @@ public class Blog implements VoteAbleEntity {
     @Column(columnDefinition = "text")
     private String content;
 
+    // might it cause cache miss?
+    // since the voteCount field might be update frequently
+    // evolution in different frequency comparing to other fields
     @Column(nullable = false)
     private Integer voteCount = 0;
 
@@ -54,13 +57,14 @@ public class Blog implements VoteAbleEntity {
     private Set<Tag> tags = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id", nullable = false)
+    @JoinColumn(name = "author_id", nullable = false, updatable = false)
     private RganUser author;
 
 //    @Temporal(TemporalType.TIMESTAMP)
 //    @Column(name = "created_time", updatable = false, insertable = false,
 //        columnDefinition = "datetime default CURRENT_TIMESTAMP")
 //    @Generated(value = GenerationTime.ALWAYS)
+    @Column(updatable = false)
     private LocalDateTime createdTime;
 
 //    @Temporal(TemporalType.TIMESTAMP)
@@ -73,13 +77,23 @@ public class Blog implements VoteAbleEntity {
 
     @PrePersist
     private void prePersist(){
-        createdTime = LocalDateTime.now();
-        modifiedTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
+        createdTime = now;
+        modifiedTime = now;
     }
 
-    @PreUpdate
-    private void preUpdate(){
-        modifiedTime = LocalDateTime.now();
+    // here's the problem
+    // the voteCount field might be modified
+    // thus trigger the preUpdate
+    // so update this field by hand
+//    @PreUpdate
+//    private void preUpdate(){
+//        modifiedTime = LocalDateTime.now();
+//    }
+
+
+    public void setModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
     public String getSummary() {

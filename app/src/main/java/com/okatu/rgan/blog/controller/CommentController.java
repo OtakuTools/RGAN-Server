@@ -91,7 +91,7 @@ public class CommentController {
         }
 
         comment.setContent(commentEditParam.getContent());
-        comment.setAuthor(user);
+        comment.setModifiedTime(LocalDateTime.now());
         // ignore the reply to
 
         commentRepository.save(comment);

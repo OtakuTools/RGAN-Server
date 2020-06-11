@@ -11,7 +11,7 @@ import javax.persistence.*;
 @DiscriminatorValue(VoteType.COMMENT_DISCRIMINATOR)
 public class CommentVoteItem extends VoteItem{
     @ManyToOne(cascade = CascadeType.PERSIST, optional = false)
-    @JoinColumn(name = "entity_id", nullable = false)
+    @JoinColumn(name = "entity_id", nullable = false, updatable = false)
     private Comment comment;
 
     public Comment getComment() {

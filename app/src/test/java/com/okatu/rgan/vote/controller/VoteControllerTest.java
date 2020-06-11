@@ -33,7 +33,7 @@ class VoteControllerTest {
         voteParam.setStatus(VoteStatus.DOWNVOTE);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .post("/blogs/6/vote")
+            .post("/blogs/42/vote")
             .contentType(MediaType.APPLICATION_JSON)
             .content(mapper.writeValueAsString(voteParam));
 

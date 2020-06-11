@@ -52,7 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .rememberMe()
             .rememberMeServices(rememberMeServices())
-            .tokenValiditySeconds(60 * 60 * 24)
+            // this setting won' t help, see the source code of RememberMeConfigurer::getRememberMeServices
+//            .tokenValiditySeconds(60 * 60 * 24)
             .and()
             .authorizeRequests()
             .antMatchers(
@@ -137,7 +138,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public RememberMeServices rememberMeServices(){
-        return new RganRememberMeServices("guess-what?", userDetailsService(), persistentTokenRepository());
+        RganRememberMeServices rememberMeServices = new RganRememberMeServices("guess-what?", userDetailsService(), persistentTokenRepository());
+        rememberMeServices.setTokenValiditySeconds(60 * 60 * 24 * 7);
+        return rememberMeServices;
     }
 
     @Bean
