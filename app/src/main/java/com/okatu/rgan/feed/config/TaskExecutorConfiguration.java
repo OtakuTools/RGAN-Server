@@ -1,8 +1,10 @@
 package com.okatu.rgan.feed.config;
 
+import org.springframework.boot.task.TaskSchedulerBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.AsyncConfigurer;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -23,5 +25,11 @@ public class TaskExecutorConfiguration{
             TimeUnit.MINUTES,
             new ArrayBlockingQueue<>(4096)
         );
+    }
+
+    @Bean
+    public TaskScheduler taskScheduler(){
+        TaskScheduler taskScheduler = new TaskSchedulerBuilder().poolSize(2).build();
+        return taskScheduler;
     }
 }

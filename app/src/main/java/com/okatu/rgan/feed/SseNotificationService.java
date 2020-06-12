@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -77,6 +79,21 @@ public class SseNotificationService {
         if(sseEmitter != null){
             sseEmitter.complete();
         }
+    }
+
+    @Async
+    @Scheduled(fixedRate = 50_000)
+    public void sendHeartbeatEventMessageToAll(){
+        sseEmitterConcurrentHashMap.forEach((userId, sseEmitter) -> {
+            try {
+                sseEmitter.send(SseEmitter.event().name("heartbeat").comment("heartbeat!"));
+            }catch (Exception e){
+                logger.error("Exception while send message to userId: {}, eventName: {}", userId, "heartbeat", e);
+                // complete method seems no help here, since it will check sendFail status
+                sseEmitterConcurrentHashMap.remove(userId);
+                sseEmitter.completeWithError(e);
+            }
+        });
     }
 
     public void removeConnectionIfExist(){
