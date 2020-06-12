@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
@@ -22,8 +23,10 @@ public class SseConnectionController {
     private SseNotificationService sseNotificationService;
 
     @GetMapping("/connect")
-    public SseEmitter createConnection(@AuthenticationPrincipal RganUser user){
-        return sseNotificationService.createConnection(user);
+    public SseEmitter createConnection(@AuthenticationPrincipal RganUser user, HttpServletResponse response){
+        SseEmitter sseEmitter = sseNotificationService.createConnection(user);
+        response.addHeader("X-Accel-Buffering", "no");
+        return sseEmitter;
     }
 
     // add a hook for client side?
