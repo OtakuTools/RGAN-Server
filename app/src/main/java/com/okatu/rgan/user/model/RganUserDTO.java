@@ -11,6 +11,7 @@ public class RganUserDTO {
 
     private String profilePicturePath;
 
+
     public Long getId() {
         return id;
     }
