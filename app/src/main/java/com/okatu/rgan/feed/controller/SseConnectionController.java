@@ -25,8 +25,8 @@ public class SseConnectionController {
     @GetMapping("/connect")
     public SseEmitter createConnection(@AuthenticationPrincipal RganUser user, HttpServletResponse response){
         SseEmitter sseEmitter = sseNotificationService.createConnection(user);
-        response.addHeader("X-Accel-Buffering", "no");
-        response.addHeader("Test", "aaa");
+        response.setHeader("X-Accel-Buffering", "no");
+        response.setHeader("Test", "aaa");
         return sseEmitter;
     }
 

@@ -23,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,7 +39,8 @@ public class BlogController {
     private UserFavouriteListService userFavouriteListService;
 
     @GetMapping
-    public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable) {
+    public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable, HttpServletResponse response) {
+        response.setHeader("Test", "aaa");
         return blogService.getAllPublishedBlogsOrderByCreatedTimeDesc(pageable);
     }
 
