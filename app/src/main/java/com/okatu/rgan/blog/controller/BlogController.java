@@ -40,7 +40,6 @@ public class BlogController {
 
     @GetMapping
     public Page<BlogSummaryDTO> all(@PageableDefault Pageable pageable, HttpServletResponse response) {
-        response.setHeader("Test", "aaa");
         return blogService.getAllPublishedBlogsOrderByCreatedTimeDesc(pageable);
     }
 

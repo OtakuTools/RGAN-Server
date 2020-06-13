@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 // what do you need:
 // user follow update
@@ -58,9 +60,11 @@ public class UserCenterController {
         if (name != null) {
             return userRepository.findByUsername(name).map(RganUserDTO::convertFrom)
                     .orElseThrow(() -> new ResourceNotFoundException("user", name));
-        } else {
+        } else if(id != null){
             return userRepository.findById(id).map(RganUserDTO::convertFrom)
                     .orElseThrow(() -> new ResourceNotFoundException("user", id));
+        }else{
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "missing parameter while get user info");
         }
     }
 

@@ -82,10 +82,11 @@ public class SseNotificationService {
     }
 
 //    @Async
-//    @Scheduled(fixedRate = 50_000)
+    @Scheduled(fixedRate = 50_000)
     public void sendHeartbeatEventMessageToAll(){
         sseEmitterConcurrentHashMap.forEach((userId, sseEmitter) -> {
             try {
+                logger.info("I am sending!, userId: {}, sseEmitter: {}", userId, sseEmitter);
                 sseEmitter.send(SseEmitter.event().name("heartbeat").comment("heartbeat!"));
             }catch (Exception e){
                 logger.error("Exception while send message to userId: {}, eventName: {}", userId, "heartbeat", e);
