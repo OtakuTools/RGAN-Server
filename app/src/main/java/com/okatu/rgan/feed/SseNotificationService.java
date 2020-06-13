@@ -81,8 +81,8 @@ public class SseNotificationService {
         }
     }
 
-    @Async
-    @Scheduled(fixedRate = 50_000)
+//    @Async
+//    @Scheduled(fixedRate = 50_000)
     public void sendHeartbeatEventMessageToAll(){
         sseEmitterConcurrentHashMap.forEach((userId, sseEmitter) -> {
             try {
