@@ -58,7 +58,7 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
         CommentVoteCounter commentVoteCounter = new CommentVoteCounter(saved);
-        commentVoteCounterRepository.save(commentVoteCounter);
+        saved.setVoteCounter(commentVoteCounterRepository.save(commentVoteCounter));
         eventPublisher.publishEvent(new CommentPublishEvent(this, comment));
         return saved;
     }

@@ -10,7 +10,8 @@ public class BlogVoteCounter {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @PrimaryKeyJoinColumn(name = "id")
+//    @PrimaryKeyJoinColumn seems no help here
+    @JoinColumn(name = "id")
     @MapsId
     private Blog blog;
 

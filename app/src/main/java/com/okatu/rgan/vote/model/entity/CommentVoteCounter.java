@@ -11,7 +11,7 @@ public class CommentVoteCounter {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @PrimaryKeyJoinColumn(name = "id")
+    @JoinColumn(name = "id")
     @MapsId
     private Comment comment;
 

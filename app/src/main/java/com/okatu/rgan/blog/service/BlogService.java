@@ -83,7 +83,7 @@ public class BlogService {
 
         Blog saved = blogRepository.save(blog);
         BlogVoteCounter blogVoteCounter = new BlogVoteCounter(saved);
-        blogVoteCounterRepository.save(blogVoteCounter);
+        saved.setVoteCounter(blogVoteCounterRepository.save(blogVoteCounter));
         return BlogDTO.convertFrom(saved);
     }
 
