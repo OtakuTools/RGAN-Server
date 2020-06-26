@@ -1,5 +1,7 @@
 package com.okatu.rgan.user.feature.model.entity;
 
+import com.okatu.rgan.common.model.ManuallyAssignIdEntitySuperClass;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -10,7 +12,7 @@ import java.time.LocalDateTime;
 // see the comment in Blog class
 // we need some extra columns
 @Entity
-public class UserFavouriteList {
+public class UserFavouriteList extends ManuallyAssignIdEntitySuperClass<UserFavouriteListId> {
 
     @EmbeddedId
     private UserFavouriteListId id;

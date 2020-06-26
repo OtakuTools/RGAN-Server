@@ -65,6 +65,8 @@ class BlogControllerTest {
         BlogEditParam blogEditParam = new BlogEditParam();
         blogEditParam.setTitle("change");
         blogEditParam.setContent("fuack me waht");
+        blogEditParam.setStatus(BlogStatus.PUBLISHED);
+        blogEditParam.setType(BlogType.ORIGINAL);
 
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -96,6 +98,17 @@ class BlogControllerTest {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
             .get("/blogs/search?keyword=" + keywords);
+
+        mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(print());
+    }
+
+    @WithUserDetails("test1")
+    @Test
+    void addBlogToUserFavouriteList() throws Exception {
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+            .post("/blogs/42/favourite");
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

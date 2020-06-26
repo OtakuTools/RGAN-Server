@@ -18,7 +18,7 @@ public interface BlogSummaryProjection {
 
     BlogStatus getStatus();
 
-    Integer getVoteCount();
+    VoteCounter getVoteCounter();
 
     Integer getVisitorCount();
 
@@ -35,5 +35,9 @@ public interface BlogSummaryProjection {
         String getUsername();
 
         String getProfilePicturePath();
+    }
+
+    interface VoteCounter {
+        Integer getValue();
     }
 }

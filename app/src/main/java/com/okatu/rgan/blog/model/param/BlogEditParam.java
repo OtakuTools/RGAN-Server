@@ -3,14 +3,17 @@ package com.okatu.rgan.blog.model.param;
 import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.constant.BlogType;
 
+import javax.validation.constraints.NotNull;
 import java.util.LinkedHashSet;
 
 public class BlogEditParam {
 
     private String title;
 
+    @NotNull
     private BlogType type;
 
+    @NotNull
     private BlogStatus status;
 
     private String summary;

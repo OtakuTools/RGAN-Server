@@ -1,6 +1,6 @@
-package com.okatu.rgan.file.controller;
+package com.okatu.rgan.upload.controller;
 
-import com.okatu.rgan.file.constant.QiniuStorageProperties;
+import com.okatu.rgan.upload.constant.QiniuStorageProperties;
 
 import com.qiniu.util.Auth;
 import com.qiniu.util.StringMap;

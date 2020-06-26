@@ -12,11 +12,14 @@ import com.okatu.rgan.common.exception.InvalidRequestParameterException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.user.model.RganUser;
+import com.okatu.rgan.vote.model.entity.BlogVoteCounter;
+import com.okatu.rgan.vote.repository.BlogVoteCounterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -35,6 +38,9 @@ public class BlogService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    @Autowired
+    private BlogVoteCounterRepository blogVoteCounterRepository;
 
     public Page<BlogSummaryDTO> getAuthorsPublishedBlogsOrderByCreatedTimeDesc(Collection<RganUser> authors, Pageable pageable){
         return blogRepository.findByAuthorInAndStatusOrderByCreatedTimeDesc(authors, BlogStatus.PUBLISHED, pageable).map(BlogSummaryDTO::convertFrom);
@@ -57,6 +63,7 @@ public class BlogService {
         return blogRepository.findByAuthorOrderByCreatedTime(author, pageable).map(BlogSummaryDTO::convertFrom);
     }
 
+    @Transactional
     public BlogDTO addBlog(BlogEditParam blogEditParam, @NonNull RganUser user){
         LinkedHashSet<Tag> tags = findTagsByTitles(blogEditParam.getTags());
 
@@ -73,9 +80,10 @@ public class BlogService {
         blog.setContent(blogEditParam.getContent());
         blog.setTags(tags);
         blog.setAuthor(user);
-        blog.setVoteCount(0);
 
         Blog saved = blogRepository.save(blog);
+        BlogVoteCounter blogVoteCounter = new BlogVoteCounter(saved);
+        blogVoteCounterRepository.save(blogVoteCounter);
         return BlogDTO.convertFrom(saved);
     }
 

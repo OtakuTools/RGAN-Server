@@ -1,13 +1,13 @@
 package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.vote.model.VoteAbleEntity;
+import com.okatu.rgan.vote.model.entity.CommentVoteCounter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-public class Comment implements VoteAbleEntity {
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,7 +36,17 @@ public class Comment implements VoteAbleEntity {
     // same reason to remove the @PreUpdate
     private LocalDateTime modifiedTime;
 
-    private Integer voteCount = 0;
+//    private Integer voteCount = 0;
+    @OneToOne(mappedBy = "comment", optional = false, fetch = FetchType.EAGER)
+    private CommentVoteCounter voteCounter;
+
+    public CommentVoteCounter getVoteCounter() {
+        return voteCounter;
+    }
+
+    public void setVoteCounter(CommentVoteCounter voteCounter) {
+        this.voteCounter = voteCounter;
+    }
 
     @PrePersist
     private void prePersist(){
@@ -50,13 +60,13 @@ public class Comment implements VoteAbleEntity {
 //        modifiedTime = LocalDateTime.now();
 //    }
 
-    public Integer getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(Integer voteCount) {
-        this.voteCount = voteCount;
-    }
+//    public Integer getVoteCount() {
+//        return voteCount;
+//    }
+//
+//    public void setVoteCount(Integer voteCount) {
+//        this.voteCount = voteCount;
+//    }
 
     public LocalDateTime getCreatedTime() {
         return createdTime;
@@ -120,15 +130,5 @@ public class Comment implements VoteAbleEntity {
 
     public void setBlog(Blog blog) {
         this.blog = blog;
-    }
-
-    @Override
-    public void incrVoteCount(int value) {
-        this.voteCount += value;
-    }
-
-    @Override
-    public void decrVoteCount(int value) {
-        this.voteCount -= value;
     }
 }

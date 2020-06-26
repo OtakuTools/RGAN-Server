@@ -3,7 +3,7 @@ package com.okatu.rgan.blog.model.entity;
 import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.vote.model.VoteAbleEntity;
+import com.okatu.rgan.vote.model.entity.BlogVoteCounter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import java.util.Set;
 // but what about a `findTagIdByBlog`? never
 // unidirectional relationship is enough
 @Entity
-public class Blog implements VoteAbleEntity {
+public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,9 +35,11 @@ public class Blog implements VoteAbleEntity {
     // might it cause cache miss?
     // since the voteCount field might be update frequently
     // evolution in different frequency comparing to other fields
-    @Column(nullable = false)
-    private Integer voteCount = 0;
+//    @Column(nullable = false)
+//    private Integer voteCount = 0;
 
+    // we should separate this when apply cache
+    // more "dynamic" part comparing to other fields
     private Integer visitorCount = 0;
 
     // ugly here
@@ -75,6 +77,9 @@ public class Blog implements VoteAbleEntity {
 
     private String summary;
 
+    @OneToOne(mappedBy = "blog", optional = false, fetch = FetchType.EAGER)
+    private BlogVoteCounter voteCounter;
+
     @PrePersist
     private void prePersist(){
         LocalDateTime now = LocalDateTime.now();
@@ -91,6 +96,14 @@ public class Blog implements VoteAbleEntity {
 //        modifiedTime = LocalDateTime.now();
 //    }
 
+
+    public BlogVoteCounter getVoteCounter() {
+        return voteCounter;
+    }
+
+    public void setVoteCounter(BlogVoteCounter voteCounter) {
+        this.voteCounter = voteCounter;
+    }
 
     public void setModifiedTime(LocalDateTime modifiedTime) {
         this.modifiedTime = modifiedTime;
@@ -148,13 +161,13 @@ public class Blog implements VoteAbleEntity {
 
     public void setType(BlogType type) { this.type = type; }
 
-    public Integer getVoteCount() {
-        return voteCount;
-    }
-
-    public void setVoteCount(Integer voteCount) {
-        this.voteCount = voteCount;
-    }
+//    public Integer getVoteCount() {
+//        return voteCount;
+//    }
+//
+//    public void setVoteCount(Integer voteCount) {
+//        this.voteCount = voteCount;
+//    }
 
     public Integer getVisitorCount() {
         return visitorCount;
@@ -181,15 +194,5 @@ public class Blog implements VoteAbleEntity {
     }
 
     public Blog() {
-    }
-
-    @Override
-    public void incrVoteCount(int value) {
-        this.voteCount += value;
-    }
-
-    @Override
-    public void decrVoteCount(int value) {
-        this.voteCount -= value;
     }
 }

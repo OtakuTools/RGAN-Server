@@ -8,6 +8,7 @@ import com.okatu.rgan.blog.model.CommentSummaryDTO;
 import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
 import com.okatu.rgan.blog.repository.BlogRepository;
 import com.okatu.rgan.blog.repository.CommentRepository;
+import com.okatu.rgan.blog.service.CommentService;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.user.model.RganUser;
@@ -46,6 +47,8 @@ public class CommentController {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private CommentService commentService;
 
     @GetMapping("/{blogId}/comments")
     public List<CommentSummaryDTO> all(@PathVariable("blogId") Long blogId){
@@ -57,23 +60,7 @@ public class CommentController {
     // Request URL: https://stackoverflow.com/posts/60629950/comments
     @PostMapping("/{blogId}/comments")
     public String add(@PathVariable("blogId") Long blogId, @RequestBody @Valid CommentEditParam commentEditParam, @AuthenticationPrincipal RganUser user){
-        Comment comment = new Comment();
-        comment.setContent(commentEditParam.getContent());
-        comment.setAuthor(user);
-        comment.setBlog(blogRepository.findById(blogId).orElseThrow(
-            () -> new ResourceNotFoundException("blog", blogId)
-        ));
-        comment.setVoteCount(0);
-
-        if(commentEditParam.getReplyTo() != null){
-            comment.setReplyTo(commentRepository.findById(commentEditParam.getReplyTo())
-                .orElseThrow(
-                    () -> new ResourceNotFoundException("comment", commentEditParam.getReplyTo())
-                ));
-        }
-
-        commentRepository.save(comment);
-        eventPublisher.publishEvent(new CommentPublishEvent(this, comment));
+        Comment comment = commentService.addComment(blogId, commentEditParam, user);
 
         return "";
     }

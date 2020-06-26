@@ -1,6 +1,6 @@
-package com.okatu.rgan.file.config;
+package com.okatu.rgan.upload.config;
 
-import com.okatu.rgan.file.constant.QiniuStorageProperties;
+import com.okatu.rgan.upload.constant.QiniuStorageProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

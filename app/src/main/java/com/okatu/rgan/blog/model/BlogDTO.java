@@ -137,7 +137,7 @@ public class BlogDTO {
         blogDTO.setModifiedTime(blog.getModifiedTime());
         blogDTO.setTags(blog.getTags());
         blogDTO.setAuthor(new AuthorInCreateEntityDTO(blog.getAuthor().getUsername(), blog.getAuthor().getProfilePicturePath()));
-        blogDTO.setVoteCount(blog.getVoteCount());
+        blogDTO.setVoteCount(blog.getVoteCounter().getValue());
         blogDTO.setVisitorCount(blog.getVisitorCount());
         return blogDTO;
     }

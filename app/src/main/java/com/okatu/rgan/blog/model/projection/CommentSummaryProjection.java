@@ -15,7 +15,7 @@ public interface CommentSummaryProjection {
 
     LocalDateTime getModifiedTime();
 
-    Integer getVoteCount();
+    VoteCounter getVoteCounter();
 
     interface AuthorSummary{
         String getUsername();
@@ -25,5 +25,9 @@ public interface CommentSummaryProjection {
 
     interface ReplyToSummary{
         Long getId();
+    }
+
+    interface VoteCounter {
+        Integer getValue();
     }
 }

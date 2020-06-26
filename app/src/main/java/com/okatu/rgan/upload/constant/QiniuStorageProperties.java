@@ -1,4 +1,4 @@
-package com.okatu.rgan.file.constant;
+package com.okatu.rgan.upload.constant;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConstructorBinding;

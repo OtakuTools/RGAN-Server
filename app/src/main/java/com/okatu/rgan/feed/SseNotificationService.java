@@ -87,7 +87,7 @@ public class SseNotificationService {
         sseEmitterConcurrentHashMap.forEach((userId, sseEmitter) -> {
             try {
 //                logger.info("I am sending!, userId: {}, sseEmitter: {}", userId, sseEmitter);
-                sseEmitter.send(SseEmitter.event().name("heartbeat").data("hb").comment("heartbeat!"));
+                sseEmitter.send(SseEmitter.event().name("heartbeat").data("hb"));
             }catch (Exception e){
                 logger.error("Exception while send message to userId: {}, eventName: {}", userId, "heartbeat", e);
                 // complete method seems no help here, since it will check sendFail status

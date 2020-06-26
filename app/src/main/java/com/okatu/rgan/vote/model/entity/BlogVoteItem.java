@@ -3,7 +3,6 @@ package com.okatu.rgan.vote.model.entity;
 import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.constant.VoteType;
-import com.okatu.rgan.vote.model.VoteAbleEntity;
 
 import javax.persistence.*;
 
@@ -26,11 +25,6 @@ public class BlogVoteItem extends VoteItem{
     public BlogVoteItem(RganUser author, Blog blog) {
         super(author);
         this.blog = blog;
-    }
-
-    @Override
-    public VoteAbleEntity getAssociateVoteAbleEntity() {
-        return blog;
     }
 
     public BlogVoteItem() {

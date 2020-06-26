@@ -7,12 +7,13 @@ import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.common.exception.UniquenessViolationException;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.constant.VoteStatus;
-import com.okatu.rgan.vote.model.VoteAbleEntity;
 import com.okatu.rgan.vote.model.entity.BlogVoteItem;
 import com.okatu.rgan.vote.model.entity.CommentVoteItem;
 import com.okatu.rgan.vote.model.entity.VoteItem;
 import com.okatu.rgan.vote.model.event.*;
+import com.okatu.rgan.vote.repository.BlogVoteCounterRepository;
 import com.okatu.rgan.vote.repository.BlogVoteItemRepository;
+import com.okatu.rgan.vote.repository.CommentVoteCounterRepository;
 import com.okatu.rgan.vote.repository.CommentVoteItemRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,12 @@ public class VoteService {
     private CommentVoteItemRepository commentVoteItemRepository;
 
     @Autowired
+    private BlogVoteCounterRepository blogVoteCounterRepository;
+
+    @Autowired
+    private CommentVoteCounterRepository commentVoteCounterRepository;
+
+    @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
@@ -44,20 +51,22 @@ public class VoteService {
         Optional<BlogVoteItem> optional = blogVoteItemRepository.findByBlogAndAuthor(blog, user);
         BlogVoteItem voteItem;
         boolean firstVote = true;
+        int changeValue = 0;
 
         if(optional.isPresent()){
             voteItem = optional.get();
-            applyStateTransition(voteItem, newStatus);
+            changeValue = applyStateTransition(voteItem, newStatus);
         }else{
             if(newStatus == VoteStatus.CANCELED){
                 throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
             }
 
             voteItem = new BlogVoteItem(user, blog);
-            applyOnCancelOrNotExistStatus(voteItem, newStatus);
+            changeValue = applyOnCancelOrNotExistStatus(voteItem, newStatus);
             firstVote = false;
         }
         blogVoteItemRepository.save(voteItem);
+        blogVoteCounterRepository.changeVoteCount(changeValue, blog.getVoteCounter());
         if(newStatus == VoteStatus.UPVOTE){
             // we can have such kind information(firstVote/reVote) in service layer
             // so keep it, in the format of static type
@@ -83,20 +92,22 @@ public class VoteService {
         Optional<CommentVoteItem> optional = commentVoteItemRepository.findByCommentAndAuthor(comment, user);
         CommentVoteItem voteItem;
         boolean firstVote = true;
+        int changeValue = 0;
 
         if(optional.isPresent()){
             voteItem = optional.get();
-            applyStateTransition(voteItem, newStatus);
+            changeValue = applyStateTransition(voteItem, newStatus);
         }else{
             if(newStatus == VoteStatus.CANCELED){
                 throw new ResourceNotFoundException("You cannot cancel a not exist vote!");
             }
 
             voteItem = new CommentVoteItem(user, comment);
-            applyOnCancelOrNotExistStatus(voteItem, newStatus);
+            changeValue = applyOnCancelOrNotExistStatus(voteItem, newStatus);
             firstVote = false;
         }
         commentVoteItemRepository.save(voteItem);
+        commentVoteCounterRepository.changeVoteCount(changeValue, comment.getVoteCounter());
         if(newStatus == VoteStatus.UPVOTE){
             if(firstVote){
                 applicationEventPublisher.publishEvent(new CommentVotePublishEvent(this, voteItem));
@@ -108,69 +119,69 @@ public class VoteService {
         }
     }
 
-    private void applyStateTransition(VoteItem voteItem, VoteStatus newStatus){
+    // the return value here,
+    // indicate the change value should be apply on the vote counter
+    // a type might be more clear, but for now ..
+    private int applyStateTransition(VoteItem voteItem, VoteStatus newStatus){
         if(voteItem.getStatus().equals(newStatus)){
             throw new UniquenessViolationException("You cannot re-vote/downvote/cancel the same entity, voteItem id: " + voteItem.getId());
         }
 
         switch (voteItem.getStatus()){
             case DOWNVOTE:
-                applyOnDownVoteStatus(voteItem, newStatus);
-                break;
+                return applyOnDownVoteStatus(voteItem, newStatus);
             case CANCELED:
-                applyOnCancelOrNotExistStatus(voteItem, newStatus);
-                break;
+                return applyOnCancelOrNotExistStatus(voteItem, newStatus);
             case UPVOTE:
-                applyOnUpVoteStatus(voteItem, newStatus);
-                break;
+                return applyOnUpVoteStatus(voteItem, newStatus);
         }
+
+        throw new ConstraintViolationException("should not hit here");
     }
 
-    private void applyOnCancelOrNotExistStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
-        VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
+    private int applyOnCancelOrNotExistStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         switch (newStatus){
             case DOWNVOTE:
                 voteItem.setStatus(VoteStatus.DOWNVOTE);
-                voteAble.decrVoteCount(1);
-                break;
+                return decrVoteCount(1);
             case UPVOTE:
                 voteItem.setStatus(VoteStatus.UPVOTE);
-                voteAble.incrVoteCount(1);
-                break;
-            default:
-                throw new ConstraintViolationException("should not hit here");
+                return incrVoteCount(1);
         }
+        throw new ConstraintViolationException("should not hit here");
     }
 
-    private void applyOnUpVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
-        VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
+    private int applyOnUpVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         switch (newStatus){
             case DOWNVOTE:
                 voteItem.setStatus(VoteStatus.DOWNVOTE);
-                voteAble.decrVoteCount(2);
-                break;
+                return decrVoteCount(2);
             case CANCELED:
                 voteItem.setStatus(VoteStatus.CANCELED);
-                voteAble.decrVoteCount(1);
-                break;
-            default:
-                throw new ConstraintViolationException("should not hit here");
+                return decrVoteCount(1);
         }
+        throw new ConstraintViolationException("should not hit here");
     }
 
-    private void applyOnDownVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
-        VoteAbleEntity voteAble = voteItem.getAssociateVoteAbleEntity();
+    private int applyOnDownVoteStatus(@NonNull VoteItem voteItem, VoteStatus newStatus){
         switch (newStatus){
             case CANCELED:
                 voteItem.setStatus(VoteStatus.CANCELED);
-                voteAble.incrVoteCount(1);
-                break;
+                return incrVoteCount(1);
             case UPVOTE:
                 voteItem.setStatus(VoteStatus.UPVOTE);
-                voteAble.incrVoteCount(2);
-                break;
-            default:
-                throw new ConstraintViolationException("should not hit here");
+                return incrVoteCount(2);
         }
+        throw new ConstraintViolationException("should not hit here");
+    }
+
+    // just make the semantic clear here
+    // i think any qualified compiler will inline these
+    private int incrVoteCount(int value){
+        return value;
+    }
+
+    private int decrVoteCount(int value){
+        return -value;
     }
 }

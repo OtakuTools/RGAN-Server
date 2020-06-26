@@ -2,7 +2,6 @@ package com.okatu.rgan.vote.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.constant.VoteStatus;
-import com.okatu.rgan.vote.model.VoteAbleEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -79,8 +78,6 @@ public abstract class VoteItem {
     public void setModifiedTime(LocalDateTime modifiedTime) {
         this.modifiedTime = modifiedTime;
     }
-
-    public abstract VoteAbleEntity getAssociateVoteAbleEntity();
 
     VoteItem(){
 

@@ -104,7 +104,7 @@ public class CommentSummaryDTO {
             replyToCommentId,
             projection.getCreatedTime(),
             projection.getModifiedTime(),
-            projection.getVoteCount()
+            projection.getVoteCounter().getValue()
         );
     }
 }
