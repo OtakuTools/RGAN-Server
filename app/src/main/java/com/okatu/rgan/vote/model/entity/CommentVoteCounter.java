@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class CommentVoteCounter extends ManuallyAssignIdEntitySuperClass<Long> {
     @Id
     private Long id;
