@@ -4,6 +4,9 @@ import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.constant.BlogType;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.entity.BlogVoteCounter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,6 +17,8 @@ import java.util.Set;
 // but what about a `findTagIdByBlog`? never
 // unidirectional relationship is enough
 @Entity
+@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,6 +58,7 @@ public class Blog {
         joinColumns = @JoinColumn(name = "blog_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     // use @ManyToMany only here, since the relationship here is quite stable and simple,
     // unlike follow or favourite, both of which need extra column for description,
     // and mapping such join table with extra column seems a bit of tricky in jpa.
@@ -77,8 +83,20 @@ public class Blog {
 
     private String summary;
 
-    @OneToOne(mappedBy = "blog", optional = false, fetch = FetchType.EAGER)
+    // see:
+    // https://vladmihalcea.com/the-best-way-to-map-a-onetoone-relationship-with-jpa-and-hibernate/
+//    @OneToOne(optional = false, mappedBy = "blog")
+    @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @PrimaryKeyJoinColumn
     private BlogVoteCounter voteCounter;
+
+    public BlogVoteCounter getVoteCounter() {
+        return voteCounter;
+    }
+
+    public void setVoteCounter(BlogVoteCounter voteCounter) {
+        this.voteCounter = voteCounter;
+    }
 
     @PrePersist
     private void prePersist(){
@@ -91,18 +109,11 @@ public class Blog {
     // the voteCount field might be modified
     // thus trigger the preUpdate
     // so update this field by hand
-//    @PreUpdate
-//    private void preUpdate(){
-//        modifiedTime = LocalDateTime.now();
-//    }
-
-
-    public BlogVoteCounter getVoteCounter() {
-        return voteCounter;
-    }
-
-    public void setVoteCounter(BlogVoteCounter voteCounter) {
-        this.voteCounter = voteCounter;
+    // ===========
+    // now we separate this shit
+    @PreUpdate
+    private void preUpdate(){
+        modifiedTime = LocalDateTime.now();
     }
 
     public void setModifiedTime(LocalDateTime modifiedTime) {

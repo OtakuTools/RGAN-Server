@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
@@ -41,6 +42,7 @@ public class CommentService {
         return commentRepository.findByAuthorOrderByCreatedTimeDesc(author, pageable).map(CommentSummaryDTO::convertFrom);
     }
 
+    @Transactional
     public Comment addComment(long blogId, CommentEditParam commentEditParam, @NonNull RganUser user){
         Comment comment = new Comment();
         comment.setContent(commentEditParam.getContent());

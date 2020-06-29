@@ -82,8 +82,8 @@ public class BlogService {
         blog.setAuthor(user);
 
         Blog saved = blogRepository.save(blog);
-        BlogVoteCounter blogVoteCounter = new BlogVoteCounter(saved);
-        saved.setVoteCounter(blogVoteCounterRepository.save(blogVoteCounter));
+        BlogVoteCounter voteCounter = new BlogVoteCounter(saved);
+        saved.setVoteCounter(blogVoteCounterRepository.save(voteCounter));
         return BlogDTO.convertFrom(saved);
     }
 

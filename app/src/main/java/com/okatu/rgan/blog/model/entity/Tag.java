@@ -1,9 +1,13 @@
 package com.okatu.rgan.blog.model.entity;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,19 +1,19 @@
 package com.okatu.rgan.vote.model.entity;
 
 import com.okatu.rgan.blog.model.entity.Comment;
+import com.okatu.rgan.common.model.ManuallyAssignIdEntitySuperClass;
 import com.okatu.rgan.vote.constant.VoteType;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 
+
 @Entity
-public class CommentVoteCounter {
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class CommentVoteCounter extends ManuallyAssignIdEntitySuperClass<Long> {
     @Id
     private Long id;
-
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id")
-    @MapsId
-    private Comment comment;
 
     private Integer value = 0;
 
@@ -21,12 +21,11 @@ public class CommentVoteCounter {
     }
 
     public CommentVoteCounter(Comment comment) {
-        this.comment = comment;
+        this.id = comment.getId();
     }
 
-
-    public Comment getComment() {
-        return comment;
+    public Long getId() {
+        return id;
     }
 
     public Integer getValue() {

@@ -2,6 +2,7 @@ package com.okatu.rgan.user.model;
 
 import com.okatu.rgan.user.authentication.constant.UserAccountStatus;
 import com.okatu.rgan.user.authentication.constant.UserVerificationStatus;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -16,6 +17,8 @@ import java.util.Set;
 // 而disabled，可能是因为某个管理员的手动操作
 @Entity
 @Table(name = "user")
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class RganUser implements UserDetails {
 
     @Id

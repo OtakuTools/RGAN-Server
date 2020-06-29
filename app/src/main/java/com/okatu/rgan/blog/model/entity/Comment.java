@@ -37,7 +37,8 @@ public class Comment {
     private LocalDateTime modifiedTime;
 
 //    private Integer voteCount = 0;
-    @OneToOne(mappedBy = "comment", optional = false, fetch = FetchType.EAGER)
+    @OneToOne(optional = false, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @PrimaryKeyJoinColumn
     private CommentVoteCounter voteCounter;
 
     public CommentVoteCounter getVoteCounter() {
@@ -55,10 +56,10 @@ public class Comment {
         modifiedTime = now;
     }
 //
-//    @PreUpdate
-//    private void preUpdate(){
-//        modifiedTime = LocalDateTime.now();
-//    }
+    @PreUpdate
+    private void preUpdate(){
+        modifiedTime = LocalDateTime.now();
+    }
 
 //    public Integer getVoteCount() {
 //        return voteCount;

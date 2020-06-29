@@ -43,10 +43,11 @@ class CommentControllerTest {
         commentEditParam.setContent("abc");
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
-            .post("/blogs/1/comments")
+            .post("/blogs/7/comments")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(commentEditParam));
         mockMvc.perform(requestBuilder)
+            .andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(print());
     }
 }

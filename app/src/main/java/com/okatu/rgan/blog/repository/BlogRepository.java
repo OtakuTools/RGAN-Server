@@ -8,12 +8,13 @@ import com.okatu.rgan.user.model.RganUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Collection;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
-
+    
     Page<BlogSummaryProjection> findByAuthorInAndStatusOrderByCreatedTimeDesc(Collection<RganUser> author, BlogStatus status, Pageable pageable);
 
     Page<BlogSummaryProjection> findByStatusOrderByCreatedTimeDesc(BlogStatus status, Pageable pageable);
@@ -24,5 +25,6 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlo
 
     Page<BlogSummaryProjection> findByAuthorAndStatusOrderByCreatedTimeDesc(RganUser author, BlogStatus status, Pageable pageable);
 
+//    @Query(value = "SELECT b FROM Blog b join fetch b.voteCounter WHERE b.id=?1 AND b.status=?2")
     Optional<Blog> findByIdAndStatus(Long id, BlogStatus status);
 }
