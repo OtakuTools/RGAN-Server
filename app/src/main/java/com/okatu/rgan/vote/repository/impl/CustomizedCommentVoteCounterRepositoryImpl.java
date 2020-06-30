@@ -19,6 +19,7 @@ public class CustomizedCommentVoteCounterRepositoryImpl implements CustomizedCom
 
     @Override
     public void changeVoteCount(int value, CommentVoteCounter voteCounter) {
+        //noinspection JpaQlInspection
         entityManager.createQuery("UPDATE CommentVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
             .setParameter(1, value)
             .setParameter(2, voteCounter)

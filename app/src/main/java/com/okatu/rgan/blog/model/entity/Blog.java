@@ -18,7 +18,7 @@ import java.util.Set;
 // unidirectional relationship is enough
 @Entity
 @Cacheable
-//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

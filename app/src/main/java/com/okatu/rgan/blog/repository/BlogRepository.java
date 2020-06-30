@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
-    
+
     Page<BlogSummaryProjection> findByAuthorInAndStatusOrderByCreatedTimeDesc(Collection<RganUser> author, BlogStatus status, Pageable pageable);
 
     Page<BlogSummaryProjection> findByStatusOrderByCreatedTimeDesc(BlogStatus status, Pageable pageable);

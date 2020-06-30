@@ -1,5 +1,6 @@
 package com.okatu.rgan.blog.model;
 
+import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.blog.model.projection.CommentSummaryProjection;
 import com.okatu.rgan.user.model.AuthorInCreateEntityDTO;
 
@@ -105,6 +106,21 @@ public class CommentSummaryDTO {
             projection.getCreatedTime(),
             projection.getModifiedTime(),
             projection.getVoteCounter().getValue()
+        );
+    }
+
+    public static CommentSummaryDTO convertFrom(Comment comment){
+        Long replyToCommentId = comment.getReplyTo() != null ?
+            comment.getReplyTo().getId() : null;
+        return new CommentSummaryDTO(
+            comment.getId(),
+            comment.getContent(),
+            comment.getAuthor().getUsername(),
+            comment.getAuthor().getProfilePicturePath(),
+            replyToCommentId,
+            comment.getCreatedTime(),
+            comment.getModifiedTime(),
+            comment.getVoteCounter().getValue()
         );
     }
 }

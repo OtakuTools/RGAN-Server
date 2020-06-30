@@ -28,7 +28,7 @@ class CommentControllerTest {
 
     @Test
     void all() throws Exception {
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs/1/comments");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs/7/comments");
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

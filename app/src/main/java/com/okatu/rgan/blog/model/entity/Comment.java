@@ -2,11 +2,14 @@ package com.okatu.rgan.blog.model.entity;
 
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.entity.CommentVoteCounter;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Cacheable
+@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,12 +20,12 @@ public class Comment {
     @Transient
     private Integer status;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false, updatable = false)
     private RganUser author;
 
-    @ManyToOne
-    @JoinColumn(name = "reply_to_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reply_to_id")
     private Comment replyTo;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -30,7 +30,7 @@ class BlogControllerTest {
 
     @Test
     public void testGet() throws Exception{
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs/12");
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/blogs/7");
 
         mockMvc.perform(requestBuilder)
             .andExpect(MockMvcResultMatchers.status().isOk())

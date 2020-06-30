@@ -22,6 +22,7 @@ public class CustomizedBlogVoteCounterRepositoryImpl implements CustomizedBlogVo
 
     @Override
     public void changeVoteCount(int value, BlogVoteCounter voteCounter) {
+        //noinspection JpaQlInspection
         entityManager.createQuery("UPDATE BlogVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
             .setParameter(1, value)
             .setParameter(2, voteCounter)
