@@ -51,6 +51,9 @@
     <logger name="com.okatu.rgan" level="${APP_LOG_LEVEL}" additivity="false">
         <appender-ref ref="APP"/>
     </logger>
+    <logger name="org.hibernate.SQL" level="${APP_LOG_LEVEL}" additivity="false">
+        <appender-ref ref="APP"/>
+    </logger>
 
     <root level="${DEPLOY_LOG_LEVEL}">
         <appender-ref ref="CONSOLE"/>
