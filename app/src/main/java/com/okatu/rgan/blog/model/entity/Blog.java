@@ -17,6 +17,7 @@ import java.util.Set;
 // but what about a `findTagIdByBlog`? never
 // unidirectional relationship is enough
 @Entity
+//@NamedEntityGraph
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Blog {

@@ -23,12 +23,15 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
         Assert.notEmpty(keywords, "keywords should not be empty");
         // tags field needs another query
         // very vulnerable
+        // see https://stackoverflow.com/a/6004072/8510613
+        // and https://stackoverflow.com/a/51496418/8510613
+        // we just can't use collection in constructor
         StringBuilder based = new StringBuilder(
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +
                 "b.summary, b.type, b.status, " +
                 "b.voteCounter.value, b.visitorCount, " +
-                "b.author.username, " +
+                "b.author.username, b.author.profilePicturePath, " +
                 "b.createdTime, b.modifiedTime) FROM Blog b WHERE b.status=com.okatu.rgan.blog.constant.BlogStatus.PUBLISHED AND ");
         // LOWER(firstname) like '%' + LOWER(?0) + '%'
         based.append("(b.title like ?1");
@@ -51,6 +54,10 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
         List<BlogSummaryDTO> res = query.getResultList();
 
         res.forEach(blogSummaryDTO -> {
+//            Set<TagSummaryDTO> tags = entityManager.createQuery(
+//                "SELECT t FROM Tag t JOIN Blog b WHERE b.id=?1", Tag.class)
+//                .setParameter(1, blogSummaryDTO.getId())
+//                .getResultList().stream().map(TagSummaryDTO::convertFrom).collect(Collectors.toCollection(LinkedHashSet::new));
             @SuppressWarnings("unchecked")
             List<TagSummaryDTO> tags = entityManager.createNativeQuery(
                 "SELECT tag.id as id, tag.title as title FROM blog_tag_association association " +
