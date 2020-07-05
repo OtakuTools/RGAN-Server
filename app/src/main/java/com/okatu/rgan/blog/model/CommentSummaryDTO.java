@@ -15,10 +15,6 @@ public class CommentSummaryDTO {
 
     private Long replyTo;
 
-    private Long blogId;
-
-    private String blogTitle;
-
     private LocalDateTime createdTime;
 
     private LocalDateTime modifiedTime;

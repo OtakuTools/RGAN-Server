@@ -26,6 +26,9 @@ public class CustomizedBlogRepositoryImpl implements CustomizedBlogRepository {
         // see https://stackoverflow.com/a/6004072/8510613
         // and https://stackoverflow.com/a/51496418/8510613
         // we just can't use collection in constructor
+        // and https://stackoverflow.com/questions/12459779/query-specified-join-fetching-but-the-owner-of-the-fetched-association-was-not
+        // https://stackoverflow.com/questions/12496945/join-fetch-query-specified-join-fetching-but-the-owner-of-the-fetched-associa
+        // just can't use JOIN FETCH for b.voteCounter
         StringBuilder based = new StringBuilder(
             "SELECT new com.okatu.rgan.blog.model.BlogSummaryDTO(" +
                 "b.id, b.title, " +

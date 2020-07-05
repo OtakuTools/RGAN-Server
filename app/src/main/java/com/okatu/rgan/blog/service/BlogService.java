@@ -52,10 +52,10 @@ public class BlogService {
 
     public BlogDTO getPublishedBlogById(long id){
         // we are not enabling query cache, so...
-        return blogRepository.findById(id).filter(blog -> blog.getStatus() == BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
-            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
-//        return blogRepository.findByIdAndStatus(id, BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
+//        return blogRepository.findById(id).filter(blog -> blog.getStatus() == BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
 //            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
+        return blogRepository.findByIdAndStatus(id, BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
+            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
     }
 
     public Page<BlogSummaryDTO> getAuthorSpecificStatusBlogsOrderByCreatedTimeDesc(@NonNull RganUser author, BlogStatus status, Pageable pageable){

@@ -3,6 +3,7 @@ package com.okatu.rgan.user.feature.controller;
 import com.okatu.rgan.blog.constant.BlogStatus;
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.model.CommentSummaryDTO;
+import com.okatu.rgan.blog.model.CommentSummaryWithBlogTitleDTO;
 import com.okatu.rgan.blog.service.BlogService;
 import com.okatu.rgan.blog.service.CommentService;
 import com.okatu.rgan.common.exception.ResourceNotFoundException;
@@ -105,7 +106,7 @@ public class UserCenterController {
     }
 
     @GetMapping("/self/comments")
-    public Page<CommentSummaryDTO> getSelfComments(@AuthenticationPrincipal RganUser self, @PageableDefault Pageable pageable){
+    public Page<CommentSummaryWithBlogTitleDTO> getSelfComments(@AuthenticationPrincipal RganUser self, @PageableDefault Pageable pageable){
         return commentService.getAuthorAllCommentsOrderByCreatedTimeDesc(self, pageable);
     }
 

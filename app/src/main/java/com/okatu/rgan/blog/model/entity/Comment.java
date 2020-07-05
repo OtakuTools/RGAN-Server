@@ -8,6 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@NamedEntityGraph(
+    name = "comment.voteCounter",
+    attributeNodes = {@NamedAttributeNode(value = "voteCounter")}
+)
 @Cacheable
 @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class Comment {

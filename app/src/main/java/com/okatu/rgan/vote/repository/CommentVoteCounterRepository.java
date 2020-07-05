@@ -8,8 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface CommentVoteCounterRepository extends JpaRepository<CommentVoteCounter, Comment>, CustomizedCommentVoteCounterRepository {
-//    @Modifying
-//    @Query(value = "UPDATE CommentVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
-//    void changeVoteCount(int value, CommentVoteCounter voteCounter);
+public interface CommentVoteCounterRepository extends JpaRepository<CommentVoteCounter, Comment> {
+    @Modifying
+    @Query(value = "UPDATE CommentVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
+    void changeVoteCount(int value, CommentVoteCounter voteCounter);
 }

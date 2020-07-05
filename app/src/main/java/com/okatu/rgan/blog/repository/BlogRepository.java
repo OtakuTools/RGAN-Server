@@ -7,6 +7,7 @@ import com.okatu.rgan.blog.model.entity.Blog;
 import com.okatu.rgan.user.model.RganUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,16 +23,22 @@ import java.util.Optional;
 // like l2 cache, stuff like UserSummary need to be cached
 public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlogRepository {
 
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Page<BlogSummaryProjection> findByAuthorInAndStatusOrderByCreatedTimeDesc(Collection<RganUser> author, BlogStatus status, Pageable pageable);
 
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Page<BlogSummaryProjection> findByStatusOrderByCreatedTimeDesc(BlogStatus status, Pageable pageable);
 
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Page<BlogSummaryProjection> findByAuthor_UsernameAndStatusOrderByCreatedTimeDesc(String username, BlogStatus status, Pageable pageable);
 
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Page<BlogSummaryProjection> findByAuthorOrderByCreatedTime(RganUser author, Pageable pageable);
 
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Page<BlogSummaryProjection> findByAuthorAndStatusOrderByCreatedTimeDesc(RganUser author, BlogStatus status, Pageable pageable);
 
 //    @Query(value = "SELECT b FROM Blog b join fetch b.voteCounter WHERE b.id=?1 AND b.status=?2")
+    @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Blog> findByIdAndStatus(Long id, BlogStatus status);
 }

@@ -1,6 +1,7 @@
 package com.okatu.rgan.blog.service;
 
 import com.okatu.rgan.blog.model.CommentSummaryDTO;
+import com.okatu.rgan.blog.model.CommentSummaryWithBlogTitleDTO;
 import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.blog.model.event.CommentDeleteEvent;
 import com.okatu.rgan.blog.model.event.CommentPublishEvent;
@@ -47,8 +48,8 @@ public class CommentService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    public Page<CommentSummaryDTO> getAuthorAllCommentsOrderByCreatedTimeDesc(RganUser author, Pageable pageable){
-        return commentRepository.findByAuthorOrderByCreatedTimeDesc(author, pageable).map(CommentSummaryDTO::convertFrom);
+    public Page<CommentSummaryWithBlogTitleDTO> getAuthorAllCommentsOrderByCreatedTimeDesc(RganUser author, Pageable pageable){
+        return commentRepository.findByAuthorOrderByCreatedTimeDesc(author, pageable).map(CommentSummaryWithBlogTitleDTO::convertFrom);
     }
 
     public List<CommentSummaryDTO> getBlogAllComments(long blogId){

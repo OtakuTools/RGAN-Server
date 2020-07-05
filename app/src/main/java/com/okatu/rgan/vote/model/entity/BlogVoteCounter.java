@@ -12,8 +12,8 @@ import javax.persistence.*;
 // FUCK
 // REALLY RELIABLE HERE?
 @Entity
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+//@Cacheable
+//@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
 public class BlogVoteCounter extends ManuallyAssignIdEntitySuperClass<Long> {
     @Id
     private Long id;

@@ -10,9 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 
-public interface BlogVoteCounterRepository extends JpaRepository<BlogVoteCounter, Blog>, CustomizedBlogVoteCounterRepository{
+public interface BlogVoteCounterRepository extends JpaRepository<BlogVoteCounter, Blog>{
     // flush the change before this query
-//    @Modifying(flushAutomatically = true)
-//    @Query(value = "UPDATE BlogVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
-//    void changeVoteCount(int value, BlogVoteCounter voteCounter);
+    @Modifying(flushAutomatically = true)
+    @Query(value = "UPDATE BlogVoteCounter v SET v.value = v.value + ?1 WHERE v=?2")
+    void changeVoteCount(int value, BlogVoteCounter voteCounter);
 }
