@@ -11,6 +11,7 @@ public class RganUserDTO {
 
     private String profilePicturePath;
 
+    private String description;
 
     public Long getId() {
         return id;
@@ -44,12 +45,21 @@ public class RganUserDTO {
         this.profilePicturePath = profilePicturePath;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public static RganUserDTO convertFrom(RganUser user){
         RganUserDTO rganUserDTO = new RganUserDTO();
         rganUserDTO.setId(user.getId());
         rganUserDTO.setUsername(user.getUsername());
         rganUserDTO.setCreatedTime(user.getCreatedTime());
         rganUserDTO.setProfilePicturePath(user.getProfilePicturePath());
+        rganUserDTO.setDescription(user.getDescription());
         return rganUserDTO;
     }
 }
