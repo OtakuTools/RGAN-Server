@@ -2,31 +2,21 @@ package com.okatu.rgan.blog.controller;
 
 import com.okatu.rgan.blog.model.BlogSummaryDTO;
 import com.okatu.rgan.blog.service.BlogService;
-import com.okatu.rgan.common.exception.ConstraintViolationException;
-import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.blog.model.BlogDTO;
 import com.okatu.rgan.blog.model.param.BlogEditParam;
-import com.okatu.rgan.blog.model.entity.Blog;
-import com.okatu.rgan.blog.model.entity.Tag;
-import com.okatu.rgan.blog.repository.BlogRepository;
-import com.okatu.rgan.common.exception.ResourceNotFoundException;
-import com.okatu.rgan.blog.repository.TagRepository;
 import com.okatu.rgan.user.feature.service.UserFavouriteListService;
 import com.okatu.rgan.user.model.RganUser;
-import com.okatu.rgan.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/blogs")
@@ -64,9 +54,10 @@ public class BlogController {
     // The Developer has the responsibility for threadsafe access to the attribute objects themselves.
     // This will protect the attribute collection inside the HttpSession object from concurrent access,
     // eliminating the opportunity for an application to cause that collection to become corrupted.
+
     @GetMapping("/{id}")
-    public BlogDTO one(@PathVariable Long id){
-        return blogService.getPublishedBlogById(id);
+    public BlogDTO one(@PathVariable Long id, @Nullable @AuthenticationPrincipal RganUser user){
+        return blogService.getBlogById(id, user);
     }
 
     @PutMapping("/{id}")

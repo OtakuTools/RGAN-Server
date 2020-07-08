@@ -14,12 +14,17 @@ import com.okatu.rgan.common.exception.ResourceNotFoundException;
 import com.okatu.rgan.user.model.RganUser;
 import com.okatu.rgan.vote.model.entity.BlogVoteCounter;
 import com.okatu.rgan.vote.repository.BlogVoteCounterRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -32,6 +37,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class BlogService {
+
+    private static Logger logger = LoggerFactory.getLogger(BlogService.class);
 
     @Autowired
     private BlogRepository blogRepository;
@@ -50,12 +57,19 @@ public class BlogService {
         return blogRepository.findByStatusOrderByCreatedTimeDesc(BlogStatus.PUBLISHED, pageable).map(BlogSummaryDTO::convertFrom);
     }
 
-    public BlogDTO getPublishedBlogById(long id){
+    public BlogDTO getBlogById(long id, @Nullable RganUser requestUser){
         // we are not enabling query cache, so...
 //        return blogRepository.findById(id).filter(blog -> blog.getStatus() == BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
 //            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
-        return blogRepository.findByIdAndStatus(id, BlogStatus.PUBLISHED).map(BlogDTO::convertFrom)
-            .orElseThrow(() -> new ResourceNotFoundException("blog", id));
+        return blogRepository.findByIdIs(id).map(blog -> {
+            if(blog.getStatus() != BlogStatus.PUBLISHED &&
+                (requestUser == null || RganUser.isNotSame(requestUser, blog.getAuthor()))){
+                logger.error("user id : {} try to access blog id : {} with status {}", requestUser == null ? null : requestUser.getId(), blog.getId(), blog.getStatus());
+                throw new ResourceNotFoundException("blog", id);
+            }
+
+            return BlogDTO.convertFrom(blog);
+        }).orElseThrow(() -> new ResourceNotFoundException("blog", id));
     }
 
     public Page<BlogSummaryDTO> getAuthorSpecificStatusBlogsOrderByCreatedTimeDesc(@NonNull RganUser author, BlogStatus status, Pageable pageable){

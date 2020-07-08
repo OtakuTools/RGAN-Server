@@ -41,4 +41,7 @@ public interface BlogRepository extends JpaRepository<Blog, Long>, CustomizedBlo
 //    @Query(value = "SELECT b FROM Blog b join fetch b.voteCounter WHERE b.id=?1 AND b.status=?2")
     @EntityGraph(value = "blog.voteCounter", type = EntityGraph.EntityGraphType.LOAD)
     Optional<Blog> findByIdAndStatus(Long id, BlogStatus status);
+
+    @Query(value = "SELECT b FROM Blog b JOIN FETCH b.voteCounter WHERE b.id=?1")
+    Optional<Blog> findByIdIs(Long id);
 }
