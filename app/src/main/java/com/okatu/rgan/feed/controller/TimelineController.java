@@ -102,6 +102,11 @@ public class TimelineController {
         // 3. paging might be difficult, since we retrieve the message like MessageBox -> FeedMessage -> Concrete(vote/comment)
     }
 
+    @DeleteMapping("/message/{id}")
+    public void deleteReceiveTimelineMessage(@PathVariable Long id, @AuthenticationPrincipal RganUser user){
+        timelineService.deleteReceiveTimelineMessage(id, user);
+    }
+
     // if you need to notify user when they login that they have new unread message, need an interface
     // so that the front end can request it after login
     // so some storage, to tell whether a message is unread or not

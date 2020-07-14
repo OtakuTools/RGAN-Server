@@ -3,6 +3,7 @@ package com.okatu.rgan.feed.service;
 import com.okatu.rgan.blog.model.entity.Comment;
 import com.okatu.rgan.blog.repository.CommentRepository;
 import com.okatu.rgan.common.exception.ConstraintViolationException;
+import com.okatu.rgan.common.exception.ResourceAccessDeniedException;
 import com.okatu.rgan.feed.constant.FeedMessageStatus;
 import com.okatu.rgan.feed.constant.FeedMessageType;
 import com.okatu.rgan.feed.model.dto.TimelineCommentDTO;
@@ -16,6 +17,7 @@ import com.okatu.rgan.vote.repository.CommentVoteItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -35,16 +37,17 @@ public class TimelineService {
     @Autowired
     private BlogVoteItemRepository blogVoteItemRepository;
 
-    public Page<TimelineCommentDTO> getTimelineCommentByReceiver(RganUser user, Pageable pageable){
+    public Page<TimelineCommentDTO> getTimelineCommentByReceiver(@NonNull RganUser user, Pageable pageable){
         return feedMessageBoxRepository.findByReceiverAndMessageTypeAndMessageStatusOrderByCreatedTimeDesc(
             user, FeedMessageType.COMMENT, FeedMessageStatus.ENABLED, pageable)
             .map(feedMessageBoxItem -> {
                 Optional<Comment> optional = commentRepository.findById(feedMessageBoxItem.getMessageId());
+                // comment might be deleted
                 return optional.map(comment -> TimelineCommentDTO.createFrom(feedMessageBoxItem, comment)).orElse(null);
             });
     }
 
-    public Page<TimelineUpVoteDTO> getTimelineUpVoteByReceiver(RganUser user, Pageable pageable){
+    public Page<TimelineUpVoteDTO> getTimelineUpVoteByReceiver(@NonNull RganUser user, Pageable pageable){
         return feedMessageBoxRepository.findAllVoteItemByReceiverAndMessageStatusOrderByCreatedTimeDesc(user, FeedMessageStatus.ENABLED, pageable)
             .map(feedMessageBoxItem -> {
                 TimelineUpVoteDTO timelineUpVoteDTO;
@@ -62,5 +65,15 @@ public class TimelineService {
 
                 return timelineUpVoteDTO;
             });
+    }
+
+    public void deleteReceiveTimelineMessage(long messageId, @NonNull RganUser self){
+        feedMessageBoxRepository.findById(messageId).ifPresent(feedMessageBoxItem -> {
+            if(RganUser.isNotSame(feedMessageBoxItem.getReceiver(), self)){
+                throw new ResourceAccessDeniedException("You cannot access this resource");
+            }
+            feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
+            feedMessageBoxRepository.save(feedMessageBoxItem);
+        });
     }
 }
