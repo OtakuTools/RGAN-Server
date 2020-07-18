@@ -72,8 +72,10 @@ public class TimelineService {
             if(RganUser.isNotSame(feedMessageBoxItem.getReceiver(), self)){
                 throw new ResourceAccessDeniedException("You cannot access this resource");
             }
-            feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
-            feedMessageBoxRepository.save(feedMessageBoxItem);
+            if(feedMessageBoxItem.getMessageStatus() == FeedMessageStatus.ENABLED){
+                feedMessageBoxItem.setMessageStatus(FeedMessageStatus.DELETED);
+                feedMessageBoxRepository.save(feedMessageBoxItem);
+            }
         });
     }
 }

@@ -51,7 +51,7 @@ public class VoteService {
     public void doVote(Blog blog, RganUser user, @NonNull VoteStatus newStatus){
         Optional<BlogVoteItem> optional = blogVoteItemRepository.findByBlogAndAuthor(blog, user);
         BlogVoteItem voteItem;
-        boolean firstVote = true;
+        boolean firstVote = false;
         int changeValue = 0;
 
         if(optional.isPresent()){
@@ -64,7 +64,7 @@ public class VoteService {
 
             voteItem = new BlogVoteItem(user, blog);
             changeValue = applyOnCancelOrNotExistStatus(voteItem, newStatus);
-            firstVote = false;
+            firstVote = true;
         }
         blogVoteItemRepository.save(voteItem);
         blogVoteCounterRepository.changeVoteCount(changeValue, blog.getVoteCounter());
@@ -92,7 +92,7 @@ public class VoteService {
     public void doVote(Comment comment, RganUser user, @NonNull VoteStatus newStatus){
         Optional<CommentVoteItem> optional = commentVoteItemRepository.findByCommentAndAuthor(comment, user);
         CommentVoteItem voteItem;
-        boolean firstVote = true;
+        boolean firstVote = false;
         int changeValue = 0;
 
         if(optional.isPresent()){
@@ -105,7 +105,7 @@ public class VoteService {
 
             voteItem = new CommentVoteItem(user, comment);
             changeValue = applyOnCancelOrNotExistStatus(voteItem, newStatus);
-            firstVote = false;
+            firstVote = true;
         }
         commentVoteItemRepository.save(voteItem);
         commentVoteCounterRepository.changeVoteCount(changeValue, comment.getVoteCounter());
